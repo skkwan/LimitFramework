@@ -9,15 +9,15 @@ Single era (--era run2 or --era run3):
 Combined (--era run2run3):
   For each mass point, calls combineCards.py to merge the run2 and run3
   datacards into a single combined datacard:
-    run2_SRHH, run2_SRZH, run3_SRHH, run3_SRZH  (imax=4)
+    run2_SR, run3_SR  (imax=2)
   Then runs combine on the merged card.
   Requires run2 and run3 datacards to exist — run make_datacards.py for
   both eras first.
 
 Usage:
-    python3 scripts/run_combine.py --era run2    --bf 1.0 --xsec 2d
-    python3 scripts/run_combine.py --era run3    --bf 1.0 --xsec 2d
-    python3 scripts/run_combine.py --era run2run3 --bf 1.0 --xsec 2d
+    python3 scripts/run_combine.py --era run2    --xsec 2d
+    python3 scripts/run_combine.py --era run3    --xsec 2d
+    python3 scripts/run_combine.py --era run2run3 --xsec 2d
     python3 scripts/run_combine.py --era run2run3 --jobs 4
     python3 scripts/run_combine.py --mchi 300 --mlsp 0 --era run2run3 --force
 """
@@ -37,17 +37,17 @@ import config
 
 # ── Combined card builder ─────────────────────────────────────────────────────
 
-def make_combined_card(mchi, mlsp, bf, xsec_mode):
+def make_combined_card(mchi, mlsp, xsec_mode):
     """
     Call combineCards.py to merge run2 and run3 datacards for one mass point.
     Saves combined card to combine/datacards/run2run3/.
     Returns (card_path, None) on success or (None, error_str) on failure.
 
-    combineCards.py renames channels as run2_SRHH, run2_SRZH, run3_SRHH, run3_SRZH
-    and keeps absolute workspace paths intact so no workspace changes are needed.
+    combineCards.py renames channels as run2_SR, run3_SR and keeps absolute
+    workspace paths intact so no workspace changes are needed.
     """
-    card_run2 = config.datacard_path(mchi, mlsp, 'run2', bf, xsec_mode)
-    card_run3 = config.datacard_path(mchi, mlsp, 'run3', bf, xsec_mode)
+    card_run2 = config.datacard_path(mchi, mlsp, 'run2', xsec_mode)
+    card_run3 = config.datacard_path(mchi, mlsp, 'run3', xsec_mode)
 
     missing = []
     if not os.path.exists(card_run2): missing.append(f"run2: {card_run2}")
@@ -55,7 +55,7 @@ def make_combined_card(mchi, mlsp, bf, xsec_mode):
     if missing:
         return None, "missing cards: " + "; ".join(missing)
 
-    combined = config.datacard_path(mchi, mlsp, 'run2run3', bf, xsec_mode)
+    combined = config.datacard_path(mchi, mlsp, 'run2run3', xsec_mode)
     os.makedirs(os.path.dirname(combined), exist_ok=True)
 
     cmd = ["combineCards.py", f"run2={card_run2}", f"run3={card_run3}"]
@@ -78,22 +78,21 @@ def make_combined_card(mchi, mlsp, bf, xsec_mode):
 
 def run_one(args):
     """Run Combine on one mass point. Returns result dict."""
-    mchi, mlsp, era_tag, bf, xsec_mode, out_dir, force = args
+    mchi, mlsp, era_tag, xsec_mode, out_dir, force = args
 
-    bf_str = f"bf{bf:.2f}".replace('.', 'p')
     result_json = os.path.join(out_dir,
-                               f"result_mchi{mchi}_mlsp{mlsp}_{bf_str}_{xsec_mode}.json")
+                               f"result_mchi{mchi}_mlsp{mlsp}_{xsec_mode}.json")
     if not force and os.path.exists(result_json):
         with open(result_json) as f:
             return json.load(f)
 
     # Build or locate the datacard
     if era_tag == 'run2run3':
-        card_path, err = make_combined_card(mchi, mlsp, bf, xsec_mode)
+        card_path, err = make_combined_card(mchi, mlsp, xsec_mode)
         if card_path is None:
             return {'mchi': mchi, 'mlsp': mlsp, 'status': 'no_card', 'detail': err}
     else:
-        card_path = config.datacard_path(mchi, mlsp, era_tag, bf, xsec_mode)
+        card_path = config.datacard_path(mchi, mlsp, era_tag, xsec_mode)
         if not os.path.exists(card_path):
             return {'mchi': mchi, 'mlsp': mlsp,
                     'status': 'no_card', 'detail': str(card_path)}
@@ -128,7 +127,7 @@ def run_one(args):
 
     result = {
         'mchi': mchi, 'mlsp': mlsp,
-        'era': era_tag, 'bf': bf, 'xsec': xsec_mode,
+        'era': era_tag, 'xsec': xsec_mode,
         'status': 'ok',
         **limits,
     }
@@ -153,7 +152,7 @@ def parse_limits(stdout):
 # ── CSV writer ────────────────────────────────────────────────────────────────
 
 def save_csv(results, csv_path):
-    cols = ['mchi', 'mlsp', 'era', 'bf', 'xsec', 'status',
+    cols = ['mchi', 'mlsp', 'era', 'xsec', 'status',
             'exp_m2', 'exp_m1', 'exp', 'exp_p1', 'exp_p2']
     os.makedirs(os.path.dirname(csv_path), exist_ok=True)
     with open(csv_path, 'w', newline='') as f:
@@ -171,7 +170,6 @@ def main():
     parser.add_argument("--era",   choices=["run2", "run3", "run2run3", "both"],
                         default="both",
                         help="'run2run3' merges cards with combineCards.py first")
-    parser.add_argument("--bf",    type=float, default=1.0)
     parser.add_argument("--xsec",  choices=["2d", "1d"], default="2d")
     parser.add_argument("--mchi",  type=int, default=None)
     parser.add_argument("--mlsp",  type=int, default=None)
@@ -182,11 +180,8 @@ def main():
 
     eras = ["run2", "run3", "run2run3"] if args.era == "both" else [args.era]
 
-    if args.bf == 1.0:
-        mass_points = sorted(config.SIGNAL_GRID['HH'])
-    else:
-        mass_points = sorted(set(config.SIGNAL_GRID['HH']) & set(config.SIGNAL_GRID['ZH']))
-    
+    mass_points = sorted(config.SIGNAL_GRID)
+
     if args.mchi is not None:
         mass_points = [(mc, ml) for mc, ml in mass_points if mc == args.mchi]
     if args.mlsp is not None:
@@ -196,12 +191,12 @@ def main():
         out_dir = os.path.join(config.LIMITS_DIR, era)
         os.makedirs(out_dir, exist_ok=True)
 
-        print(f"\n=== era={era}  bf={args.bf}  xsec={args.xsec} ===")
+        print(f"\n=== era={era}  xsec={args.xsec} ===")
         if era == 'run2run3':
             print("  Will merge per-era cards via combineCards.py for each mass point")
 
         job_args = [
-            (mchi, mlsp, era, args.bf, args.xsec, out_dir, args.force)
+            (mchi, mlsp, era, args.xsec, out_dir, args.force)
             for mchi, mlsp in mass_points
         ]
         print(f"Running {len(job_args)} jobs (parallel={args.jobs})", flush=True)
@@ -244,10 +239,9 @@ def main():
 
         ok_results = [r for r in results if r.get('status') == 'ok']
         if ok_results:
-            bf_str = f"bf{args.bf:.2f}".replace('.', 'p')
             csv_path = os.path.join(
                 config.LIMITS_DIR,
-                f"limits_{era}_{bf_str}_{args.xsec}xsec.csv")
+                f"limits_{era}_{args.xsec}xsec.csv")
             save_csv(ok_results, csv_path)
             print(f"\n  Plot: python3 scripts/plot.py --csv {csv_path} --era {era}")
 

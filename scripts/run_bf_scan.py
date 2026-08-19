@@ -1,6 +1,16 @@
 #!/usr/bin/env python3
 """
 run_bf_scan.py
+
+NOT APPLICABLE to the current Z(ll)H(bb) channel (single TChiZH signal
+process, no branching-fraction mixing) -- make_datacards.py and
+run_combine.py no longer accept --bf, so every call this script makes will
+fail. Kept only for reference in case a future multi-process channel
+revives the BF-scan idea; otherwise safe to delete (along with plot.py's
+now-dead plot_bf_exclusion/find_crossing).
+
+Original docstring below, describing the old H(gg)+H/Z(bb) BF-scan usage:
+
 Wrapper that scans over BF values for the mlsp=0 slice and produces
 the inputs needed for the ATLAS-style BF vs mchi exclusion plot.
 

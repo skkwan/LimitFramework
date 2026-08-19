@@ -12,16 +12,13 @@ Produces CMS-style limit plots:
      Color map: expected cross section upper limit [fb]  (log scale)
      Red contours: expected median, ±1σ, ±2σ exclusion boundaries
 
-  BF exclusion (--plot bf):
-     ATLAS-style B(χ̃₁⁰ → hG̃) vs m(χ̃₁⁰) contour.
-     Reads all limits_{era}_bf*_{xsec}xsec.csv produced by run_bf_scan.py.
-     Does NOT require --csv (scans the limits dir automatically).
+Single signal process (TChiZH) -- there's no branching-fraction mixing in
+this channel, so (unlike the H(gg)+H/Z(bb) channel this framework was
+originally scaffolded for) there is no BF-exclusion plot mode here.
 
 Usage:
-    python3 scripts/plot.py --era run2 --bf 1.0 --xsec 1d --plot 1d --mlsp 0
-    python3 scripts/plot.py --era run2 --bf 0.5 --xsec 1d --plot 1d --mlsp 0
-    python3 scripts/plot.py --era run2 --bf 1.0 --xsec 2d --plot 2d
-    python3 scripts/plot.py --plot bf --era run2run3 --xsec 1d
+    python3 scripts/plot.py --era run2 --xsec 1d --plot 1d --mlsp 0
+    python3 scripts/plot.py --era run2 --xsec 2d --plot 2d
 """
 
 import os
@@ -113,12 +110,11 @@ def add_xsec(df_lim, xsec_mode, era_tag):
     return df
 
 
-def find_csv(era_tag, bf, xsec_mode):
-    """Auto-find limits CSV for a given era, bf, xsec."""
-    bf_str = f"bf{bf:.2f}".replace('.', 'p')
+def find_csv(era_tag, xsec_mode):
+    """Auto-find limits CSV for a given era, xsec mode."""
     # search in era subdir first, then limits root
     for d in [os.path.join(config.LIMITS_DIR, era_tag), config.LIMITS_DIR]:
-        pattern = os.path.join(d, f"limits_{era_tag}_{bf_str}_{xsec_mode}xsec.csv")
+        pattern = os.path.join(d, f"limits_{era_tag}_{xsec_mode}xsec.csv")
         matches = glob.glob(pattern)
         if matches:
             return matches[0]
@@ -160,9 +156,8 @@ def plot_brazil(df, mlsp_val, xsec_mode, era_tag, lumi_label, out_path):
     ax.legend(loc='upper right')
     ax.grid(True, which='both', alpha=0.3, ls=':')
 
-    bf_val   = float(df['bf'].iloc[0])
     xsec_lbl = r'$\sigma_{\rm 1D}$' if xsec_mode == '1d' else r'$\sigma_{\rm 2D}$'
-    ax.set_title(f'Higgsino, $\\mathcal{{B}}(\\tilde{{\\chi}}\\to H)={bf_val:.2f}$, '
+    ax.set_title(f'Higgsino $\\to Z(ll)H(bb)$, '
                  f'$m_{{\\rm LSP}}={mlsp_val}$ GeV, {xsec_lbl}', fontsize=11)
 
     ax.text(0.04, 0.97, "CMS", transform=ax.transAxes,
@@ -271,10 +266,9 @@ def plot_2d_exclusion(df, xsec_mode, era_tag, lumi_label, out_path):
     ax.set_xlabel(r'$m(\tilde{\chi}_1^0)_{\rm NLSP}$ [GeV]', fontsize=14)
     ax.set_ylabel(r'$m_{\rm LSP}$ [GeV]', fontsize=14)
 
-    bf_val   = float(df['bf'].iloc[0])
     xsec_lbl = r'$\sigma_{\rm 1D}$' if xsec_mode == '1d' else r'$\sigma_{\rm 2D}$'
     ax.text(0.03, 0.97,
-            f'pp → higgsino → HH/ZH + LSP\n$\\mathcal{{B}}(\\tilde{{\\chi}}\\to H)={bf_val:.2f}$,  {xsec_lbl}',
+            f'pp → higgsino → Z(ll)H(bb) + LSP\n{xsec_lbl}',
             transform=ax.transAxes, fontsize=10, va='top', ha='left',
             bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.4'),
             zorder=10)
@@ -293,7 +287,12 @@ def plot_2d_exclusion(df, xsec_mode, era_tag, lumi_label, out_path):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  BF exclusion (ATLAS-style)
+#  BF exclusion (ATLAS-style) -- DEAD CODE for this single-process channel.
+#  Kept only because plot_bf_exclusion below still references it; neither is
+#  reachable from main() anymore (see the --plot choices), since a BF scan
+#  requires branching-fraction mixing between two signal processes, which
+#  doesn't exist for a pure TChiZH grid. Safe to delete once run_bf_scan.py
+#  (also inapplicable now) is removed.
 # ══════════════════════════════════════════════════════════════════════════════
 
 def find_crossing(mchi_vals, mu_vals):
@@ -451,43 +450,25 @@ def plot_bf_exclusion(era_tag, xsec_mode, lumi_label, out_dir):
 def main():
     parser = argparse.ArgumentParser(description="Plot limits")
     parser.add_argument("--csv",    default=None,
-                        help="Limits CSV from run_combine.py (auto-found if --era and --bf given)")
+                        help="Limits CSV from run_combine.py (auto-found if --era given)")
     parser.add_argument("--era",    default=None,
-                        help="Era label (required for --plot bf; used to auto-find CSV)")
-    parser.add_argument("--bf",     type=float, default=1.0,
-                        help="B(chi->H) for auto-finding CSV (default: 1.0)")
+                        help="Era label (used to auto-find CSV)")
     parser.add_argument("--xsec",   choices=["1d", "2d"], default="1d",
                         help="Xsec mode (default: 1d)")
     parser.add_argument("--mlsp",   type=int, default=None,
                         help="mlsp value for 1D Brazil band (default: smallest)")
-    parser.add_argument("--plot",   choices=["1d", "2d", "bf", "both"], default="both")
+    parser.add_argument("--plot",   choices=["1d", "2d", "both"], default="both")
     parser.add_argument("--outdir", default=None)
     args = parser.parse_args()
 
-    # ── BF mode: no CSV needed ────────────────────────────────────────────────
-    if args.plot == "bf":
-        if not args.era:
-            print("ERROR: --era required for --plot bf"); sys.exit(1)
-        xsec_mode  = args.xsec
-        era_tag    = args.era
-        lumi_label = LUMI_LABELS.get(era_tag, era_tag)
-        out_dir    = args.outdir or os.path.join(config.LIMITS_DIR, era_tag)
-        if not glob.glob(os.path.join(out_dir, f"limits_{era_tag}_bf*_{xsec_mode}xsec.csv")):
-            out_dir = config.LIMITS_DIR
-        print(f"Making BF exclusion plot  era={era_tag}  xsec={xsec_mode}", flush=True)
-        plot_bf_exclusion(era_tag, xsec_mode, lumi_label, out_dir)
-        print("\nDone.")
-        return
-
-    # ── 1d / 2d / both: auto-find CSV if not given ───────────────────────────
+    # ── auto-find CSV if not given ────────────────────────────────────────────
     if not args.csv:
         if not args.era:
-            print("ERROR: --csv or (--era + --bf) required for --plot 1d/2d/both")
+            print("ERROR: --csv or --era required")
             sys.exit(1)
-        args.csv = find_csv(args.era, args.bf, args.xsec)
+        args.csv = find_csv(args.era, args.xsec)
         if not args.csv:
-            bf_str = f"bf{args.bf:.2f}".replace('.', 'p')
-            print(f"ERROR: could not find limits_{args.era}_{bf_str}_{args.xsec}xsec.csv "
+            print(f"ERROR: could not find limits_{args.era}_{args.xsec}xsec.csv "
                   f"in {config.LIMITS_DIR}")
             sys.exit(1)
         print(f"Auto-found CSV: {args.csv}")
@@ -502,8 +483,6 @@ def main():
 
     era_tag    = args.era  or str(df_raw['era'].iloc[0])
     xsec_mode  = args.xsec or str(df_raw['xsec'].iloc[0])
-    bf_val     = float(df_raw['bf'].iloc[0])
-    bf_str     = f"bf{bf_val:.2f}".replace('.', 'p')
     lumi_label = LUMI_LABELS.get(era_tag, era_tag)
     out_dir    = args.outdir or os.path.dirname(args.csv)
     os.makedirs(out_dir, exist_ok=True)
@@ -521,13 +500,13 @@ def main():
             mlsp_val = int(counts[counts >= 3].index.min())
         print(f"\nMaking 1D Brazil band (mlsp={mlsp_val})...", flush=True)
         out_1d = os.path.join(out_dir,
-                              f"brazil_{era_tag}_{bf_str}_{xsec_mode}xsec_mlsp{mlsp_val}.png")
+                              f"brazil_{era_tag}_{xsec_mode}xsec_mlsp{mlsp_val}.png")
         plot_brazil(df, mlsp_val, xsec_mode, era_tag, lumi_label, out_1d)
 
     if args.plot in ("2d", "both"):
         print(f"\nMaking 2D exclusion map...", flush=True)
         out_2d = os.path.join(out_dir,
-                              f"exclusion2d_{era_tag}_{bf_str}_{xsec_mode}xsec.png")
+                              f"exclusion2d_{era_tag}_{xsec_mode}xsec.png")
         plot_2d_exclusion(df, xsec_mode, era_tag, lumi_label, out_2d)
 
     print("\nDone.")
