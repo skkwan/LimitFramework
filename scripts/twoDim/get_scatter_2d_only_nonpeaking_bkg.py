@@ -1,42 +1,32 @@
 #!/usr/bin/env python3
 """
 get_scatter_2d_only_nonpeaking_bkg.py
-2D (m(ll), MET) analogue of oneDim_simplification/get_scatter_1d_met.py: wraps
-do_2d_toys_nonpeaking_bkg_only.py's model-building/toy-running functions to scan
-several injected n_sig values, save every toy's best-fit n_sig/n_bkg (value + error)
-to a single JSON file, make CMS-styled (cmsstyle "Private work") scatter plots of
-injected vs. recovered yield, and (like get_scatter_1d_met_two_bkg.py) dump per-toy
-example fit plots to example_toys/ and example_toys_outliers/ (one plot per observable,
-m(ll) and MET, per toy). Same signal + non-peaking-only-background model as
-get_scatter_1d_met.py, but fit over both (m(ll), MET) observables instead of the MET
-marginal only.
+2D (m(ll), MET) analogue of the one-dimensional MET-only scatter study: wraps
+helper.py's model-building/toy-running functions to scan several injected n_sig
+values, save every toy's best-fit n_sig/n_bkg (value + error) to a single JSON file,
+make CMS-styled (cmsstyle "Private work") scatter plots of injected vs. recovered
+yield, and dump per-toy example fit plots to example_toys/ and
+example_toys_outliers/ (one plot per observable, m(ll) and MET, per toy). Same signal
++ non-peaking-only-background model as the 1D MET study, but fit over both (m(ll),
+MET) observables instead of the MET marginal only.
 
 Usage:
     python3 get_scatter_2d_only_nonpeaking_bkg.py
-    python3 get_scatter_2d_only_nonpeaking_bkg.py --n-sig-list 0 5 10 15 20 25 -N 5000 --n-bkg-in 48
+    python3 get_scatter_2d_only_nonpeaking_bkg.py --n-sig-list 0 5 10 15 20 25 -N 5000 --n-bkg-in 132
     python3 get_scatter_2d_only_nonpeaking_bkg.py --force
 """
 
 import ROOT
-import cmsstyle as CMS
 import os
-import sys
 import json
 import argparse
 
 ROOT.RooMsgService.instance().setGlobalKillBelow(ROOT.RooFit.ERROR)
 ROOT.gROOT.SetBatch(True)
 
-sys.path.insert(0, os.path.dirname(__file__))
-from do_2d_toys_nonpeaking_bkg_only import (
-    build_model_2d, run_mcstudy_2d, collect_results, make_example_toy_plot,
-    _first_converged_toys,
-)
-
-ONE_DIM_DIR = os.path.join(os.path.dirname(__file__), "..", "oneDim_simplification")
-sys.path.insert(0, ONE_DIM_DIR)
-from get_scatter_1d_met import (
-    add_pulls, aggregate_point, make_scatter_plot, make_distribution_plot,
+from helper import (
+    build_model_2d, run_mcstudy_2d, collect_results, make_example_toy_plot_nonpeaking_bkg,
+    _first_converged_toys, add_pulls, aggregate_point, make_scatter_plot, make_distribution_plot,
 )
 
 DATATAG = "two_dim_peakingBkgOnly"
@@ -59,7 +49,7 @@ def n_sig_fit_range(n_sig_in):
 def run_scan(args):
     mll, met, sig_pdf, bkg_pdf, components = build_model_2d(args.m1, args.m2)
 
-    n_bkg_lo, n_bkg_hi = 0.0, 100.0
+    n_bkg_lo, n_bkg_hi = 0.0, args.n_bkg_in*2.0
 
     outlier_plot_dir = os.path.join(args.plot_dir, "example_toys_outliers")
     example_plot_dir = os.path.join(args.plot_dir, "example_toys")
@@ -84,13 +74,13 @@ def run_scan(args):
             if n_outliers_plotted >= args.n_outlier_examples:
                 break
             if row["status"] == 0 and row["n_sig_val"] < args.outlier_n_sig_max:
-                make_example_toy_plot(mcs, mll, met, total_pdf, sig_pdf, bkg_pdf, n_sig, n_bkg,
+                make_example_toy_plot_nonpeaking_bkg(mcs, mll, met, total_pdf, sig_pdf, bkg_pdf, n_sig, n_bkg,
                                       outlier_plot_dir, tag, idx)
                 n_outliers_plotted += 1
 
         n_examples_plotted = 0
         for idx in _first_converged_toys(rows, args.n_example_toys):
-            make_example_toy_plot(mcs, mll, met, total_pdf, sig_pdf, bkg_pdf, n_sig, n_bkg,
+            make_example_toy_plot_nonpeaking_bkg(mcs, mll, met, total_pdf, sig_pdf, bkg_pdf, n_sig, n_bkg,
                                   example_plot_dir, tag, idx)
             n_examples_plotted += 1
 
@@ -208,7 +198,7 @@ def main():
                     "pdf), save every toy's best-fit n_sig/n_bkg to JSON, and make "
                     "injected-vs-fitted scatter plots.")
     parser.add_argument("--n-sig-list", nargs="+", type=float, default=[0, 5, 10, 15, 20, 25])
-    parser.add_argument("--n-bkg-in", type=float, default=48.0)
+    parser.add_argument("--n-bkg-in", type=float, default=132)
     parser.add_argument("--outlier-n-sig-max", type=float, default=-80.0,
                         help="Make example toy plots (data + best-fit signal/"
                              "background curves) for converged toys whose best-fit "
@@ -225,7 +215,7 @@ def main():
     parser.add_argument("--m2", type=int, default=1)
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--outdir", default="/eos/cms/store/group/phys_susy/skkwan/toys/2d_mll_met/scatter_plot_results")
-    parser.add_argument("--plot-dir", default="/eos/user/s/skkwan/www/higgsino/studies/mll-MET-fit-2D/toys/two_dimension_only_nonpeaking_bkg")
+    parser.add_argument("--plot-dir", default="/eos/user/s/skkwan/www/higgsino/studies/mll-MET-fit-2D/two_dimensional_fitTo_handling/nonpeak_bkg_only")
     parser.add_argument("--force", action="store_true",
                         help="Re-run the scan even if results_2d_mll_met.json already exists")
     args = parser.parse_args()
@@ -235,9 +225,9 @@ def main():
     print(f"\nMaking scatter plots from {json_path} ...")
     make_plots(result, args.plot_dir)
 
-    print(f"\n Check https://skkwan.web.cern.ch/higgsino/studies/mll-MET-fit-2D/toys/two_dimension_only_nonpeaking_bkg/ for outputs")
-    print(f"\n Check https://skkwan.web.cern.ch/higgsino/studies/mll-MET-fit-2D/toys/two_dimension_only_nonpeaking_bkg/example_toys_outliers/ for outlier plots")
-    print(f"\n Check https://skkwan.web.cern.ch/higgsino/studies/mll-MET-fit-2D/toys/two_dimension_only_nonpeaking_bkg/example_toys/ for random examples that converged")
+    print(f"\n Check https://skkwan.web.cern.ch/higgsino/studies/mll-MET-fit-2D/two_dimensional_fitTo_handling/nonpeak_bkg_only/ for outputs")
+    print(f"\n Check https://skkwan.web.cern.ch/higgsino/studies/mll-MET-fit-2D/two_dimensional_fitTo_handling/nonpeak_bkg_only/example_toys_outliers/ for outlier plots")
+    print(f"\n Check https://skkwan.web.cern.ch/higgsino/studies/mll-MET-fit-2D/two_dimensional_fitTo_handling/nonpeak_bkg_only/example_toys/ for random examples that converged")
 
 if __name__ == "__main__":
     main()

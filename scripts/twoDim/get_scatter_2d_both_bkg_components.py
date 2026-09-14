@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
 get_scatter_2d_both_bkg_components.py
-2D (m(ll), MET) analogue of oneDim_simplification/get_scatter_1d_met_two_bkg.py and
-get_scatter_1d_met_two_bkg_fit_r.py, merged into a single script with a --floatR
-switch instead of two sibling files. Wraps do_2d_toys_both_bkg.py's
-model-building/toy-running functions (full 2D signal pdf + BOTH background
-components, peaking-in-m(ll) and non-peaking-in-m(ll), mixed by r) to scan several
+2D (m(ll), MET) analogue of the one-dimensional two-background scatter studies,
+merged into a single script with a --floatR switch instead of two sibling files.
+Wraps helper.py's model-building/toy-running functions (full 2D signal pdf + BOTH
+background components, peaking-in-m(ll) and non-peaking-in-m(ll), mixed by r) to scan several
 injected n_sig values, save every toy's best-fit n_sig/n_bkg (and r, iff --floatR)
 to a single JSON file, make CMS-styled (cmsstyle "Private work") scatter plots of
 injected vs. recovered yield, and dump per-toy example fit plots to example_toys/
@@ -27,25 +26,18 @@ Usage:
 """
 
 import ROOT
-import cmsstyle as CMS
 import os
-import sys
 import json
 import argparse
 
 ROOT.RooMsgService.instance().setGlobalKillBelow(ROOT.RooFit.ERROR)
 ROOT.gROOT.SetBatch(True)
 
-sys.path.insert(0, os.path.dirname(__file__))
-from do_2d_toys_both_bkg import (
-    build_model_2d_both_bkg, collect_results_2d, add_pulls_2d, make_example_toy_plot,
-    _first_converged_toys,
+from helper import (
+    build_model_2d_both_bkg, run_mcstudy_2d, collect_results_2d, add_pulls_2d,
+    make_example_toy_plot_both_bkg, _first_converged_toys,
+    aggregate_point, make_scatter_plot, make_distribution_plot,
 )
-from do_2d_toys_nonpeaking_bkg_only import run_mcstudy_2d
-
-ONE_DIM_DIR = os.path.join(os.path.dirname(__file__), "..", "oneDim_simplification")
-sys.path.insert(0, ONE_DIM_DIR)
-from get_scatter_1d_met import aggregate_point, make_scatter_plot, make_distribution_plot
 
 DATATAG = "two_dim_both_bkg"
 
@@ -93,17 +85,17 @@ def run_scan(args):
             if n_outliers_plotted >= args.n_outlier_examples:
                 break
             if row["status"] == 0 and args.floatR and row["r_val"] > 0.35:
-                make_example_toy_plot(mcs, mll, met, total_pdf, sig_pdf, bkg_pdf, n_sig, n_bkg,
+                make_example_toy_plot_both_bkg(mcs, mll, met, total_pdf, sig_pdf, bkg_pdf, n_sig, n_bkg,
                                       ratio_peaking, args.floatR, outlier_plot_dir, tag, idx)
                 n_outliers_plotted += 1
             elif row["status"] == 0 and not args.floatR:
-                make_example_toy_plot(mcs, mll, met, total_pdf, sig_pdf, bkg_pdf, n_sig, n_bkg,
+                make_example_toy_plot_both_bkg(mcs, mll, met, total_pdf, sig_pdf, bkg_pdf, n_sig, n_bkg,
                                       ratio_peaking, args.floatR, outlier_plot_dir, tag, idx)
                 n_outliers_plotted += 1
 
         n_examples_plotted = 0
         for idx in _first_converged_toys(rows, args.n_example_toys):
-            make_example_toy_plot(mcs, mll, met, total_pdf, sig_pdf, bkg_pdf, n_sig, n_bkg,
+            make_example_toy_plot_both_bkg(mcs, mll, met, total_pdf, sig_pdf, bkg_pdf, n_sig, n_bkg,
                                   ratio_peaking, args.floatR, example_plot_dir, tag, idx)
             n_examples_plotted += 1
 
