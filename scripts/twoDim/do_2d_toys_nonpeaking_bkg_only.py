@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+Not used anymore
 do_2d_toys_nonpeaking_bkg_only.py
 2D (m(ll), MET) analogue of oneDim_simplification/do_1d_met_toys.py: generates and fits
 toy datasets from the full 2D signal product pdf and the non-peaking-in-m(ll)-only

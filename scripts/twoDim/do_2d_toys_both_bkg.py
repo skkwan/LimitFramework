@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+Not used anymore
 do_2d_toys_both_bkg.py
 2D (m(ll), MET) analogue of do_2d_toys_nonpeaking_bkg_only.py, but using BOTH
 background components (peaking-in-m(ll) + non-peaking-in-m(ll)) instead of the
