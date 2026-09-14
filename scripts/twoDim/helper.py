@@ -237,6 +237,24 @@ def build_model_2d_both_bkg(m1, m2, r, floatR, r_range=(0.0, 1.0)):
     return mll, met, sig_pdf, bkg_pdf, ratio_peaking, sig_components + bkg_components
 
 
+class ToyStudy:
+    """Minimal RooMCStudy-like container: per-toy generated datasets and fit results,
+    plus the exact generated n_sig/n_bkg (fixed every toy -- see run_mcstudy_2d) that a
+    merged-pdf RooMCStudy generation could not recover, since it tags no event with its
+    sig/bkg origin."""
+    def __init__(self, n_sig_gen, n_bkg_gen):
+        self.n_sig_gen = n_sig_gen
+        self.n_bkg_gen = n_bkg_gen
+        self._gen_data = []
+        self._fit_results = []
+
+    def genData(self, i):
+        return self._gen_data[i]
+
+    def fitResult(self, i):
+        return self._fit_results[i]
+
+
 # ── Toy generation + fitting ─────────────────────────────────────────────────────────
 
 def run_mcstudy_2d(mll, met, sig_pdf, bkg_pdf, n_sig_in, n_bkg_in, n_sig_range, n_bkg_range,
@@ -247,19 +265,30 @@ def run_mcstudy_2d(mll, met, sig_pdf, bkg_pdf, n_sig_in, n_bkg_in, n_sig_range, 
                                ROOT.RooArgList(sig_pdf, bkg_pdf),
                                ROOT.RooArgList(n_sig, n_bkg))
 
+    observables = ROOT.RooArgSet(mll, met)
     ROOT.RooRandom.randomGenerator().SetSeed(seed)
-    mcs = ROOT.RooMCStudy(
-        total_pdf,
-        ROOT.RooArgSet(mll, met),
-        ROOT.RooFit.Extended(),
-        ROOT.RooFit.Silence(),
-        ROOT.RooFit.FitOptions(ROOT.RooFit.Save(True), ROOT.RooFit.PrintLevel(-1)),
-    )
+
+    # Fixed (not Poisson-fluctuated) per-toy generated counts -- generate() below draws
+    # exactly this many events from each component every toy, so the true sig/bkg split
+    # is known exactly rather than only recoverable as an Extended-fit expectation.
+    n_gen_sig = round(n_sig_in)
+    n_gen_bkg = round(n_bkg_in)
+    study = ToyStudy(n_gen_sig, n_gen_bkg)
+
     print(f"Running {n_experiments} toy experiments "
          f"(n_sig_in={n_sig_in}, n_bkg_in={n_bkg_in}, seed={seed})...", flush=True)
-    mcs.generateAndFit(n_experiments, 0, True)
+    for _ in range(n_experiments):
+        sig_data = sig_pdf.generate(observables, n_gen_sig)
+        bkg_data = bkg_pdf.generate(observables, n_gen_bkg)
+        sig_data.append(bkg_data)
+
+        fr = total_pdf.fitTo(sig_data, ROOT.RooFit.Extended(), ROOT.RooFit.Save(True),
+                             ROOT.RooFit.PrintLevel(-1))
+
+        study._gen_data.append(sig_data)
+        study._fit_results.append(fr)
     print("Done.", flush=True)
-    return mcs, n_sig, n_bkg, total_pdf
+    return study, n_sig, n_bkg, total_pdf
 
 
 # ── Fit-result collection ────────────────────────────────────────────────────────────
@@ -274,6 +303,8 @@ def collect_results(mcs, n_experiments, n_sig_in, n_bkg_in):
         rows.append({
             'status':     fr.status(),
             'cov_qual':   fr.covQual(),
+            'n_sig_gen':  mcs.n_sig_gen,
+            'n_bkg_gen':  mcs.n_bkg_gen,
             'n_sig_val':  sig_par.getVal(),
             'n_sig_err':  sig_par.getError(),
             'n_bkg_val':  bkg_par.getVal(),
@@ -292,6 +323,8 @@ def collect_results_2d(mcs, n_experiments, floatR):
         row = {
             'status':     fr.status(),
             'cov_qual':   fr.covQual(),
+            'n_sig_gen':  mcs.n_sig_gen,
+            'n_bkg_gen':  mcs.n_bkg_gen,
             'n_sig_val':  sig_par.getVal(),
             'n_sig_err':  sig_par.getError(),
             'n_bkg_val':  bkg_par.getVal(),
@@ -382,7 +415,7 @@ def make_example_toy_plot_nonpeaking_bkg(mcs, mll, met, total_pdf, sig_pdf, bkg_
         frame.SetXTitle(xlabel)
         frame.Draw()
 
-        leg = ROOT.TLegend(0.60, 0.56, 0.88, 0.88)
+        leg = ROOT.TLegend(0.60, 0.51, 0.88, 0.88)
         leg.SetBorderSize(0)
         leg.SetFillStyle(0)
         leg.SetTextSize(0.032)
@@ -392,6 +425,7 @@ def make_example_toy_plot_nonpeaking_bkg(mcs, mll, met, total_pdf, sig_pdf, bkg_
         leg.AddEntry(frame.findObject("sig"), "Signal", "l")
         leg.AddEntry(ROOT.nullptr, f"n_{{sig}} = {sig_par.getVal():.2f} #pm {sig_par.getError():.2f}", "")
         leg.AddEntry(ROOT.nullptr, f"n_{{bkg}} = {bkg_par.getVal():.2f} #pm {bkg_par.getError():.2f}", "")
+        leg.AddEntry(ROOT.nullptr, f"n_{{sig}}^{{gen}} = {mcs.n_sig_gen}, n_{{bkg}}^{{gen}} = {mcs.n_bkg_gen}", "")
         leg.Draw()
 
         outpath = os.path.join(plots_dir, f"example_toy{toy_index}_{obs_name}_{tag}.pdf")
@@ -459,7 +493,7 @@ def make_example_toy_plot_both_bkg(mcs, mll, met, total_pdf, sig_pdf, bkg_pdf, n
         frame.SetXTitle(xlabel)
         frame.Draw()
 
-        leg = ROOT.TLegend(0.60, 0.46, 0.88, 0.88)
+        leg = ROOT.TLegend(0.60, 0.41, 0.88, 0.88)
         leg.SetBorderSize(0)
         leg.SetFillStyle(0)
         leg.SetTextSize(0.032)
@@ -471,6 +505,7 @@ def make_example_toy_plot_both_bkg(mcs, mll, met, total_pdf, sig_pdf, bkg_pdf, n
         leg.AddEntry(frame.findObject("sig"), "Signal", "l")
         leg.AddEntry(ROOT.nullptr, f"n_{{sig}} = {sig_par.getVal():.2f} #pm {sig_par.getError():.2f}", "")
         leg.AddEntry(ROOT.nullptr, f"n_{{bkg}} = {bkg_par.getVal():.2f} #pm {bkg_par.getError():.2f}", "")
+        leg.AddEntry(ROOT.nullptr, f"n_{{sig}}^{{gen}} = {mcs.n_sig_gen}, n_{{bkg}}^{{gen}} = {mcs.n_bkg_gen}", "")
         if r_err is not None:
             leg.AddEntry(ROOT.nullptr, f"r = {r_val:.3f} #pm {r_err:.3f}", "")
         else:
