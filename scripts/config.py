@@ -95,13 +95,16 @@ N_MLL_BINS = 60
 # Minimum number of (unweighted) entries required to attempt a fit
 MIN_EVENTS_FOR_FIT = 10
 
-# Fixed background normalization (bkg_total_{era}_norm), per era.
-# The background shape+norm are fully determined by fit_background.py's
-# fit to background MC, so this is set constant rather than left floating.
-BKG_NORM = {
-    'run2': 24.0,
-    'run3': 48.0,
-}
+# Projected yields for the expected limits, at PROJECTED_LUMI (scaled up
+# from 2018 MC). The total background is the bkg rate in the datacards
+# (make_datacards.py) and the data_obs event count (make_workspaces.py).
+# Not per era: the projection is for the total dataset.
+PROJECTED_LUMI = 450.0  # fb^-1
+BKG_YIELD = {'peaking': 12.68, 'nonpeak': 132.52}
+SIGNAL_YIELD_COL = 'yield_450fb'  # signal_master.csv column at PROJECTED_LUMI
+
+# Relative Gaussian uncertainty on ratio_peaking in the datacards
+RATIO_PEAKING_REL_UNC = 0.30
 
 # ===========================================================================
 # Directory structure
@@ -333,6 +336,10 @@ def zpeak_fit_ws(era_tag):
 def bkg_fit_json(era_tag):
     return os.path.join(FITS_DIR, 'background', f'fit_bkg_{era_tag}.json')
 
+def bkg_components_json(era_tag):
+    """Per-component (MET peaking, MET non-peaking, m(ll) non-peaking) fit results."""
+    return os.path.join(FITS_DIR, 'background', f'fit_bkg_components_{era_tag}.json')
+
 def bkg_fit_pdf(era_tag):
     return os.path.join(FITS_DIR, 'background', f'fit_bkg_{era_tag}.pdf')
 
@@ -342,9 +349,10 @@ def bkg_fit_log(era_tag):
 def bkg_fit_ws(era_tag):
     return os.path.join(WS_DIR, 'background', f'fit_bkg_{era_tag}_ws.root')
 
-# Combined workspace (produced by make_workspaces.py)
-def combined_bkg_ws(era_tag):
-    return os.path.join(WS_DIR, 'combined', f'bkg_workspace_{era_tag}.root')
+# Combined signal+background workspace, one per mass point (produced by make_workspaces.py)
+def combined_ws(mchi, mlsp, era_tag):
+    return os.path.join(WS_DIR, 'combined',
+                        f'workspace_mchi{mchi}_mlsp{mlsp}_{era_tag}.root')
 
 # Datacards (produced by make_datacards.py)
 def datacard_path(mchi, mlsp, era_tag, xsec_mode='2d'):

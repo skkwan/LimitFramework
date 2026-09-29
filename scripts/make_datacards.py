@@ -3,9 +3,7 @@
 make_datacards.py
 Writes Combine datacards for each (mchi, mlsp, era) mass point.
 
-Single signal process (TChiZH), single signal region (SR) -- unlike the
-H(gg)+H/Z(bb) channel this framework was originally scaffolded for, there's
-no HH/ZH branching-fraction mixing and no SRHH/SRZH split here.
+Single signal process (TChiZH), single signal region (SR) 
 
 Xsec mode (--xsec):
   '2d' (default): yields as-is from CSV (uses sigma_2D per mass point)
@@ -20,6 +18,7 @@ Usage:
 
 import os
 import sys
+import json
 import argparse
 import pandas as pd
 
@@ -30,7 +29,6 @@ import config
 # ── Era settings ──────────────────────────────────────────────────────────────
 
 LUMI_UNC  = {'run2': 1.02, 'run3': 1.02, 'run2run3': 1.02}
-YIELD_COL = {'run2': 'yield_run2', 'run3': 'yield_run3_with2025', 'run2run3': 'yield_total_with2025'}
 
 
 # ── CSV helpers ───────────────────────────────────────────────────────────────
@@ -45,11 +43,10 @@ def load_signal_csv():
     return df.loc[idx].reset_index(drop=True)
 
 
-def get_yield(df, mchi, mlsp, era_tag):
-    """Raw yield from CSV for one (mchi, mlsp)."""
-    col  = YIELD_COL[era_tag]
+def get_yield(df, mchi, mlsp):
+    """Raw signal yield from CSV for one (mchi, mlsp), at config.PROJECTED_LUMI."""
     rows = df[(df['mchi'] == mchi) & (df['mlsp'] == mlsp)]
-    return 0.0 if rows.empty else float(rows[col].iloc[0])
+    return 0.0 if rows.empty else float(rows[config.SIGNAL_YIELD_COL].iloc[0])
 
 
 def get_xsec_ratio(df, mchi):
@@ -68,11 +65,8 @@ def get_xsec_ratio(df, mchi):
 
 # ── Path helpers ──────────────────────────────────────────────────────────────
 
-def sig_ws_path(mchi, mlsp, era_tag):
-    return os.path.abspath(config.sig_fit_ws(mchi, mlsp, era_tag))
-
-def bkg_ws_path(era_tag):
-    return os.path.abspath(config.combined_bkg_ws(era_tag))
+def ws_path(mchi, mlsp, era_tag):
+    return os.path.abspath(config.combined_ws(mchi, mlsp, era_tag))
 
 
 # ── Datacard writer ───────────────────────────────────────────────────────────
@@ -84,7 +78,7 @@ def write_datacard(mchi, mlsp, era_tag, df, xsec_mode, force=False):
         print(f"  EXISTS (skip): {os.path.basename(out_path)}")
         return True
 
-    r_raw = get_yield(df, mchi, mlsp, era_tag)
+    r_raw = get_yield(df, mchi, mlsp)
     xsec_factor = get_xsec_ratio(df, mchi) if xsec_mode == '1d' else 1.0
     r = r_raw * xsec_factor
 
@@ -92,16 +86,14 @@ def write_datacard(mchi, mlsp, era_tag, df, xsec_mode, force=False):
         print(f"  SKIP mchi={mchi} mlsp={mlsp}: yield zero after scaling")
         return False
 
-    sig_ws   = sig_ws_path(mchi, mlsp, era_tag)
-    sig_name = f"ws_sig_mchi{mchi}_mlsp{mlsp}"
-    sig_pdf  = f"sig_pdf_mchi{mchi}_mlsp{mlsp}_{era_tag}"
+    # Signal pdf + yield (sig_pdf_..._norm) and background model live in one
+    # workspace per mass point (make_workspaces.py)
+    ws_file = ws_path(mchi, mlsp, era_tag)
+    ws_name = f"ws_{era_tag}"
+    sig_pdf = f"sig_pdf_mchi{mchi}_mlsp{mlsp}_{era_tag}"
 
-    bkg_ws   = bkg_ws_path(era_tag)
-    bkg_name = f"ws_bkg_{era_tag}"
-
-    missing = [(p, l) for p, l in [(sig_ws, 'sig'), (bkg_ws, 'bkg')] if not os.path.exists(p)]
-    if missing:
-        print(f"  SKIP mchi={mchi} mlsp={mlsp}: missing: {[l for _, l in missing]}")
+    if not os.path.exists(ws_file):
+        print(f"  SKIP mchi={mchi} mlsp={mlsp}: missing workspace {ws_file}")
         return False
 
     out_dir = os.path.dirname(out_path)
@@ -110,19 +102,30 @@ def write_datacard(mchi, mlsp, era_tag, df, xsec_mode, force=False):
     # CombineHarvester's datacard parser joins the shapes path onto the
     # datacard's own directory even when it's already absolute, so the
     # shapes lines must use paths relative to out_dir.
-    sig_ws_rel = os.path.relpath(sig_ws, out_dir)
-    bkg_ws_rel = os.path.relpath(bkg_ws, out_dir)
+    ws_rel = os.path.relpath(ws_file, out_dir)
+
+    bkg_rate = sum(config.BKG_YIELD.values())
+
+    # Central value of the ratio of peaking to total background, from the MC fit
+    json_path = config.bkg_fit_json(era_tag)
+    if not os.path.exists(json_path):
+        print(f"  SKIP mchi={mchi} mlsp={mlsp}: missing {json_path} (run fit_background.py)")
+        return False
+    with open(json_path) as fj:
+        ratio = json.load(fj)['ratio_peaking_mc']
+    ratio_unc = config.RATIO_PEAKING_REL_UNC * ratio
 
     with open(out_path, 'w') as f:
         f.write(f"# Higgsino Z(ll)H(bb) datacard\n")
         f.write(f"# mchi={mchi} mlsp={mlsp} era={era_tag} xsec={xsec_mode}\n")
-        f.write(f"# Yield: sig={r:.4f}\n")
+        f.write(f"# Yields at {config.PROJECTED_LUMI:g} fb-1: sig={r:.4f}  bkg={bkg_rate:.6g} "
+                f"(peaking {config.BKG_YIELD['peaking']:g}, non-peaking {config.BKG_YIELD['nonpeak']:g})\n")
         f.write(f"# Run: combine -M AsymptoticLimits <card> -t -1 --expectSignal 0\n")
 
         f.write(f"\nimax 1\njmax *\nkmax *\n\n---\n\n")
-        f.write(f"shapes sig      SR  {sig_ws_rel}  {sig_name}:{sig_pdf}\n")
-        f.write(f"shapes bkg      SR  {bkg_ws_rel}  {bkg_name}:bkg_total_{era_tag}\n")
-        f.write(f"shapes data_obs SR  {bkg_ws_rel}  {bkg_name}:data_obs\n")
+        f.write(f"shapes sig      SR  {ws_rel}  {ws_name}:{sig_pdf}\n")
+        f.write(f"shapes bkg      SR  {ws_rel}  {ws_name}:bkg_total_{era_tag}\n")
+        f.write(f"shapes data_obs SR  {ws_rel}  {ws_name}:data_obs\n")
         f.write(f"\n---\n\n")
         f.write(f"bin         SR\n")
         f.write(f"observation -1\n")
@@ -130,9 +133,18 @@ def write_datacard(mchi, mlsp, era_tag, df, xsec_mode, force=False):
         f.write(f"bin      SR   SR\n")
         f.write(f"process  sig  bkg\n")
         f.write(f"process  0    1\n")
-        f.write(f"rate     {r:.6f}  1.0\n")
+        # sig: the yield is the workspace's sig_pdf_..._norm (from the CSV, set
+        # in make_workspaces.py); the rate here multiplies it.
+        # bkg: no _norm in the workspace, so the rate is the yield itself.
+        f.write(f"rate     {xsec_factor:.6f}  {bkg_rate:.6g}\n")
+        f.write(f"\n---\n\n")
+        # Ratio of peaking to total background inside bkg_total: Gaussian
+        # constraint with RATIO_PEAKING_REL_UNC relative width, range limited
+        # to [0,1] (otherwise Combine uses mean +/- 4 sigma, which goes below 0)
+        f.write(f"ratio_peaking_{era_tag}  param  {ratio:.3g}  {ratio_unc:.3g}  [0,1]\n")
 
-    print(f"  Wrote: {os.path.basename(out_path)}  [xsec_factor={xsec_factor:.2f}  sig={r:.3f}]")
+    print(f"  Wrote: {os.path.basename(out_path)}  [xsec_factor={xsec_factor:.2f}  sig={r:.3f}  "
+          f"bkg={bkg_rate:.6g}  ratio_peaking={ratio:.3g} +/- {ratio_unc:.3g}]")
     return True
 
 

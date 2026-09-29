@@ -66,3 +66,51 @@ After `make_datacards.py`,
 ```bash
 combine -M FitDiagnostics -d combine/datacards/run2/datacard_mchi650_mlsp1_run2_2dxsec.txt -t 1000 -s -1 --expectSignal 0 --rMin -5 --rMax 5 --toysNoSystematics
 ```
+
+## H(bb)Z(ll) setup
+```bash
+cd scripts
+python3 make_inputs.py --mode all
+python3 fit_signal.py --era run2 --force  
+# Fit the z-peak m(ll) only
+python3 fit_zpeak.py --era run2 --force
+# Declare the analytic forms for the remaining background components and fit the MC in two dimensions. r is fixed to the generated value
+python3 fit_background.py --era run2 --force
+# Load the background and signal PDFs. Uses the master_signal.csv file by default. Declares three RooRealVars (bkg_total_{era}_norm, ratio_peaking_{era}, and sig_pdf_...{era}_norm) and builds the total background PDF. Only the signal strength r floats in the fit
+python3 make_workspaces.py --era run2 --force
+# Write Combine datacards for each mass point and each era. 
+python3 make_datacards.py --era run2 --mchi 650 --mlsp 1 --force
+```
+Locations of intermediate outputs:
+- The signal shapes are saved to `/afs/cern.ch/work/s/skkwan/public/combineArea/CMSSW_14_1_0_pre4/src/CombineHarvester/CombineTools/bin/LimitFramework/combine/fits/signal/*.json`
+- The Z-peak m(ll) shape is saved to `/afs/cern.ch/work/s/skkwan/public/combineArea/CMSSW_14_1_0_pre4/src/CombineHarvester/CombineTools/bin/LimitFramework/combine/fits/zpeak/fit_zpeak_run2.json`
+- The remaining three background shapes are saved to `/afs/cern.ch/work/s/skkwan/public/combineArea/CMSSW_14_1_0_pre4/src/CombineHarvester/CombineTools/bin/LimitFramework/combine/fits/background/fit_bkg_components_run2.json`.
+- The plots of all of the background shapes are in `/afs/cern.ch/work/s/skkwan/public/combineArea/CMSSW_14_1_0_pre4/src/CombineHarvester/CombineTools/bin/LimitFramework/combine/fits/background/fit_bkg_run2.pdf`.
+- The workspaces are in `/afs/cern.ch/work/s/skkwan/public/combineArea/CMSSW_14_1_0_pre4/src/CombineHarvester/CombineTools/bin/LimitFramework/combine/workspaces/combined/`, e.g. `/afs/cern.ch/work/s/skkwan/public/combineArea/CMSSW_14_1_0_pre4/src/CombineHarvester/CombineTools/bin/LimitFramework/combine/workspaces/combined/workspace_mchi650_mlsp1_run2.root`.
+- The datacards are in `/afs/cern.ch/work/s/skkwan/public/combineArea/CMSSW_14_1_0_pre4/src/CombineHarvester/CombineTools/bin/LimitFramework/combine/datacards/run2/`, e.g. `/afs/cern.ch/work/s/skkwan/public/combineArea/CMSSW_14_1_0_pre4/src/CombineHarvester/CombineTools/bin/LimitFramework/combine/datacards/run2/datacard_mchi650_mlsp1_run2_2dxsec.txt`.
+
+
+Then to run Combine:
+```bash
+cd /afs/cern.ch/work/s/skkwan/public/combineArea/CMSSW_14_1_0_pre4/src/CombineHarvester/CombineTools/bin/LimitFramework/combine/datacards/run2
+cmsenv
+ValidateDatacards.py datacard_mchi650_mlsp1_run2_2dxsec.txt
+combine -M AsymptoticLimits datacard_mchi650_mlsp1_run2_2dxsec.txt -t -1 --expectSignal 0
+```
+Currently getting this:
+```
+ <<< Combine >>> 
+ <<< v10.2.1 >>>
+>>> Random number generator seed is 123456
+>>> Method used is AsymptoticLimits
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 0.4094
+Expected  2.5%: r < 0.1794
+Expected 16.0%: r < 0.2624
+Expected 50.0%: r < 0.4102
+Expected 84.0%: r < 0.6554
+Expected 97.5%: r < 0.9929
+
+Done in 0.12 min (cpu), 0.12 min (real)
+```

@@ -1,27 +1,24 @@
 #!/usr/bin/env python3
 """
 fit_background.py
-Fits the 2D (mll, met) background model to the COMBINED background-MC
-sample (peaking + non-peaking categories from make_inputs.py's bkg mode),
-per era. Adapted from 2DFit_higgsinos/hbb_zll's obtain_background_components.py
-(individual shape fits) and fit2D.py (the ratio-r AddPdf combination,
-run there in "bkgOnly" mode against backgrounds_total.root -- the same
-peaking+non-peaking hadd this script builds on the fly).
+Fits the background shapes to background MC (peaking and non-peaking
+categories from make_inputs.py's bkg mode), per era, as separate 1D fits.
+Adapted from 2DFit_higgsinos/hbb_zll's obtain_background_components.py.
 
-Model:
-  bkg_total = ratio_peaking * [peak_dcb_mll(FIXED) x Gumbel_peak(met)]
-            + (1-ratio_peaking) * [Exp_nonpeak(mll) x Gumbel_nonpeak(met)]
+Separate fits:
+  met_peak:    Gumbel_peak(met)    <- peaking-in-m(ll) MC
+  met_nonpeak: Gumbel_nonpeak(met) <- non-peaking-in-m(ll) MC
+  mll_nonpeak: Exp_nonpeak(mll)    <- non-peaking-in-m(ll) MC
 
-  peak_dcb_mll is a double-sided Crystal Ball with parameters imported
-  CONSTANT from fit_zpeak.py's peaking-background-MC fit -- everything else
-  (including ratio_peaking, i.e. "r") floats freely DURING this fit. r is
-  seeded from the true MC-weighted peaking/non-peaking split so the fit
-  starts close to the expected composition, then lets the joint shape fit
-  adjust it, exactly like hbb_zll's fit2D.py. Once the fit converges, all
-  remaining shape/mixture parameters (mu_peak, b_peak, mu_nonpeak,
-  b_nonpeak, a_nonpeak_mll, ratio_peaking) are frozen at their best-fit
-  values before being saved to the workspace -- the background model is
-  fully fixed by this MC fit, not refit by Combine.
+  The peaking m(ll) shape, peak_dcb_mll (double-sided Crystal Ball), is
+  imported CONSTANT from fit_zpeak.py and not refit here. After the fits,
+  all shape parameters (mu_peak, b_peak, mu_nonpeak, b_nonpeak,
+  a_nonpeak_mll) are frozen at their best-fit values and the two 2D
+  components are saved:
+    bkg_peak    = peak_dcb_mll(mll) x Gumbel_peak(met)
+    bkg_nonpeak = Exp_nonpeak(mll)  x Gumbel_nonpeak(met)
+  make_workspaces.py combines them with the ratio r (ratio_peaking,
+  seeded from ratio_peaking_mc saved here) and the normalizations.
 
 No blind window is implemented yet (pre-unblinding / early validation
 stage): the fit runs over the full declared (mll, met) signal-region range
@@ -29,20 +26,18 @@ stage): the fit runs over the full declared (mll, met) signal-region range
 
 Produces one fit per era: {run2, run3}.
 
-Saves per fit:
-  - JSON with fit parameters, errors, fit quality, n_bkg_mc (the weighted
-    MC yield, i.e. ds.sumEntries())
-  - 9-page PDF: a summary page (n-tuple entries and summed weights used in
-    the fit, per category) followed by one linear + one log-scale page per
-    category x variable (m(ll) peaking, m(ll) non-peaking, MET peaking,
-    MET non-peaking), each a data/fit projection with a residual sub-pad,
-    legend parameters
-  - Workspace with FIXED-parameter PDF: all shape/mixture parameters
-    (mu_peak, b_peak, mu_nonpeak, b_nonpeak, a_nonpeak_mll, ratio_peaking)
-    are set constant at their best-fit values before import, since they're
-    fully determined by this MC fit rather than refit by Combine. The
-    overall normalization (bkg_total_{era}_norm) is set separately and
-    fixed in make_workspaces.py (see config.BKG_NORM).
+Saves per era:
+  - fit_bkg_components_{era}.json: parameters, errors and fit quality of
+    each separate fit (met_peak, met_nonpeak, mll_nonpeak)
+  - fit_bkg_{era}.json: summary -- weighted MC yield per category, n_bkg_mc
+    (their sum) and ratio_peaking_mc (peaking fraction of n_bkg_mc)
+  - 9-page PDF: a summary page (n-tuple entries and summed weights per
+    category, status of each fit) followed by one linear + one log-scale
+    page per category x variable (m(ll) peaking, m(ll) non-peaking, MET
+    peaking, MET non-peaking), each a data/fit projection with a residual
+    sub-pad, legend parameters
+  - Workspace ws_bkg_{era} with bkg_peak_{era} and bkg_nonpeak_{era}, all
+    shape parameters constant.
 
 Usage:
     python3 scripts/fit_background.py --era run2
@@ -123,16 +118,17 @@ def load_zpeak_shape(era_tag):
     return mll_var, pdf, f
 
 
-def build_background_model(mll_var, met_var, era, peak_dcb_mll, init_ratio=0.1):
+def build_background_components(mll_var, met_var, era, peak_dcb_mll):
     """
-    Builds the 2D background model (mll_var and met_var are the two dimensions, era_tag is used to name the variables,
-    peak_dcb_mll is the double-sided crystal ball m(ll) shape from the control region, init_ratio is the ratio r)
+    Builds the 2D background components (mll_var and met_var are the two dimensions, era_tag is used to name the variables,
+    peak_dcb_mll is the double-sided crystal ball m(ll) shape from the control region)
 
         Peaking-in-m(ll) background: (Z+jets and TTZ):  peak_dcb_mll(mll) x Gumbel_peak(met)
         Non-peaking-in-m(ll) background: (ttbar and WZ and ZZ): Exp(mll) x Gumbel_nonpeak(met)
-        Total 2D background = Peaking*(1-r) + r*Nonpeaking
 
-    Returns the total 2D background PDF, a list of the parameters, and a list of the PDFs that need to stay in scope
+    The mixture (total = r*Peaking + (1-r)*Nonpeaking) is built in make_workspaces.py.
+
+    Returns a list of the shape parameters and a dict of the PDFs (which also need to stay in scope)
     """
     # peaking-in-m(ll) background
     # declare parameters
@@ -166,59 +162,32 @@ def build_background_model(mll_var, met_var, era, peak_dcb_mll, init_ratio=0.1):
                                            mll_var, a_nonpeak_mll)
     bkg_nonpeak = ROOT.RooProdPdf(f"bkg_nonpeak_{era}", f"bkg_nonpeak_{era}",
                                    ROOT.RooArgList(exp_nonpeak_mll, gumbel_nonpeak))
-    
-    # total background = peaking + r * non-peaking
-    ratio_peaking = ROOT.RooRealVar(f"ratio_peaking_{era}", f"ratio_peaking_{era}",
-                                     init_ratio, 0.0, 1.0)
-    bkg_total = ROOT.RooAddPdf(f"bkg_total_{era}", f"bkg_total_{era}",
-                                ROOT.RooArgList(bkg_peak, bkg_nonpeak),
-                                ROOT.RooArgList(ratio_peaking))
 
-    params = [mu_peak, b_peak, mu_nonpeak, b_nonpeak, a_nonpeak_mll, ratio_peaking]
+    params = [mu_peak, b_peak, mu_nonpeak, b_nonpeak, a_nonpeak_mll]
     components = {
         "gumbel_peak": gumbel_peak, "bkg_peak": bkg_peak,
         "exp_nonpeak_mll": exp_nonpeak_mll, "gumbel_nonpeak": gumbel_nonpeak,
         "bkg_nonpeak": bkg_nonpeak,
     }
-    return bkg_total, params, components
+    return params, components
 
 
 # ── Data loading ──────────────────────────────────────────────────────────────
 
-def sum_weight(files, cut=None):
-    """Total weighted yield (sum of weight_nominal) across a list of files,
-    optionally restricted by a filter expression."""
-    if not files:
-        return 0.0
-    df = ROOT.RDataFrame("tree", files)
-    if cut:
-        df = df.Filter(cut)
-    return df.Sum("weight_nominal").GetValue()
-
-
 def load_bkg_mc(years, mll_var, met_var):
     """
-    Weighted RooDataSets (mll, met, weight_nominal) built from the
-    background-MC categories (make_inputs.py's bkg mode): the combined
-    "backgrounds_total" analogue from hbb_zll's reformat.py/fit2D.py used
-    for the joint fit, plus peaking-only and non-peaking-only datasets used
-    for per-category plotting.
+    Weighted RooDataSets (mll, met, weight_nominal) built separately from
+    the peaking and non-peaking background-MC n-tuples (make_inputs.py's
+    bkg mode), restricted to the (mll, met) fit range.
 
-    Returns (ds, n_entries, peak_sumw, nonpeak_sumw, peak_ds, nonpeak_ds).
+    Returns (peak_ds, nonpeak_ds); either is None if its n-tuples are
+    missing or empty.
     """
-    peak_files    = config.bkg_category_files('peaking', years)
-    nonpeak_files = config.bkg_category_files('nonpeak', years)
-    files = peak_files + nonpeak_files
-    if not files:
-        print(f"  ERROR: no background-MC ntuples found for years {years} "
-              f"(run make_inputs.py --mode bkg first)")
-        return None, 0, 0.0, 0.0, None, None
-
     cut = f"met > {config.MET_LO} && met < {config.MET_HI}"
-    peak_sumw    = sum_weight(peak_files, cut)
-    nonpeak_sumw = sum_weight(nonpeak_files, cut)
 
     def _build(files_list, name):
+        if not files_list:
+            return None
         chain = ROOT.TChain("tree")
         for f in files_list:
             chain.Add(f)
@@ -228,11 +197,21 @@ def load_bkg_mc(years, mll_var, met_var):
                               ROOT.RooFit.WeightVar(w))
         return ds if ds.numEntries() > 0 else None
 
-    ds         = _build(files, "ds_bkg_mc")
-    peak_ds    = _build(peak_files, "ds_bkg_peak_mc")
-    nonpeak_ds = _build(nonpeak_files, "ds_bkg_nonpeak_mc")
-    n = ds.numEntries() if ds is not None else 0
-    return ds, n, peak_sumw, nonpeak_sumw, peak_ds, nonpeak_ds
+    peak_ds    = _build(config.bkg_category_files('peaking', years), "ds_bkg_peak_mc")
+    nonpeak_ds = _build(config.bkg_category_files('nonpeak', years), "ds_bkg_nonpeak_mc")
+    return peak_ds, nonpeak_ds
+
+
+def fit_component(pdf, ds, obs_var):
+    """Weighted unbinned 1D fit of pdf to ds projected onto obs_var."""
+    ds_1d = ds.reduce(ROOT.RooArgSet(obs_var))
+    return pdf.fitTo(
+        ds_1d,
+        ROOT.RooFit.Save(True),
+        ROOT.RooFit.SumW2Error(True),  # weighted MC -> correctly-scaled uncertainties
+        ROOT.RooFit.PrintLevel(-1),
+        ROOT.RooFit.Warnings(False),
+    )
 
 
 # ── Plotting ──────────────────────────────────────────────────────────────────
@@ -325,32 +304,36 @@ def draw_projection(var, ds, pdf, xlabel, tag, data_label, pdf_shape_label,
     return canvas
 
 
-def make_bkg_plots(result, pdf_components, peak_dcb_mll, mll_var, met_var,
-                    era_tag, n_bkg, peak_sumw, nonpeak_sumw,
-                    peak_ds, nonpeak_ds, zpeak_info, pdf_file, log_file):
+def make_bkg_plots(results, pdf_components, peak_dcb_mll, mll_var, met_var,
+                    era_tag, peak_ds, nonpeak_ds, zpeak_info, pdf_file, log_file):
+    """results: {fit key: RooFitResult} for the separate fits (met_peak, met_nonpeak, mll_nonpeak)."""
     logger = setup_logger(log_file)
-    pars = result_to_dict(result)
-    hc   = high_correlations(result)
+    peak_sumw    = peak_ds.sumEntries()
+    nonpeak_sumw = nonpeak_ds.sumEntries()
+    n_bkg        = peak_sumw + nonpeak_sumw
 
-    logger.info(f"=== Background fit (combined peaking+non-peaking MC): era={era_tag} ===")
+    logger.info(f"=== Background component fits (separate peaking / non-peaking MC): era={era_tag} ===")
     logger.info(f"  n_bkg_mc (weighted) = {n_bkg:.4f}  "
-                f"[MC truth: peak_sumw={peak_sumw:.4f}  nonpeak_sumw={nonpeak_sumw:.4f}]")
+                f"[peak_sumw={peak_sumw:.4f}  nonpeak_sumw={nonpeak_sumw:.4f}  "
+                f"ratio_peaking_mc={peak_sumw / n_bkg:.4f}]")
     logger.info(f"  fit range: mll [{config.MLL_LO:.0f},{config.MLL_HI:.0f}], "
                 f"met [{config.MET_LO:.0f},{config.MET_HI:.0f}]")
-    for name, (val, err) in pars.items():
-        logger.info(f"  {name:<28}: {val:.6f} +/- {err:.6f}")
-    logger.info(f"  covQual={result.covQual()}  status={result.status()}  "
-                f"EDM={result.edm():.2e}  minNLL={result.minNll():.4f}")
-    for p1, p2, c in hc:
-        logger.info(f"  HIGH CORR: {p1} <-> {p2} = {c:.4f}")
+    pars = {}
+    for key, result in results.items():
+        logger.info(f"  --- {key} ---")
+        for name, (val, err) in result_to_dict(result).items():
+            logger.info(f"  {name:<28}: {val:.6f} +/- {err:.6f}")
+            pars[name] = (val, err)
+        logger.info(f"  covQual={result.covQual()}  status={result.status()}  "
+                    f"EDM={result.edm():.2e}  minNLL={result.minNll():.4f}")
+        for p1, p2, c in high_correlations(result):
+            logger.info(f"  HIGH CORR: {p1} <-> {p2} = {c:.4f}")
 
-    ratio_val = pars[f"ratio_peaking_{era_tag}"][0]
     mu_peak_v, mu_peak_e = pars[f"mu_peak_{era_tag}"]
     b_peak_v,  b_peak_e  = pars[f"b_peak_{era_tag}"]
     mu_np_v,   mu_np_e   = pars[f"mu_nonpeak_{era_tag}"]
     b_np_v,    b_np_e    = pars[f"b_nonpeak_{era_tag}"]
     a_np_v,    a_np_e    = pars[f"a_nonpeak_mll_{era_tag}"]
-    logger.info(f"  n_peak ~ {ratio_val*n_bkg:.1f}  n_nonpeak ~ {(1-ratio_val)*n_bkg:.1f}")
 
     zp_pars = zpeak_info["params"]
     zp_mean = zp_pars[f"peak_mean_mll_{era_tag}"]
@@ -403,7 +386,7 @@ def make_bkg_plots(result, pdf_components, peak_dcb_mll, mll_var, met_var,
     n_nonpeak_entries = nonpeak_ds.numEntries()
 
     summary = ROOT.TCanvas("c_summary", "c_summary", 850, 1100)
-    text = ROOT.TPaveText(0.05, 0.75, 0.95, 0.95, "NDC")
+    text = ROOT.TPaveText(0.05, 0.65, 0.95, 0.95, "NDC")
     text.SetTextAlign(13)
     text.SetTextFont(42)
     text.SetTextSize(0.022)
@@ -419,6 +402,9 @@ def make_bkg_plots(result, pdf_components, peak_dcb_mll, mll_var, met_var,
                  f"met [{config.MET_LO:.0f},{config.MET_HI:.0f}]")
     text.AddText(f"fit_zpeak.py unbinned mll fit: n_entries = {zpeak_info['n_mc']}  "
                  f"sum_weights = {zpeak_info['sum_weights']:.4f}")
+    for key, result in results.items():
+        text.AddText(f"{key} fit: status = {result.status()}  covQual = {result.covQual()}  "
+                     f"EDM = {result.edm():.2e}")
     text.Draw()
 
     # Build the 9-page vector PDF (a summary page, then linear + log scale
@@ -475,79 +461,100 @@ def fit_one(era_tag, force=False):
         zpeak_info = json.load(f)
 
     years = config.era_years(era_tag)
-    ds, n_bkg, peak_sumw, nonpeak_sumw, peak_ds, nonpeak_ds = load_bkg_mc(years, mll_var, met_var)
-    if ds is None:
-        print(f"  SKIP: no background MC loaded")
+    peak_ds, nonpeak_ds = load_bkg_mc(years, mll_var, met_var)
+    if peak_ds is None or nonpeak_ds is None:
+        missing = [c for c, d in [("peaking", peak_ds), ("nonpeak", nonpeak_ds)] if d is None]
+        print(f"  SKIP: no background MC loaded for {missing} "
+              f"(run make_inputs.py --mode bkg first)")
         zpeak_file.Close()
         return False
-    print(f"  Loaded {n_bkg} background MC entries "
+
+    # Weighted yields within the (mll, met) fit range
+    peak_sumw    = peak_ds.sumEntries()
+    nonpeak_sumw = nonpeak_ds.sumEntries()
+    n_bkg_mc     = peak_sumw + nonpeak_sumw
+    ratio_peaking_mc = peak_sumw / n_bkg_mc
+    n_entries    = peak_ds.numEntries() + nonpeak_ds.numEntries()
+    print(f"  Loaded {n_entries} background MC entries "
           f"(mll [{config.MLL_LO:.0f},{config.MLL_HI:.0f}], "
           f"met [{config.MET_LO:.0f},{config.MET_HI:.0f}])  "
-          f"peak_sumw={peak_sumw:.4f}  nonpeak_sumw={nonpeak_sumw:.4f}")
+          f"peak_sumw={peak_sumw:.4f}  nonpeak_sumw={nonpeak_sumw:.4f}  "
+          f"ratio_peaking_mc={ratio_peaking_mc:.4f}")
 
-    total_sumw = peak_sumw + nonpeak_sumw
-    init_ratio = peak_sumw / total_sumw if total_sumw > 0 else 0.1
-    print(f"   Using {init_ratio} for the ratio!")
-    init_ratio = min(max(init_ratio, 1e-3), 1 - 1e-3)  # keep strictly inside (0,1)
+    params, pdf_components = build_background_components(
+        mll_var, met_var, era_tag, peak_dcb_mll)
 
-    bkg_total, params, pdf_components = build_background_model(
-        mll_var, met_var, era_tag, peak_dcb_mll, init_ratio=init_ratio)
+    # Separate 1D fits: (key, pdf, dataset, observable)
+    fits = [
+        ("met_peak",    "gumbel_peak",     peak_ds,    met_var),
+        ("met_nonpeak", "gumbel_nonpeak",  nonpeak_ds, met_var),
+        ("mll_nonpeak", "exp_nonpeak_mll", nonpeak_ds, mll_var),
+    ]
+    results = {}
+    for key, pdf_key, ds, obs_var in fits:
+        result = fit_component(pdf_components[pdf_key], ds, obs_var)
+        results[key] = result
+        print(f"  Fit {key}: status={result.status()}  covQual={result.covQual()}  "
+              f"EDM={result.edm():.2e}  minNLL={result.minNll():.4f}")
+        for name, (val, err) in result_to_dict(result).items():
+            print(f"    {name:<28} = {val:.4f} +/- {err:.4f}")
+        if result.status() != 0:
+            print(f"  WARNING: {key} fit did not converge cleanly")
 
-    # Weighted MC -> SumW2Error for correctly-scaled parameter uncertainties.
-    result = bkg_total.fitTo(
-        ds,
-        ROOT.RooFit.Save(True),
-        ROOT.RooFit.SumW2Error(True),
-        ROOT.RooFit.PrintLevel(-1),
-        ROOT.RooFit.Warnings(False),
-    )
-
-    print(f"  Fit: status={result.status()}  covQual={result.covQual()}  "
-          f"EDM={result.edm():.2e}  minNLL={result.minNll():.4f}")
-    for p in params:
-        print(f"    {p.GetName():<28} = {p.getVal():.4f} +/- {p.getError():.4f}")
-    if result.status() != 0:
-        print(f"  WARNING: fit did not converge cleanly")
-
-    # Freeze the shape/mixture params at their best-fit values -- the
-    # background model is fully determined by this MC fit, not refit by
-    # Combine (only the overall norm, fixed separately in
-    # make_workspaces.py, and the signal strength r float downstream).
+    # Freeze the shape params at their best-fit values -- the background
+    # shapes are fully determined by these MC fits, not refit by Combine.
     for p in params:
         p.setConstant(True)
 
     ws = ROOT.RooWorkspace(f"ws_bkg_{era_tag}")
-    ws.Import(bkg_total, ROOT.RooFit.RecycleConflictNodes())
+    ws.Import(pdf_components["bkg_peak"], ROOT.RooFit.RecycleConflictNodes())
+    ws.Import(pdf_components["bkg_nonpeak"], ROOT.RooFit.RecycleConflictNodes())
     os.makedirs(os.path.dirname(out_ws), exist_ok=True)
     ws.writeToFile(out_ws)
     zpeak_file.Close()
 
-    n_bkg_mc = ds.sumEntries()  # weighted yield -- the physically meaningful count
-    pars = result_to_dict(result)
+    # Separate JSON with the parameters of each component fit
+    out_components_json = config.bkg_components_json(era_tag)
+    components_data = {"era": era_tag}
+    for key, pdf_key, ds, obs_var in fits:
+        result = results[key]
+        components_data[key] = {
+            "pdf":         pdf_components[pdf_key].GetName(),
+            "observable":  obs_var.GetName(),
+            "dataset":     ds.GetName(),
+            "n_entries":   ds.numEntries(),
+            "sum_weights": ds.sumEntries(),
+            "fit_status":  result.status(),
+            "cov_qual":    result.covQual(),
+            "edm":         result.edm(),
+            "min_nll":     result.minNll(),
+            "params":      {n: {"val": v, "err": e} for n, (v, e) in result_to_dict(result).items()},
+            "high_corr":   [[p1, p2, c] for p1, p2, c in high_correlations(result)],
+        }
+    os.makedirs(os.path.dirname(out_components_json), exist_ok=True)
+    with open(out_components_json, 'w') as f:
+        json.dump(components_data, f, indent=2)
+    print(f"  Saved {out_components_json}")
+
     out_data = {
-        "era":          era_tag,
-        "n_entries":    n_bkg,
-        "n_bkg_mc":     n_bkg_mc,
-        "peak_sumw":    peak_sumw,
-        "nonpeak_sumw": nonpeak_sumw,
-        "init_ratio":   init_ratio,
-        "mll_range":    [config.MLL_LO, config.MLL_HI],
-        "met_range":    [config.MET_LO, config.MET_HI],
-        "zpeak_json":   config.zpeak_fit_json(era_tag),
-        "fit_status":   result.status(),
-        "cov_qual":     result.covQual(),
-        "edm":          result.edm(),
-        "min_nll":      result.minNll(),
-        "params":       {n: {"val": v, "err": e} for n, (v, e) in pars.items()},
-        "high_corr":    [[p1, p2, c] for p1, p2, c in high_correlations(result)],
+        "era":              era_tag,
+        "n_entries":        n_entries,
+        "n_bkg_mc":         n_bkg_mc,
+        "peak_sumw":        peak_sumw,
+        "nonpeak_sumw":     nonpeak_sumw,
+        "ratio_peaking_mc": ratio_peaking_mc,
+        "mll_range":        [config.MLL_LO, config.MLL_HI],
+        "met_range":        [config.MET_LO, config.MET_HI],
+        "zpeak_json":       zpeak_json_path,
+        "components_json":  out_components_json,
     }
     os.makedirs(os.path.dirname(out_json), exist_ok=True)
     with open(out_json, 'w') as f:
         json.dump(out_data, f, indent=2)
     print(f"  Saved {out_json}")
 
-    make_bkg_plots(result, pdf_components, peak_dcb_mll, mll_var, met_var, era_tag, n_bkg_mc,
-                   peak_sumw, nonpeak_sumw, peak_ds, nonpeak_ds, zpeak_info, out_pdf, out_log)
+    make_bkg_plots(results, pdf_components, peak_dcb_mll, mll_var, met_var, era_tag,
+                   peak_ds, nonpeak_ds, zpeak_info, out_pdf, out_log)
     print(f"  Saved {out_pdf}")
     return True
 
@@ -556,7 +563,7 @@ def fit_one(era_tag, force=False):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Fit 2-component (mll, met) background model to data")
+        description="Fit background component shapes (MET peaking/non-peaking, m(ll) non-peaking) to background MC")
     parser.add_argument("--era",   choices=["run2", "run3", "both"], default="both")
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
