@@ -36,6 +36,9 @@ Saves per era:
     page per category x variable (m(ll) peaking, m(ll) non-peaking, MET
     peaking, MET non-peaking), each a data/fit projection with a residual
     sub-pad, legend parameters
+  - each of those 8 plots also on its own, as fit_bkg_{era}_{plot}.pdf and
+    .png ({plot} = mll_peak, mll_peak_log, mll_nonpeak, ..., met_nonpeak_log);
+    the 9-page PDF and these are copied to config.OUTPUT_WWW_DIR/backgrounds
   - Workspace ws_bkg_{era} with bkg_peak_{era} and bkg_nonpeak_{era}, all
     shape parameters constant.
 
@@ -234,18 +237,24 @@ def draw_projection(var, ds, pdf, xlabel, tag, data_label, pdf_shape_label,
     frame.SetLineWidth(0)
     res_frame.SetLineWidth(0)
 
-    ds.plotOn(frame, ROOT.RooFit.Name("data"),
+    # Plot at config.PROJECTED_LUMI: the MC is normalized to 2018 lumi. RooFit
+    # does not carry the data's Rescale over to the curve, so scale both.
+    lumi_scale = config.PROJECTED_LUMI / config.LUMI['2018']
+    ds.plotOn(frame, ROOT.RooFit.Name("data"), ROOT.RooFit.Rescale(lumi_scale),
               ROOT.RooFit.DataError(ROOT.RooAbsData.SumW2),
               ROOT.RooFit.MarkerColor(ROOT.TColor.GetColor(data_color)),
               ROOT.RooFit.LineColor(ROOT.TColor.GetColor(data_color)),
               ROOT.RooFit.LineWidth(2), ROOT.RooFit.MarkerSize(1))
     pdf.plotOn(frame, ROOT.RooFit.Name("pdf"),
+               ROOT.RooFit.Normalization(lumi_scale, ROOT.RooAbsReal.Relative),
                ROOT.RooFit.LineColor(ROOT.TColor.GetColor(fitted_color)),
                ROOT.RooFit.LineWidth(2), ROOT.RooFit.LineStyle(1))
+    frame.GetYaxis().SetTitle(f"{frame.GetYaxis().GetTitle()} "
+                              f"(scaled to {config.PROJECTED_LUMI:g} fb^{{#minus1}})")
 
     raw_max = frame.GetMaximum()
     if log_scale:
-        frame.SetMaximum(raw_max * 20)
+        frame.SetMaximum(raw_max * 200)
         frame.SetMinimum(max(raw_max * 1e-4, 1e-3))
     else:
         frame.SetMaximum(raw_max * 1.5)
@@ -254,7 +263,9 @@ def draw_projection(var, ds, pdf, xlabel, tag, data_label, pdf_shape_label,
     # you need both of the following lines
     CMS.SetExtraText("Private work")
     CMS.SetCmsText("CMS", font=62, size=0.76)
-    CMS.SetLumi(250, unit="fb", run="")
+    # Label with the projected luminosity; the plotted MC and the legend's yield are
+    # scaled up to it from 2018 MC
+    CMS.SetLumi(config.PROJECTED_LUMI, unit="fb", run="", round_lumi=0)
 
     cname  = f"c_{tag}"
     canvas = ROOT.TCanvas(cname, cname, 650, 700)
@@ -266,17 +277,21 @@ def draw_projection(var, ds, pdf, xlabel, tag, data_label, pdf_shape_label,
     pad1.Draw(); pad1.cd()
     frame.GetXaxis().SetLabelSize(0)
     frame.GetXaxis().SetTitleSize(0)
-    frame.GetYaxis().SetTitleSize(0.055)
+    frame.GetYaxis().SetTitleSize(0.045)
     frame.GetYaxis().SetTitleOffset(1.4)
     frame.GetYaxis().SetLabelSize(0.048)
     frame.Draw()
     CMS.CMS_lumi(pad1, iPosX=0)
     CMS.UpdatePad(pad1)
 
-    leg = ROOT.TLegend(0.20, 0.66, 0.95, 0.88)
+    leg = ROOT.TLegend(0.20, 0.64, 0.96, 0.88)
+    leg.SetMargin(0.18)
     leg.AddEntry(frame.findObject("data"), data_label, "PE")
+    n_projected = ds.sumEntries() * lumi_scale
+    leg.AddEntry(ROOT.nullptr, f"{ds.numEntries()} entries in 2018 MC, {n_projected:.3g} events in "
+                               f"{config.PROJECTED_LUMI:g} fb^{{#minus1}}", "")
     leg.AddEntry(frame.findObject("pdf"), pdf_shape_label, "L")
-    leg.SetBorderSize(0); leg.SetTextSize(0.045)
+    leg.SetBorderSize(0); leg.SetTextSize(0.038)
     leg.Draw()
 
     canvas.cd()
@@ -409,31 +424,41 @@ def make_bkg_plots(results, pdf_components, peak_dcb_mll, mll_var, met_var,
 
     # Build the 9-page vector PDF (a summary page, then linear + log scale
     # per plot) via EPS + ghostscript, same method as fit_signal.py's
-    # make_plots.
+    # make_plots. Each plot is also saved on its own, as a single-page PDF
+    # (gs from the same EPS) and a PNG.
+    plots = [("mll_peak",    canvas_mll_peak),    ("mll_peak_log",    canvas_mll_peak_log),
+             ("mll_nonpeak", canvas_mll_nonpeak), ("mll_nonpeak_log", canvas_mll_nonpeak_log),
+             ("met_peak",    canvas_met_peak),    ("met_peak_log",    canvas_met_peak_log),
+             ("met_nonpeak", canvas_met_nonpeak), ("met_nonpeak_log", canvas_met_nonpeak_log)]
     pdf_stem = os.path.splitext(pdf_file)[0]
     eps_pages = []
-    for i, canvas in enumerate([summary,
-                                 canvas_mll_peak, canvas_mll_peak_log,
-                                 canvas_mll_nonpeak, canvas_mll_nonpeak_log,
-                                 canvas_met_peak, canvas_met_peak_log,
-                                 canvas_met_nonpeak, canvas_met_nonpeak_log]):
+    for i, canvas in enumerate([summary] + [canvas for _, canvas in plots]):
         eps_path = f"{pdf_stem}_page{i}.eps"
         canvas.SaveAs(eps_path)
         eps_pages.append(eps_path)
 
-    cmd = (f"gs -q -dBATCH -dNOPAUSE -dSAFER -dEPSCrop -dPDFSETTINGS=/prepress "
-           f"-sDEVICE=pdfwrite -dEmbedAllFonts=true -dSubsetFonts=true "
-           f"-sOutputFile={pdf_file} " + " ".join(eps_pages))
-    ret = os.system(cmd)
-    if ret != 0:
-        raise RuntimeError(f"gs merge failed (exit {ret}): {cmd}")
+    gs = ("gs -q -dBATCH -dNOPAUSE -dSAFER -dEPSCrop -dPDFSETTINGS=/prepress "
+          "-sDEVICE=pdfwrite -dEmbedAllFonts=true -dSubsetFonts=true")
+    gs_jobs = [(pdf_file, eps_pages)]
+    plot_files = [pdf_file]
+    for (name, canvas), eps_path in zip(plots, eps_pages[1:]):
+        gs_jobs.append((f"{pdf_stem}_{name}.pdf", [eps_path]))
+        canvas.SaveAs(f"{pdf_stem}_{name}.png")
+        plot_files += [f"{pdf_stem}_{name}.pdf", f"{pdf_stem}_{name}.png"]
+
+    for out_path, inputs in gs_jobs:
+        cmd = f"{gs} -sOutputFile={out_path} " + " ".join(inputs)
+        ret = os.system(cmd)
+        if ret != 0:
+            raise RuntimeError(f"gs failed (exit {ret}): {cmd}")
     for eps_path in eps_pages:
         os.remove(eps_path)
 
     logger.info(f"PDF saved: {pdf_file}")
+    logger.info(f"Individual plots saved: {' '.join(plot_files[1:])}")
 
-    os.system(f"cp {pdf_file} {config.OUTPUT_WWW_DIR}")
-    logger.info(f"PDF copied to: {config.OUTPUT_WWW_DIR}")
+    os.system(f"cp {' '.join(plot_files)} {config.OUTPUT_WWW_DIR}/backgrounds")
+    logger.info(f"PDF and individual plots copied to: {config.OUTPUT_WWW_DIR}/backgrounds")
 
 
 # ── Main fit ──────────────────────────────────────────────────────────────────

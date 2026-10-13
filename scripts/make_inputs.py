@@ -31,11 +31,11 @@ framework expects), with branches:
   zpeak CRZ:             mll, weight_nominal
 
 Usage:
-    python3 scripts/make_inputs.py --mode sig --years 2018
-    python3 scripts/make_inputs.py --mode bkg --years 2018
-    python3 scripts/make_inputs.py --mode zpeak --years 2018
-    python3 scripts/make_inputs.py --mode all                 # all configured years
-    python3 scripts/make_inputs.py --mode sig --mass-points 300,0 500,100
+    python3 make_inputs.py --mode sig --years 2018
+    python3 make_inputs.py --mode bkg --years 2018
+    python3 make_inputs.py --mode zpeak --years 2018
+    python3 make_inputs.py --mode all                 # all configured years
+    python3 make_inputs.py --mode sig --mass-points 300,0 500,100
 """
 
 import argparse
@@ -95,22 +95,39 @@ def hadd(out_path, in_paths):
 # ── Signal ────────────────────────────────────────────────────────────────────
 
 def discover_signal_mass_points(year):
+    """(mchi, mlsp) pairs with both mm and ee SR snapshots for one year."""
     base = config.RAW_SIGNAL_DIR.get(year)
     if not base:
         return []
-    pattern = os.path.join(base, f"{config.SIGNAL_PROCESS}_*")
+    prefix = config.RAW_SIGNAL_PREFIX.get(year, "")
+    pattern = os.path.join(base, f"{prefix}{config.SIGNAL_PROCESS}_*")
     pairs = []
     for d in sorted(glob.glob(pattern)):
         if not os.path.isdir(d):
             continue
-        name = os.path.basename(d)  # TChiZH_650_1
+        name = os.path.basename(d)[len(prefix):]  # TChiZH_650_1
         parts = name.split("_")
         try:
             m1, m2 = int(parts[-2]), int(parts[-1])
         except (ValueError, IndexError):
             continue
-        pairs.append((m1, m2))
+        if (glob.glob(f"{d}/snapshot_*mm_SR_mll_MET_fit_scheme.root")
+                and glob.glob(f"{d}/snapshot_*ee_SR_mll_MET_fit_scheme.root")):
+            pairs.append((m1, m2))
     return pairs
+
+
+def common_signal_mass_points(years):
+    """Mass points available (mm and ee) in every year of `years`; others are skipped."""
+    per_year = {y: set(discover_signal_mass_points(y)) for y in years}
+    common = set.intersection(*per_year.values()) if per_year else set()
+    for y, pts in per_year.items():
+        missing = sorted(set.union(*per_year.values()) - pts)
+        if missing:
+            print(f"  {y}: missing {len(missing)} mass point(s): "
+                  + ", ".join(f"{a}_{b}" for a, b in missing))
+    print(f"  {len(common)} mass point(s) common to {', '.join(years)}")
+    return sorted(common)
 
 
 def make_signal_ntuple(year, mchi, mlsp, force=False):
@@ -120,7 +137,7 @@ def make_signal_ntuple(year, mchi, mlsp, force=False):
         return True
 
     base = config.RAW_SIGNAL_DIR[year]
-    mp_name = f"{config.SIGNAL_PROCESS}_{mchi}_{mlsp}"
+    mp_name = f"{config.RAW_SIGNAL_PREFIX.get(year, '')}{config.SIGNAL_PROCESS}_{mchi}_{mlsp}"
     mp_dir = os.path.join(base, mp_name)
 
     os.system(f"mkdir -p $(dirname {out_path})")
@@ -185,6 +202,7 @@ def make_bkg_ntuple(year, category, force=False):
         return False
 
     mm_files, ee_files = discover_bkg_files(year, category)
+    print(" >>> mm_files is ", mm_files, ">> ee_files is ", ee_files)
     if not mm_files and not ee_files:
         print(f"  SKIP: no raw '{category}' background ntuples found for {year}")
         return False
@@ -203,7 +221,7 @@ def make_bkg_ntuple(year, category, force=False):
         os.remove(f)
 
     if ok:
-        print(f"  Saved {out_path}")
+        print(f"  Background: Saved {out_path}")
     return ok
 
 
@@ -295,9 +313,9 @@ def main():
     if args.mode in ("sig", "all"):
         years = args.years or sorted(config.RAW_SIGNAL_DIR.keys())
         print(f"=== Signal ntuples: years={years} ===")
+        points = mass_points or common_signal_mass_points(config.SIGNAL_MC_YEARS)
         n_ok = n_fail = 0
         for year in years:
-            points = mass_points or discover_signal_mass_points(year)
             print(f"-- {year}: {len(points)} mass point(s) --")
             for mchi, mlsp in points:
                 ok = make_signal_ntuple(year, mchi, mlsp, force=args.force)

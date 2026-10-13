@@ -1,0 +1,6108 @@
+{
+  "fields": {
+    "yield_2016APV": "sum of weight_nominal in the 2016APV signal ntuple, fit range (mll > 60.0 && mll < 120.0 && met > 200.0 && met < 1200.0); absent if the mass point has no 2016APV ntuple",
+    "yield_2016": "sum of weight_nominal in the 2016 signal ntuple, fit range (mll > 60.0 && mll < 120.0 && met > 200.0 && met < 1200.0); absent if the mass point has no 2016 ntuple",
+    "yield_2017": "sum of weight_nominal in the 2017 signal ntuple, fit range (mll > 60.0 && mll < 120.0 && met > 200.0 && met < 1200.0); absent if the mass point has no 2017 ntuple",
+    "yield_2018": "sum of weight_nominal in the 2018 signal ntuple, fit range (mll > 60.0 && mll < 120.0 && met > 200.0 && met < 1200.0); absent if the mass point has no 2018 ntuple",
+    "yield_run2": "sum of yield_{year} over 2016APV, 2016, 2017, 2018; absent unless all of them are available",
+    "yield_450fb": "yield_run2 * PROJECTED_LUMI/LUMI_RUN2 (450/137.62); the datacard signal rate. absent if yield_run2 is (the mass point is then skipped)",
+    "yield_run2_from2018only": "yield_2018 * LUMI_RUN2/LUMI['2018'] (137.62/59.83)",
+    "yield_450fb_from2018only": "yield_run2_from2018only * PROJECTED_LUMI/LUMI_RUN2 (450/137.62)",
+    "yield_run2_total": "sum of yield_{year} over 2016APV, 2016, 2017, 2018; absent unless all of them are available",
+    "xsec_2d": "Higgsino-Bino cross-sections (relevant for all LSP masses), separated by 13 TeV and 13.6 TeV",
+    "xsec_1d": "GMSB cross-sections (only relevant for LSP mass = 1 GeV), separated by 13 TeV and 13.6 TeV",
+    "xsec_source": "luna-zhmet/histogramming/helpers: run2 from xsec.h, run3 from xsec_13p6TeV.h, looked up by the NLSP mass (mchi)"
+  },
+  "mass_points": [
+    {
+      "mchi": 200,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.244213,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 1.33562,
+        "run3": 1.33562
+      },
+      "yield_2016APV": 1.7574,
+      "yield_2016": 0.55298,
+      "yield_2017": 1.50816,
+      "yield_2018": 2.27893,
+      "yield_run2": 6.09747,
+      "yield_450fb": 19.938,
+      "yield_run2_from2018only": 5.24195,
+      "yield_450fb_from2018only": 17.1405
+    },
+    {
+      "mchi": 200,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.244213,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 1.33562,
+        "run3": 1.33562
+      },
+      "yield_2016APV": 0.60165,
+      "yield_2016": 0.223503,
+      "yield_2017": 0.626718,
+      "yield_2018": 1.01244,
+      "yield_run2": 2.46431,
+      "yield_450fb": 8.05798,
+      "yield_run2_from2018only": 2.32881,
+      "yield_450fb_from2018only": 7.6149
+    },
+    {
+      "mchi": 200,
+      "mlsp": 75,
+      "xsec_2d": {
+        "run2": 0.244213,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 1.33562,
+        "run3": 1.33562
+      },
+      "yield_2016APV": 0.0340657,
+      "yield_2016": 0.0293363,
+      "yield_2017": 0.168909,
+      "yield_2018": 0.139218,
+      "yield_run2": 0.371529,
+      "yield_450fb": 1.21485,
+      "yield_run2_from2018only": 0.320227,
+      "yield_450fb_from2018only": 1.0471
+    },
+    {
+      "mchi": 250,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.104252,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.577314,
+        "run3": 0.577314
+      },
+      "yield_2016APV": 2.45889,
+      "yield_2016": 1.36315,
+      "yield_2017": 3.62495,
+      "yield_2018": 5.18145,
+      "yield_run2": 12.6284,
+      "yield_450fb": 41.2933,
+      "yield_run2_from2018only": 11.9183,
+      "yield_450fb_from2018only": 38.9713
+    },
+    {
+      "mchi": 250,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.104252,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.577314,
+        "run3": 0.577314
+      },
+      "yield_2016APV": 1.81972,
+      "yield_2016": 0.790016,
+      "yield_2017": 1.75768,
+      "yield_2018": 3.73372,
+      "yield_run2": 8.10113,
+      "yield_450fb": 26.4897,
+      "yield_run2_from2018only": 8.58825,
+      "yield_450fb_from2018only": 28.0825
+    },
+    {
+      "mchi": 250,
+      "mlsp": 75,
+      "xsec_2d": {
+        "run2": 0.104252,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.577314,
+        "run3": 0.577314
+      },
+      "yield_2016APV": 1.01846,
+      "yield_2016": 0.48726,
+      "yield_2017": 1.30541,
+      "yield_2018": 2.2793,
+      "yield_run2": 5.09043,
+      "yield_450fb": 16.6451,
+      "yield_run2_from2018only": 5.24281,
+      "yield_450fb_from2018only": 17.1433
+    },
+    {
+      "mchi": 250,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.104252,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.577314,
+        "run3": 0.577314
+      },
+      "yield_2016APV": 0.427776,
+      "yield_2016": 0.202613,
+      "yield_2017": 0.522689,
+      "yield_2018": 0.622801,
+      "yield_run2": 1.77588,
+      "yield_450fb": 5.8069,
+      "yield_run2_from2018only": 1.43256,
+      "yield_450fb_from2018only": 4.68428
+    },
+    {
+      "mchi": 250,
+      "mlsp": 125,
+      "xsec_2d": {
+        "run2": 0.104252,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.577314,
+        "run3": 0.577314
+      },
+      "yield_2018": 0.109263,
+      "yield_run2_from2018only": 0.251325,
+      "yield_450fb_from2018only": 0.821802
+    },
+    {
+      "mchi": 300,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.0509994,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.284855,
+        "run3": 0.284855
+      },
+      "yield_2016APV": 3.28918,
+      "yield_2016": 2.02146,
+      "yield_2017": 5.26522,
+      "yield_2018": 6.61739,
+      "yield_run2": 17.1933,
+      "yield_450fb": 56.2199,
+      "yield_run2_from2018only": 15.2212,
+      "yield_450fb_from2018only": 49.7715
+    },
+    {
+      "mchi": 300,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.0509994,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.284855,
+        "run3": 0.284855
+      },
+      "yield_2016APV": 2.91813,
+      "yield_2016": 1.59627,
+      "yield_2017": 3.85982,
+      "yield_2018": 6.4572,
+      "yield_run2": 14.8314,
+      "yield_450fb": 48.4968,
+      "yield_run2_from2018only": 14.8527,
+      "yield_450fb_from2018only": 48.5666
+    },
+    {
+      "mchi": 300,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.0509994,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.284855,
+        "run3": 0.284855
+      },
+      "yield_2016APV": 1.61963,
+      "yield_2016": 0.72742,
+      "yield_2017": 2.45367,
+      "yield_2018": 2.77904,
+      "yield_run2": 7.57977,
+      "yield_450fb": 24.7849,
+      "yield_run2_from2018only": 6.39231,
+      "yield_450fb_from2018only": 20.9021
+    },
+    {
+      "mchi": 300,
+      "mlsp": 125,
+      "xsec_2d": {
+        "run2": 0.0509994,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.284855,
+        "run3": 0.284855
+      },
+      "yield_2016APV": 0.8315,
+      "yield_2016": 0.481714,
+      "yield_2017": 1.10835,
+      "yield_2018": 1.76085,
+      "yield_run2": 4.18242,
+      "yield_450fb": 13.676,
+      "yield_run2_from2018only": 4.05028,
+      "yield_450fb_from2018only": 13.2439
+    },
+    {
+      "mchi": 300,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.0509994,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.284855,
+        "run3": 0.284855
+      },
+      "yield_2016APV": 0.280465,
+      "yield_2016": 0.100458,
+      "yield_2017": 0.369197,
+      "yield_2018": 0.395588,
+      "yield_run2": 1.14571,
+      "yield_450fb": 3.74633,
+      "yield_run2_from2018only": 0.909926,
+      "yield_450fb_from2018only": 2.97534
+    },
+    {
+      "mchi": 300,
+      "mlsp": 175,
+      "xsec_2d": {
+        "run2": 0.0509994,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.284855,
+        "run3": 0.284855
+      },
+      "yield_2016APV": 0.0338981,
+      "yield_2016": 0.00625541,
+      "yield_2017": 0.0102905,
+      "yield_2018": 0.0296856,
+      "yield_run2": 0.0801296,
+      "yield_450fb": 0.262014,
+      "yield_run2_from2018only": 0.0682824,
+      "yield_450fb_from2018only": 0.223275
+    },
+    {
+      "mchi": 350,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.0273286,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.153841,
+        "run3": 0.153841
+      },
+      "yield_2016APV": 2.79472,
+      "yield_2016": 1.56027,
+      "yield_2017": 5.17501,
+      "yield_2018": 7.32944,
+      "yield_run2": 16.8594,
+      "yield_450fb": 55.1281,
+      "yield_run2_from2018only": 16.8591,
+      "yield_450fb_from2018only": 55.127
+    },
+    {
+      "mchi": 350,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.0273286,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.153841,
+        "run3": 0.153841
+      },
+      "yield_2016APV": 2.66774,
+      "yield_2016": 1.75383,
+      "yield_2017": 4.86421,
+      "yield_2018": 6.7581,
+      "yield_run2": 16.0439,
+      "yield_450fb": 52.4615,
+      "yield_run2_from2018only": 15.5449,
+      "yield_450fb_from2018only": 50.8298
+    },
+    {
+      "mchi": 350,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.0273286,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.153841,
+        "run3": 0.153841
+      },
+      "yield_2016APV": 2.55872,
+      "yield_2016": 1.25705,
+      "yield_2017": 3.68797,
+      "yield_2018": 4.69517,
+      "yield_run2": 12.1989,
+      "yield_450fb": 39.8889,
+      "yield_run2_from2018only": 10.7997,
+      "yield_450fb_from2018only": 35.3138
+    },
+    {
+      "mchi": 350,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.0273286,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.153841,
+        "run3": 0.153841
+      },
+      "yield_2016APV": 1.32629,
+      "yield_2016": 0.54244,
+      "yield_2017": 1.90385,
+      "yield_2018": 2.33836,
+      "yield_run2": 6.11094,
+      "yield_450fb": 19.982,
+      "yield_run2_from2018only": 5.37866,
+      "yield_450fb_from2018only": 17.5875
+    },
+    {
+      "mchi": 350,
+      "mlsp": 175,
+      "xsec_2d": {
+        "run2": 0.0273286,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.153841,
+        "run3": 0.153841
+      },
+      "yield_2016APV": 0.616901,
+      "yield_2016": 0.265628,
+      "yield_2017": 0.840093,
+      "yield_2018": 1.11853,
+      "yield_run2": 2.84115,
+      "yield_450fb": 9.2902,
+      "yield_run2_from2018only": 2.57281,
+      "yield_450fb_from2018only": 8.41277
+    },
+    {
+      "mchi": 350,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.0273286,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.153841,
+        "run3": 0.153841
+      },
+      "yield_2016APV": 0.180676,
+      "yield_2016": 0.0695453,
+      "yield_2017": 0.206512,
+      "yield_2018": 0.323041,
+      "yield_run2": 0.779774,
+      "yield_450fb": 2.54976,
+      "yield_run2_from2018only": 0.743054,
+      "yield_450fb_from2018only": 2.42969
+    },
+    {
+      "mchi": 350,
+      "mlsp": 225,
+      "xsec_2d": {
+        "run2": 0.0273286,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.153841,
+        "run3": 0.153841
+      },
+      "yield_2018": 0.0208136,
+      "yield_run2_from2018only": 0.0478751,
+      "yield_450fb_from2018only": 0.156545
+    },
+    {
+      "mchi": 400,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.0156691,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0887325,
+        "run3": 0.0887325
+      },
+      "yield_2016APV": 2.81593,
+      "yield_2016": 1.46933,
+      "yield_2017": 4.68686,
+      "yield_2018": 5.37135,
+      "yield_run2": 14.3435,
+      "yield_450fb": 46.9014,
+      "yield_run2_from2018only": 12.3551,
+      "yield_450fb_from2018only": 40.3996
+    },
+    {
+      "mchi": 400,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.0156691,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0887325,
+        "run3": 0.0887325
+      },
+      "yield_2016APV": 3.03192,
+      "yield_2016": 1.52308,
+      "yield_2017": 3.81113,
+      "yield_2018": 5.63676,
+      "yield_run2": 14.0029,
+      "yield_450fb": 45.7877,
+      "yield_run2_from2018only": 12.9656,
+      "yield_450fb_from2018only": 42.3958
+    },
+    {
+      "mchi": 400,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.0156691,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0887325,
+        "run3": 0.0887325
+      },
+      "yield_2016APV": 2.54097,
+      "yield_2016": 1.14023,
+      "yield_2017": 3.4692,
+      "yield_2018": 5.20091,
+      "yield_run2": 12.3513,
+      "yield_450fb": 40.3872,
+      "yield_run2_from2018only": 11.963,
+      "yield_450fb_from2018only": 39.1177
+    },
+    {
+      "mchi": 400,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.0156691,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0887325,
+        "run3": 0.0887325
+      },
+      "yield_2016APV": 1.69541,
+      "yield_2016": 0.960758,
+      "yield_2017": 2.67506,
+      "yield_2018": 3.9151,
+      "yield_run2": 9.24633,
+      "yield_450fb": 30.2343,
+      "yield_run2_from2018only": 9.00545,
+      "yield_450fb_from2018only": 29.4467
+    },
+    {
+      "mchi": 400,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.0156691,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0887325,
+        "run3": 0.0887325
+      },
+      "yield_2016APV": 0.897324,
+      "yield_2016": 0.440503,
+      "yield_2017": 1.03631,
+      "yield_2018": 1.78706,
+      "yield_run2": 4.1612,
+      "yield_450fb": 13.6066,
+      "yield_run2_from2018only": 4.11058,
+      "yield_450fb_from2018only": 13.4411
+    },
+    {
+      "mchi": 400,
+      "mlsp": 225,
+      "xsec_2d": {
+        "run2": 0.0156691,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0887325,
+        "run3": 0.0887325
+      },
+      "yield_2016APV": 0.456223,
+      "yield_2016": 0.228823,
+      "yield_2017": 0.687155,
+      "yield_2018": 0.745276,
+      "yield_run2": 2.11748,
+      "yield_450fb": 6.92389,
+      "yield_run2_from2018only": 1.71427,
+      "yield_450fb_from2018only": 5.60545
+    },
+    {
+      "mchi": 400,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.0156691,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0887325,
+        "run3": 0.0887325
+      },
+      "yield_2016APV": 0.129726,
+      "yield_2016": 0.0378806,
+      "yield_2017": 0.147339,
+      "yield_2018": 0.187383,
+      "yield_run2": 0.502329,
+      "yield_450fb": 1.64255,
+      "yield_run2_from2018only": 0.431015,
+      "yield_450fb_from2018only": 1.40937
+    },
+    {
+      "mchi": 400,
+      "mlsp": 275,
+      "xsec_2d": {
+        "run2": 0.0156691,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0887325,
+        "run3": 0.0887325
+      },
+      "yield_2018": 0.00469487,
+      "yield_run2_from2018only": 0.0107991,
+      "yield_450fb_from2018only": 0.0353116
+    },
+    {
+      "mchi": 450,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.00944017,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0537702,
+        "run3": 0.0537702
+      },
+      "yield_2016APV": 2.11035,
+      "yield_2016": 1.0493,
+      "yield_2017": 3.42314,
+      "yield_2018": 4.87019,
+      "yield_run2": 11.453,
+      "yield_450fb": 37.4499,
+      "yield_run2_from2018only": 11.2023,
+      "yield_450fb_from2018only": 36.6302
+    },
+    {
+      "mchi": 450,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.00944017,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0537702,
+        "run3": 0.0537702
+      },
+      "yield_2016APV": 2.08873,
+      "yield_2016": 1.0173,
+      "yield_2017": 3.00998,
+      "yield_2018": 4.53657,
+      "yield_run2": 10.6526,
+      "yield_450fb": 34.8327,
+      "yield_run2_from2018only": 10.4349,
+      "yield_450fb_from2018only": 34.121
+    },
+    {
+      "mchi": 450,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.00944017,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0537702,
+        "run3": 0.0537702
+      },
+      "yield_2016APV": 2.09447,
+      "yield_2016": 1.06912,
+      "yield_2017": 3.46369,
+      "yield_2018": 4.45236,
+      "yield_run2": 11.0796,
+      "yield_450fb": 36.2289,
+      "yield_run2_from2018only": 10.2412,
+      "yield_450fb_from2018only": 33.4876
+    },
+    {
+      "mchi": 450,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.00944017,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0537702,
+        "run3": 0.0537702
+      },
+      "yield_2016APV": 1.85638,
+      "yield_2016": 1.04336,
+      "yield_2017": 2.57456,
+      "yield_2018": 3.81986,
+      "yield_run2": 9.29416,
+      "yield_450fb": 30.3907,
+      "yield_run2_from2018only": 8.78638,
+      "yield_450fb_from2018only": 28.7303
+    },
+    {
+      "mchi": 450,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.00944017,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0537702,
+        "run3": 0.0537702
+      },
+      "yield_2016APV": 1.68249,
+      "yield_2016": 0.775812,
+      "yield_2017": 2.0211,
+      "yield_2018": 2.43414,
+      "yield_run2": 6.91354,
+      "yield_450fb": 22.6064,
+      "yield_run2_from2018only": 5.59898,
+      "yield_450fb_from2018only": 18.3079
+    },
+    {
+      "mchi": 450,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.00944017,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0537702,
+        "run3": 0.0537702
+      },
+      "yield_2016APV": 0.692292,
+      "yield_2016": 0.350694,
+      "yield_2017": 0.948918,
+      "yield_2018": 1.39022,
+      "yield_run2": 3.38213,
+      "yield_450fb": 11.0591,
+      "yield_run2_from2018only": 3.19777,
+      "yield_450fb_from2018only": 10.4563
+    },
+    {
+      "mchi": 450,
+      "mlsp": 275,
+      "xsec_2d": {
+        "run2": 0.00944017,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0537702,
+        "run3": 0.0537702
+      },
+      "yield_2016APV": 0.282518,
+      "yield_2016": 0.14123,
+      "yield_2017": 0.404138,
+      "yield_2018": 0.49844,
+      "yield_run2": 1.32633,
+      "yield_450fb": 4.33693,
+      "yield_run2_from2018only": 1.1465,
+      "yield_450fb_from2018only": 3.74892
+    },
+    {
+      "mchi": 450,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.00944017,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0537702,
+        "run3": 0.0537702
+      },
+      "yield_2016APV": 0.0901044,
+      "yield_2016": 0.0287982,
+      "yield_2017": 0.0967229,
+      "yield_2018": 0.13097,
+      "yield_run2": 0.346595,
+      "yield_450fb": 1.13332,
+      "yield_run2_from2018only": 0.301255,
+      "yield_450fb_from2018only": 0.985065
+    },
+    {
+      "mchi": 450,
+      "mlsp": 325,
+      "xsec_2d": {
+        "run2": 0.00944017,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0537702,
+        "run3": 0.0537702
+      },
+      "yield_2018": 0.00439916,
+      "yield_run2_from2018only": 0.0101189,
+      "yield_450fb_from2018only": 0.0330874
+    },
+    {
+      "mchi": 500,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.00590757,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0338387,
+        "run3": 0.0338387
+      },
+      "yield_2016APV": 1.73476,
+      "yield_2016": 0.739301,
+      "yield_2017": 2.35336,
+      "yield_2018": 3.08226,
+      "yield_run2": 7.90967,
+      "yield_450fb": 25.8636,
+      "yield_run2_from2018only": 7.08975,
+      "yield_450fb_from2018only": 23.1826
+    },
+    {
+      "mchi": 500,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.00590757,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0338387,
+        "run3": 0.0338387
+      },
+      "yield_2016APV": 1.80868,
+      "yield_2016": 0.830607,
+      "yield_2017": 2.41981,
+      "yield_2018": 3.3967,
+      "yield_run2": 8.45581,
+      "yield_450fb": 27.6494,
+      "yield_run2_from2018only": 7.81304,
+      "yield_450fb_from2018only": 25.5477
+    },
+    {
+      "mchi": 500,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.00590757,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0338387,
+        "run3": 0.0338387
+      },
+      "yield_2016APV": 1.88045,
+      "yield_2016": 0.725284,
+      "yield_2017": 2.59969,
+      "yield_2018": 3.10438,
+      "yield_run2": 8.3098,
+      "yield_450fb": 27.172,
+      "yield_run2_from2018only": 7.14065,
+      "yield_450fb_from2018only": 23.349
+    },
+    {
+      "mchi": 500,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.00590757,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0338387,
+        "run3": 0.0338387
+      },
+      "yield_2016APV": 1.52639,
+      "yield_2016": 0.644586,
+      "yield_2017": 2.13422,
+      "yield_2018": 3.02538,
+      "yield_run2": 7.33059,
+      "yield_450fb": 23.9701,
+      "yield_run2_from2018only": 6.95894,
+      "yield_450fb_from2018only": 22.7548
+    },
+    {
+      "mchi": 500,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.00590757,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0338387,
+        "run3": 0.0338387
+      },
+      "yield_2016APV": 1.1798,
+      "yield_2016": 0.638934,
+      "yield_2017": 1.8277,
+      "yield_2018": 2.51375,
+      "yield_run2": 6.16018,
+      "yield_450fb": 20.143,
+      "yield_run2_from2018only": 5.78208,
+      "yield_450fb_from2018only": 18.9067
+    },
+    {
+      "mchi": 500,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.00590757,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0338387,
+        "run3": 0.0338387
+      },
+      "yield_2016APV": 0.877657,
+      "yield_2016": 0.396208,
+      "yield_2017": 1.49839,
+      "yield_2018": 1.88535,
+      "yield_run2": 4.65761,
+      "yield_450fb": 15.2298,
+      "yield_run2_from2018only": 4.33665,
+      "yield_450fb_from2018only": 14.1803
+    },
+    {
+      "mchi": 500,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.00590757,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0338387,
+        "run3": 0.0338387
+      },
+      "yield_2016APV": 0.46114,
+      "yield_2016": 0.224625,
+      "yield_2017": 0.641301,
+      "yield_2018": 0.859515,
+      "yield_run2": 2.18658,
+      "yield_450fb": 7.14984,
+      "yield_run2_from2018only": 1.97704,
+      "yield_450fb_from2018only": 6.46468
+    },
+    {
+      "mchi": 500,
+      "mlsp": 325,
+      "xsec_2d": {
+        "run2": 0.00590757,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0338387,
+        "run3": 0.0338387
+      },
+      "yield_2016APV": 0.211516,
+      "yield_2016": 0.116915,
+      "yield_2017": 0.284317,
+      "yield_2018": 0.367878,
+      "yield_run2": 0.980626,
+      "yield_450fb": 3.20652,
+      "yield_run2_from2018only": 0.846187,
+      "yield_450fb_from2018only": 2.76692
+    },
+    {
+      "mchi": 500,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 0.00590757,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0338387,
+        "run3": 0.0338387
+      },
+      "yield_2016APV": 0.0535077,
+      "yield_2016": 0.0232928,
+      "yield_2017": 0.0556025,
+      "yield_2018": 0.0811011,
+      "yield_run2": 0.213504,
+      "yield_450fb": 0.698131,
+      "yield_run2_from2018only": 0.186548,
+      "yield_450fb_from2018only": 0.609987
+    },
+    {
+      "mchi": 500,
+      "mlsp": 375,
+      "xsec_2d": {
+        "run2": 0.00590757,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0338387,
+        "run3": 0.0338387
+      },
+      "yield_2018": 0.00273329,
+      "yield_run2_from2018only": 0.00628707,
+      "yield_450fb_from2018only": 0.0205579
+    },
+    {
+      "mchi": 550,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.0038167,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0219868,
+        "run3": 0.0219868
+      },
+      "yield_2016APV": 1.31176,
+      "yield_2016": 0.542194,
+      "yield_2017": 1.59153,
+      "yield_2018": 2.61106,
+      "yield_run2": 6.05654,
+      "yield_450fb": 19.8041,
+      "yield_run2_from2018only": 6.00592,
+      "yield_450fb_from2018only": 19.6386
+    },
+    {
+      "mchi": 550,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.0038167,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0219868,
+        "run3": 0.0219868
+      },
+      "yield_2016APV": 1.23795,
+      "yield_2016": 0.539674,
+      "yield_2017": 1.8402,
+      "yield_2018": 2.24396,
+      "yield_run2": 5.86178,
+      "yield_450fb": 19.1673,
+      "yield_run2_from2018only": 5.16152,
+      "yield_450fb_from2018only": 16.8775
+    },
+    {
+      "mchi": 550,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.0038167,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0219868,
+        "run3": 0.0219868
+      },
+      "yield_2016APV": 1.26763,
+      "yield_2016": 0.605307,
+      "yield_2017": 1.62498,
+      "yield_2018": 2.28813,
+      "yield_run2": 5.78604,
+      "yield_450fb": 18.9196,
+      "yield_run2_from2018only": 5.26311,
+      "yield_450fb_from2018only": 17.2097
+    },
+    {
+      "mchi": 550,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.0038167,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0219868,
+        "run3": 0.0219868
+      },
+      "yield_2016APV": 1.49496,
+      "yield_2016": 0.621906,
+      "yield_2017": 2.00461,
+      "yield_2018": 2.19715,
+      "yield_run2": 6.31863,
+      "yield_450fb": 20.6611,
+      "yield_run2_from2018only": 5.05384,
+      "yield_450fb_from2018only": 16.5254
+    },
+    {
+      "mchi": 550,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.0038167,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0219868,
+        "run3": 0.0219868
+      },
+      "yield_2016APV": 1.11352,
+      "yield_2016": 0.489689,
+      "yield_2017": 1.44547,
+      "yield_2018": 2.05582,
+      "yield_run2": 5.10451,
+      "yield_450fb": 16.6911,
+      "yield_run2_from2018only": 4.72876,
+      "yield_450fb_from2018only": 15.4624
+    },
+    {
+      "mchi": 550,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.0038167,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0219868,
+        "run3": 0.0219868
+      },
+      "yield_2016APV": 0.84566,
+      "yield_2016": 0.433178,
+      "yield_2017": 1.30426,
+      "yield_2018": 1.80697,
+      "yield_run2": 4.39007,
+      "yield_450fb": 14.355,
+      "yield_run2_from2018only": 4.15637,
+      "yield_450fb_from2018only": 13.5908
+    },
+    {
+      "mchi": 550,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.0038167,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0219868,
+        "run3": 0.0219868
+      },
+      "yield_2016APV": 0.650807,
+      "yield_2016": 0.288748,
+      "yield_2017": 0.831648,
+      "yield_2018": 1.36298,
+      "yield_run2": 3.13418,
+      "yield_450fb": 10.2484,
+      "yield_run2_from2018only": 3.1351,
+      "yield_450fb_from2018only": 10.2514
+    },
+    {
+      "mchi": 550,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 0.0038167,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0219868,
+        "run3": 0.0219868
+      },
+      "yield_2016APV": 0.336181,
+      "yield_2016": 0.157408,
+      "yield_2017": 0.479587,
+      "yield_2018": 0.594471,
+      "yield_run2": 1.56765,
+      "yield_450fb": 5.12602,
+      "yield_run2_from2018only": 1.36739,
+      "yield_450fb_from2018only": 4.4712
+    },
+    {
+      "mchi": 550,
+      "mlsp": 375,
+      "xsec_2d": {
+        "run2": 0.0038167,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0219868,
+        "run3": 0.0219868
+      },
+      "yield_2016APV": 0.139359,
+      "yield_2016": 0.0868504,
+      "yield_2017": 0.236391,
+      "yield_2018": 0.252914,
+      "yield_run2": 0.715514,
+      "yield_450fb": 2.33964,
+      "yield_run2_from2018only": 0.581749,
+      "yield_450fb_from2018only": 1.90224
+    },
+    {
+      "mchi": 550,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 0.0038167,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0219868,
+        "run3": 0.0219868
+      },
+      "yield_2016APV": 0.0371622,
+      "yield_2016": 0.0145772,
+      "yield_2017": 0.0442395,
+      "yield_2018": 0.0638103,
+      "yield_run2": 0.159789,
+      "yield_450fb": 0.52249,
+      "yield_run2_from2018only": 0.146775,
+      "yield_450fb_from2018only": 0.479937
+    },
+    {
+      "mchi": 550,
+      "mlsp": 425,
+      "xsec_2d": {
+        "run2": 0.0038167,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0219868,
+        "run3": 0.0219868
+      },
+      "yield_2018": 0.00243676,
+      "yield_run2_from2018only": 0.005605,
+      "yield_450fb_from2018only": 0.0183276
+    },
+    {
+      "mchi": 600,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.00253015,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0146677,
+        "run3": 0.0146677
+      },
+      "yield_2016APV": 1.03959,
+      "yield_2016": 0.398373,
+      "yield_2017": 1.06962,
+      "yield_2018": 1.72689,
+      "yield_run2": 4.23447,
+      "yield_450fb": 13.8462,
+      "yield_run2_from2018only": 3.97215,
+      "yield_450fb_from2018only": 12.9884
+    },
+    {
+      "mchi": 600,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.00253015,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0146677,
+        "run3": 0.0146677
+      },
+      "yield_2016APV": 0.996775,
+      "yield_2016": 0.457899,
+      "yield_2017": 1.1499,
+      "yield_2018": 1.56244,
+      "yield_run2": 4.16702,
+      "yield_450fb": 13.6256,
+      "yield_run2_from2018only": 3.59391,
+      "yield_450fb_from2018only": 11.7516
+    },
+    {
+      "mchi": 600,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.00253015,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0146677,
+        "run3": 0.0146677
+      },
+      "yield_2016APV": 1.07181,
+      "yield_2016": 0.405223,
+      "yield_2017": 1.37663,
+      "yield_2018": 1.61504,
+      "yield_run2": 4.4687,
+      "yield_450fb": 14.6121,
+      "yield_run2_from2018only": 3.71489,
+      "yield_450fb_from2018only": 12.1472
+    },
+    {
+      "mchi": 600,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.00253015,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0146677,
+        "run3": 0.0146677
+      },
+      "yield_2016APV": 0.949966,
+      "yield_2016": 0.431601,
+      "yield_2017": 1.15215,
+      "yield_2018": 1.72933,
+      "yield_run2": 4.26305,
+      "yield_450fb": 13.9396,
+      "yield_run2_from2018only": 3.97779,
+      "yield_450fb_from2018only": 13.0069
+    },
+    {
+      "mchi": 600,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.00253015,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0146677,
+        "run3": 0.0146677
+      },
+      "yield_2016APV": 0.829568,
+      "yield_2016": 0.359457,
+      "yield_2017": 1.06375,
+      "yield_2018": 1.54811,
+      "yield_run2": 3.80089,
+      "yield_450fb": 12.4284,
+      "yield_run2_from2018only": 3.56095,
+      "yield_450fb_from2018only": 11.6439
+    },
+    {
+      "mchi": 600,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.00253015,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0146677,
+        "run3": 0.0146677
+      },
+      "yield_2016APV": 0.734185,
+      "yield_2016": 0.396819,
+      "yield_2017": 0.989527,
+      "yield_2018": 1.50187,
+      "yield_run2": 3.6224,
+      "yield_450fb": 11.8448,
+      "yield_run2_from2018only": 3.45458,
+      "yield_450fb_from2018only": 11.296
+    },
+    {
+      "mchi": 600,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.00253015,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0146677,
+        "run3": 0.0146677
+      },
+      "yield_2016APV": 0.683847,
+      "yield_2016": 0.337658,
+      "yield_2017": 0.86436,
+      "yield_2018": 1.23254,
+      "yield_run2": 3.11841,
+      "yield_450fb": 10.1968,
+      "yield_run2_from2018only": 2.83508,
+      "yield_450fb_from2018only": 9.27034
+    },
+    {
+      "mchi": 600,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 0.00253015,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0146677,
+        "run3": 0.0146677
+      },
+      "yield_2016APV": 0.447105,
+      "yield_2016": 0.238752,
+      "yield_2017": 0.66308,
+      "yield_2018": 0.97247,
+      "yield_run2": 2.32141,
+      "yield_450fb": 7.59072,
+      "yield_run2_from2018only": 2.23686,
+      "yield_450fb_from2018only": 7.31425
+    },
+    {
+      "mchi": 600,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 0.00253015,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0146677,
+        "run3": 0.0146677
+      },
+      "yield_2016APV": 0.224224,
+      "yield_2016": 0.119446,
+      "yield_2017": 0.325287,
+      "yield_2018": 0.483505,
+      "yield_run2": 1.15246,
+      "yield_450fb": 3.7684,
+      "yield_run2_from2018only": 1.11215,
+      "yield_450fb_from2018only": 3.63659
+    },
+    {
+      "mchi": 600,
+      "mlsp": 425,
+      "xsec_2d": {
+        "run2": 0.00253015,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0146677,
+        "run3": 0.0146677
+      },
+      "yield_2016APV": 0.0925345,
+      "yield_2016": 0.0510122,
+      "yield_2017": 0.13407,
+      "yield_2018": 0.183711,
+      "yield_run2": 0.461327,
+      "yield_450fb": 1.50848,
+      "yield_run2_from2018only": 0.422569,
+      "yield_450fb_from2018only": 1.38175
+    },
+    {
+      "mchi": 600,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 0.00253015,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0146677,
+        "run3": 0.0146677
+      },
+      "yield_2016APV": 0.026794,
+      "yield_2016": 0.00884149,
+      "yield_2017": 0.0282026,
+      "yield_2018": 0.03569,
+      "yield_run2": 0.099528,
+      "yield_450fb": 0.325444,
+      "yield_run2_from2018only": 0.0820935,
+      "yield_450fb_from2018only": 0.268435
+    },
+    {
+      "mchi": 600,
+      "mlsp": 475,
+      "xsec_2d": {
+        "run2": 0.00253015,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0146677,
+        "run3": 0.0146677
+      },
+      "yield_2018": 0.000770575,
+      "yield_run2_from2018only": 0.00177246,
+      "yield_450fb_from2018only": 0.00579574
+    },
+    {
+      "mchi": 650,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.00171418,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00996406,
+        "run3": 0.00996406
+      },
+      "yield_2016APV": 0.631181,
+      "yield_2016": 0.292148,
+      "yield_2017": 1.04422,
+      "yield_2018": 1.24415,
+      "yield_run2": 3.21169,
+      "yield_450fb": 10.5018,
+      "yield_run2_from2018only": 2.86177,
+      "yield_450fb_from2018only": 9.35762
+    },
+    {
+      "mchi": 650,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.00171418,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00996406,
+        "run3": 0.00996406
+      },
+      "yield_2016APV": 0.733472,
+      "yield_2016": 0.343599,
+      "yield_2017": 0.974575,
+      "yield_2018": 1.1465,
+      "yield_run2": 3.19815,
+      "yield_450fb": 10.4575,
+      "yield_run2_from2018only": 2.63716,
+      "yield_450fb_from2018only": 8.62319
+    },
+    {
+      "mchi": 650,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.00171418,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00996406,
+        "run3": 0.00996406
+      },
+      "yield_2016APV": 0.653201,
+      "yield_2016": 0.311483,
+      "yield_2017": 0.839208,
+      "yield_2018": 1.1694,
+      "yield_run2": 2.97329,
+      "yield_450fb": 9.72228,
+      "yield_run2_from2018only": 2.68983,
+      "yield_450fb_from2018only": 8.79541
+    },
+    {
+      "mchi": 650,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.00171418,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00996406,
+        "run3": 0.00996406
+      },
+      "yield_2016APV": 0.764755,
+      "yield_2016": 0.276227,
+      "yield_2017": 0.929143,
+      "yield_2018": 1.17632,
+      "yield_run2": 3.14645,
+      "yield_450fb": 10.2885,
+      "yield_run2_from2018only": 2.70576,
+      "yield_450fb_from2018only": 8.84749
+    },
+    {
+      "mchi": 650,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.00171418,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00996406,
+        "run3": 0.00996406
+      },
+      "yield_2016APV": 0.700378,
+      "yield_2016": 0.286718,
+      "yield_2017": 0.778582,
+      "yield_2018": 1.1903,
+      "yield_run2": 2.95598,
+      "yield_450fb": 9.66568,
+      "yield_run2_from2018only": 2.7379,
+      "yield_450fb_from2018only": 8.9526
+    },
+    {
+      "mchi": 650,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.00171418,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00996406,
+        "run3": 0.00996406
+      },
+      "yield_2016APV": 0.574711,
+      "yield_2016": 0.254973,
+      "yield_2017": 0.818763,
+      "yield_2018": 1.08625,
+      "yield_run2": 2.73469,
+      "yield_450fb": 8.94209,
+      "yield_run2_from2018only": 2.49857,
+      "yield_450fb_from2018only": 8.17
+    },
+    {
+      "mchi": 650,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.00171418,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00996406,
+        "run3": 0.00996406
+      },
+      "yield_2016APV": 0.55109,
+      "yield_2016": 0.208884,
+      "yield_2017": 0.717818,
+      "yield_2018": 1.03841,
+      "yield_run2": 2.5162,
+      "yield_450fb": 8.22766,
+      "yield_run2_from2018only": 2.38853,
+      "yield_450fb_from2018only": 7.81019
+    },
+    {
+      "mchi": 650,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 0.00171418,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00996406,
+        "run3": 0.00996406
+      },
+      "yield_2016APV": 0.439415,
+      "yield_2016": 0.233863,
+      "yield_2017": 0.632441,
+      "yield_2018": 0.849257,
+      "yield_run2": 2.15498,
+      "yield_450fb": 7.04651,
+      "yield_run2_from2018only": 1.95345,
+      "yield_450fb_from2018only": 6.38753
+    },
+    {
+      "mchi": 650,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 0.00171418,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00996406,
+        "run3": 0.00996406
+      },
+      "yield_2016APV": 0.357409,
+      "yield_2016": 0.162614,
+      "yield_2017": 0.555954,
+      "yield_2018": 0.646719,
+      "yield_run2": 1.7227,
+      "yield_450fb": 5.63301,
+      "yield_run2_from2018only": 1.48757,
+      "yield_450fb_from2018only": 4.86417
+    },
+    {
+      "mchi": 650,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 0.00171418,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00996406,
+        "run3": 0.00996406
+      },
+      "yield_2016APV": 0.178241,
+      "yield_2016": 0.0917142,
+      "yield_2017": 0.262357,
+      "yield_2018": 0.31961,
+      "yield_run2": 0.851922,
+      "yield_450fb": 2.78568,
+      "yield_run2_from2018only": 0.735162,
+      "yield_450fb_from2018only": 2.40389
+    },
+    {
+      "mchi": 650,
+      "mlsp": 475,
+      "xsec_2d": {
+        "run2": 0.00171418,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00996406,
+        "run3": 0.00996406
+      },
+      "yield_2016APV": 0.0790028,
+      "yield_2016": 0.0386456,
+      "yield_2017": 0.1005,
+      "yield_2018": 0.159785,
+      "yield_run2": 0.377934,
+      "yield_450fb": 1.2358,
+      "yield_run2_from2018only": 0.367535,
+      "yield_450fb_from2018only": 1.20179
+    },
+    {
+      "mchi": 650,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 0.00171418,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00996406,
+        "run3": 0.00996406
+      },
+      "yield_2016APV": 0.0175629,
+      "yield_2016": 0.00616452,
+      "yield_2017": 0.0192796,
+      "yield_2018": 0.0250022,
+      "yield_run2": 0.0680092,
+      "yield_450fb": 0.222381,
+      "yield_run2_from2018only": 0.0575097,
+      "yield_450fb_from2018only": 0.188049
+    },
+    {
+      "mchi": 650,
+      "mlsp": 525,
+      "xsec_2d": {
+        "run2": 0.00171418,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00996406,
+        "run3": 0.00996406
+      },
+      "yield_2018": 0.00079174,
+      "yield_run2_from2018only": 0.00182115,
+      "yield_450fb_from2018only": 0.00595492
+    },
+    {
+      "mchi": 700,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2016APV": 0.46681,
+      "yield_2016": 0.177369,
+      "yield_2017": 0.494675,
+      "yield_2018": 0.836367,
+      "yield_run2": 1.97522,
+      "yield_450fb": 6.45872,
+      "yield_run2_from2018only": 1.9238,
+      "yield_450fb_from2018only": 6.29057
+    },
+    {
+      "mchi": 700,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2016APV": 0.462988,
+      "yield_2016": 0.207699,
+      "yield_2017": 0.648547,
+      "yield_2018": 0.828331,
+      "yield_run2": 2.14756,
+      "yield_450fb": 7.02225,
+      "yield_run2_from2018only": 1.90531,
+      "yield_450fb_from2018only": 6.23013
+    },
+    {
+      "mchi": 700,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2016APV": 0.493195,
+      "yield_2016": 0.192674,
+      "yield_2017": 0.631939,
+      "yield_2018": 0.784188,
+      "yield_run2": 2.102,
+      "yield_450fb": 6.87327,
+      "yield_run2_from2018only": 1.80378,
+      "yield_450fb_from2018only": 5.89812
+    },
+    {
+      "mchi": 700,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2016APV": 0.528563,
+      "yield_2016": 0.204847,
+      "yield_2017": 0.681194,
+      "yield_2018": 0.913317,
+      "yield_run2": 2.32792,
+      "yield_450fb": 7.612,
+      "yield_run2_from2018only": 2.1008,
+      "yield_450fb_from2018only": 6.86934
+    },
+    {
+      "mchi": 700,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2016APV": 0.414747,
+      "yield_2016": 0.194411,
+      "yield_2017": 0.534332,
+      "yield_2018": 0.781679,
+      "yield_run2": 1.92517,
+      "yield_450fb": 6.29506,
+      "yield_run2_from2018only": 1.798,
+      "yield_450fb_from2018only": 5.87925
+    },
+    {
+      "mchi": 700,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2016APV": 0.459673,
+      "yield_2016": 0.187387,
+      "yield_2017": 0.555593,
+      "yield_2018": 0.813883,
+      "yield_run2": 2.01654,
+      "yield_450fb": 6.59383,
+      "yield_run2_from2018only": 1.87208,
+      "yield_450fb_from2018only": 6.12147
+    },
+    {
+      "mchi": 700,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2016APV": 0.492515,
+      "yield_2016": 0.215551,
+      "yield_2017": 0.583434,
+      "yield_2018": 0.810287,
+      "yield_run2": 2.10179,
+      "yield_450fb": 6.87259,
+      "yield_run2_from2018only": 1.86381,
+      "yield_450fb_from2018only": 6.09442
+    },
+    {
+      "mchi": 700,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2016APV": 0.43105,
+      "yield_2016": 0.207284,
+      "yield_2017": 0.584444,
+      "yield_2018": 0.735426,
+      "yield_run2": 1.9582,
+      "yield_450fb": 6.40307,
+      "yield_run2_from2018only": 1.69161,
+      "yield_450fb_from2018only": 5.53137
+    },
+    {
+      "mchi": 700,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2016APV": 0.326209,
+      "yield_2016": 0.17164,
+      "yield_2017": 0.48927,
+      "yield_2018": 0.605513,
+      "yield_run2": 1.59263,
+      "yield_450fb": 5.2077,
+      "yield_run2_from2018only": 1.39279,
+      "yield_450fb_from2018only": 4.55425
+    },
+    {
+      "mchi": 700,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2016APV": 0.245086,
+      "yield_2016": 0.112443,
+      "yield_2017": 0.355923,
+      "yield_2018": 0.508456,
+      "yield_run2": 1.22191,
+      "yield_450fb": 3.99549,
+      "yield_run2_from2018only": 1.16954,
+      "yield_450fb_from2018only": 3.82426
+    },
+    {
+      "mchi": 700,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2016APV": 0.126881,
+      "yield_2016": 0.0590669,
+      "yield_2017": 0.180243,
+      "yield_2018": 0.238047,
+      "yield_run2": 0.604238,
+      "yield_450fb": 1.97578,
+      "yield_run2_from2018only": 0.547552,
+      "yield_450fb_from2018only": 1.79043
+    },
+    {
+      "mchi": 700,
+      "mlsp": 525,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2016APV": 0.0523356,
+      "yield_2016": 0.0238961,
+      "yield_2017": 0.0634438,
+      "yield_2018": 0.103353,
+      "yield_run2": 0.243028,
+      "yield_450fb": 0.794671,
+      "yield_run2_from2018only": 0.23773,
+      "yield_450fb_from2018only": 0.777348
+    },
+    {
+      "mchi": 700,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2016APV": 0.013473,
+      "yield_2016": 0.00405088,
+      "yield_2017": 0.0148087,
+      "yield_2018": 0.0188678,
+      "yield_run2": 0.0512004,
+      "yield_450fb": 0.167419,
+      "yield_run2_from2018only": 0.0433994,
+      "yield_450fb_from2018only": 0.141911
+    },
+    {
+      "mchi": 700,
+      "mlsp": 575,
+      "xsec_2d": {
+        "run2": 0.00118113,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00689981,
+        "run3": 0.00689981
+      },
+      "yield_2018": 0.000551244,
+      "yield_run2_from2018only": 0.00126796,
+      "yield_450fb_from2018only": 0.00414607
+    },
+    {
+      "mchi": 750,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.415424,
+      "yield_2016": 0.146751,
+      "yield_2017": 0.448802,
+      "yield_2018": 0.613619,
+      "yield_run2": 1.6246,
+      "yield_450fb": 5.31224,
+      "yield_run2_from2018only": 1.41144,
+      "yield_450fb_from2018only": 4.61522
+    },
+    {
+      "mchi": 750,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.376738,
+      "yield_2016": 0.153508,
+      "yield_2017": 0.465297,
+      "yield_2018": 0.606038,
+      "yield_run2": 1.60158,
+      "yield_450fb": 5.23696,
+      "yield_run2_from2018only": 1.394,
+      "yield_450fb_from2018only": 4.5582
+    },
+    {
+      "mchi": 750,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.37856,
+      "yield_2016": 0.14419,
+      "yield_2017": 0.500343,
+      "yield_2018": 0.570933,
+      "yield_run2": 1.59403,
+      "yield_450fb": 5.21228,
+      "yield_run2_from2018only": 1.31325,
+      "yield_450fb_from2018only": 4.29417
+    },
+    {
+      "mchi": 750,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.344146,
+      "yield_2016": 0.13724,
+      "yield_2017": 0.500142,
+      "yield_2018": 0.589738,
+      "yield_run2": 1.57127,
+      "yield_450fb": 5.13785,
+      "yield_run2_from2018only": 1.3565,
+      "yield_450fb_from2018only": 4.4356
+    },
+    {
+      "mchi": 750,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.381328,
+      "yield_2016": 0.157413,
+      "yield_2017": 0.484987,
+      "yield_2018": 0.61249,
+      "yield_run2": 1.63622,
+      "yield_450fb": 5.35023,
+      "yield_run2_from2018only": 1.40884,
+      "yield_450fb_from2018only": 4.60672
+    },
+    {
+      "mchi": 750,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.27489,
+      "yield_2016": 0.133406,
+      "yield_2017": 0.403429,
+      "yield_2018": 0.598806,
+      "yield_run2": 1.41053,
+      "yield_450fb": 4.61225,
+      "yield_run2_from2018only": 1.37736,
+      "yield_450fb_from2018only": 4.50381
+    },
+    {
+      "mchi": 750,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.317268,
+      "yield_2016": 0.130154,
+      "yield_2017": 0.434964,
+      "yield_2018": 0.563917,
+      "yield_run2": 1.4463,
+      "yield_450fb": 4.72922,
+      "yield_run2_from2018only": 1.29711,
+      "yield_450fb_from2018only": 4.24139
+    },
+    {
+      "mchi": 750,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.31142,
+      "yield_2016": 0.129489,
+      "yield_2017": 0.398542,
+      "yield_2018": 0.586247,
+      "yield_run2": 1.4257,
+      "yield_450fb": 4.66186,
+      "yield_run2_from2018only": 1.34848,
+      "yield_450fb_from2018only": 4.40935
+    },
+    {
+      "mchi": 750,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.281445,
+      "yield_2016": 0.140624,
+      "yield_2017": 0.405109,
+      "yield_2018": 0.518694,
+      "yield_run2": 1.34587,
+      "yield_450fb": 4.40082,
+      "yield_run2_from2018only": 1.19309,
+      "yield_450fb_from2018only": 3.90126
+    },
+    {
+      "mchi": 750,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.25382,
+      "yield_2016": 0.101646,
+      "yield_2017": 0.333186,
+      "yield_2018": 0.475216,
+      "yield_run2": 1.16387,
+      "yield_450fb": 3.80571,
+      "yield_run2_from2018only": 1.09308,
+      "yield_450fb_from2018only": 3.57425
+    },
+    {
+      "mchi": 750,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.195417,
+      "yield_2016": 0.0896512,
+      "yield_2017": 0.242751,
+      "yield_2018": 0.343541,
+      "yield_run2": 0.871361,
+      "yield_450fb": 2.84924,
+      "yield_run2_from2018only": 0.790208,
+      "yield_450fb_from2018only": 2.58388
+    },
+    {
+      "mchi": 750,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.100788,
+      "yield_2016": 0.0492997,
+      "yield_2017": 0.126791,
+      "yield_2018": 0.159815,
+      "yield_run2": 0.436694,
+      "yield_450fb": 1.42793,
+      "yield_run2_from2018only": 0.367604,
+      "yield_450fb_from2018only": 1.20202
+    },
+    {
+      "mchi": 750,
+      "mlsp": 575,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.0346282,
+      "yield_2016": 0.0191158,
+      "yield_2017": 0.051752,
+      "yield_2018": 0.069592,
+      "yield_run2": 0.175088,
+      "yield_450fb": 0.572516,
+      "yield_run2_from2018only": 0.160074,
+      "yield_450fb_from2018only": 0.523423
+    },
+    {
+      "mchi": 750,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 0.000826366,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0048731,
+        "run3": 0.0048731
+      },
+      "yield_2016APV": 0.00909971,
+      "yield_2016": 0.00362524,
+      "yield_2017": 0.0104817,
+      "yield_2018": 0.0153792,
+      "yield_run2": 0.0385859,
+      "yield_450fb": 0.126171,
+      "yield_run2_from2018only": 0.0353751,
+      "yield_450fb_from2018only": 0.115672
+    },
+    {
+      "mchi": 800,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.000586211,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00346143,
+        "run3": 0.00346143
+      },
+      "yield_2016APV": 0.268898,
+      "yield_2016": 0.10861,
+      "yield_2017": 0.312924,
+      "yield_2018": 0.406879,
+      "yield_run2": 1.09731,
+      "yield_450fb": 3.58806,
+      "yield_run2_from2018only": 0.935896,
+      "yield_450fb_from2018only": 3.06026
+    },
+    {
+      "mchi": 800,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.000586211,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00346143,
+        "run3": 0.00346143
+      },
+      "yield_2016APV": 0.27945,
+      "yield_2016": 0.100063,
+      "yield_2017": 0.29304,
+      "yield_2018": 0.427707,
+      "yield_run2": 1.10026,
+      "yield_450fb": 3.59771,
+      "yield_run2_from2018only": 0.983804,
+      "yield_450fb_from2018only": 3.21692
+    },
+    {
+      "mchi": 800,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.000586211,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00346143,
+        "run3": 0.00346143
+      },
+      "yield_2016APV": 0.271552,
+      "yield_2016": 0.102203,
+      "yield_2017": 0.324469,
+      "yield_2018": 0.428638,
+      "yield_run2": 1.12686,
+      "yield_450fb": 3.68469,
+      "yield_run2_from2018only": 0.985945,
+      "yield_450fb_from2018only": 3.22392
+    },
+    {
+      "mchi": 800,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.000586211,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00346143,
+        "run3": 0.00346143
+      },
+      "yield_2016APV": 0.212952,
+      "yield_2016": 0.089128,
+      "yield_2017": 0.285243,
+      "yield_2018": 0.414794,
+      "yield_run2": 1.00212,
+      "yield_450fb": 3.27681,
+      "yield_run2_from2018only": 0.954102,
+      "yield_450fb_from2018only": 3.11979
+    },
+    {
+      "mchi": 800,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.000586211,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00346143,
+        "run3": 0.00346143
+      },
+      "yield_2016APV": 0.238047,
+      "yield_2016": 0.0924231,
+      "yield_2017": 0.29185,
+      "yield_2018": 0.431842,
+      "yield_run2": 1.05416,
+      "yield_450fb": 3.44697,
+      "yield_run2_from2018only": 0.993315,
+      "yield_450fb_from2018only": 3.24802
+    },
+    {
+      "mchi": 800,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.000586211,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00346143,
+        "run3": 0.00346143
+      },
+      "yield_2016APV": 0.278058,
+      "yield_2016": 0.105755,
+      "yield_2017": 0.293845,
+      "yield_2018": 0.460559,
+      "yield_run2": 1.13822,
+      "yield_450fb": 3.72184,
+      "yield_run2_from2018only": 1.05937,
+      "yield_450fb_from2018only": 3.46401
+    },
+    {
+      "mchi": 800,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.000586211,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00346143,
+        "run3": 0.00346143
+      },
+      "yield_2016APV": 0.317504,
+      "yield_2016": 0.12001,
+      "yield_2017": 0.394263,
+      "yield_2018": 0.430283,
+      "yield_run2": 1.26206,
+      "yield_450fb": 4.12678,
+      "yield_run2_from2018only": 0.98973,
+      "yield_450fb_from2018only": 3.23629
+    },
+    {
+      "mchi": 800,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 0.000586211,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00346143,
+        "run3": 0.00346143
+      },
+      "yield_2016APV": 0.236849,
+      "yield_2016": 0.0998427,
+      "yield_2017": 0.282831,
+      "yield_2018": 0.406967,
+      "yield_run2": 1.02649,
+      "yield_450fb": 3.35649,
+      "yield_run2_from2018only": 0.9361,
+      "yield_450fb_from2018only": 3.06093
+    },
+    {
+      "mchi": 800,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 0.000586211,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00346143,
+        "run3": 0.00346143
+      },
+      "yield_2016APV": 0.229639,
+      "yield_2016": 0.0951353,
+      "yield_2017": 0.286921,
+      "yield_2018": 0.392426,
+      "yield_run2": 1.00412,
+      "yield_450fb": 3.28335,
+      "yield_run2_from2018only": 0.902652,
+      "yield_450fb_from2018only": 2.95156
+    },
+    {
+      "mchi": 800,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 0.000586211,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00346143,
+        "run3": 0.00346143
+      },
+      "yield_2016APV": 0.203874,
+      "yield_2016": 0.0950639,
+      "yield_2017": 0.28954,
+      "yield_2018": 0.384466,
+      "yield_run2": 0.972943,
+      "yield_450fb": 3.1814,
+      "yield_run2_from2018only": 0.884341,
+      "yield_450fb_from2018only": 2.89168
+    },
+    {
+      "mchi": 800,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 0.000586211,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00346143,
+        "run3": 0.00346143
+      },
+      "yield_2016APV": 0.209633,
+      "yield_2016": 0.0928036,
+      "yield_2017": 0.311959,
+      "yield_2018": 0.361467,
+      "yield_run2": 0.975862,
+      "yield_450fb": 3.19095,
+      "yield_run2_from2018only": 0.83144,
+      "yield_450fb_from2018only": 2.7187
+    },
+    {
+      "mchi": 800,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 0.000586211,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00346143,
+        "run3": 0.00346143
+      },
+      "yield_2018": 0.270265,
+      "yield_run2_from2018only": 0.621659,
+      "yield_450fb_from2018only": 2.03275
+    },
+    {
+      "mchi": 800,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 0.000586211,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00346143,
+        "run3": 0.00346143
+      },
+      "yield_2016APV": 0.056414,
+      "yield_2016": 0.0305312,
+      "yield_2017": 0.078122,
+      "yield_2018": 0.123473,
+      "yield_run2": 0.28854,
+      "yield_450fb": 0.943489,
+      "yield_run2_from2018only": 0.284011,
+      "yield_450fb_from2018only": 0.928679
+    },
+    {
+      "mchi": 850,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.000420556,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0024923,
+        "run3": 0.0024923
+      },
+      "yield_2016APV": 0.186079,
+      "yield_2016": 0.0770456,
+      "yield_2017": 0.210928,
+      "yield_2018": 0.298965,
+      "yield_run2": 0.773017,
+      "yield_450fb": 2.52767,
+      "yield_run2_from2018only": 0.687673,
+      "yield_450fb_from2018only": 2.24861
+    },
+    {
+      "mchi": 850,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.000420556,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0024923,
+        "run3": 0.0024923
+      },
+      "yield_2016APV": 0.18314,
+      "yield_2016": 0.0701653,
+      "yield_2017": 0.23787,
+      "yield_2018": 0.291729,
+      "yield_run2": 0.782904,
+      "yield_450fb": 2.56,
+      "yield_run2_from2018only": 0.67103,
+      "yield_450fb_from2018only": 2.19418
+    },
+    {
+      "mchi": 850,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.000420556,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0024923,
+        "run3": 0.0024923
+      },
+      "yield_2016APV": 0.203173,
+      "yield_2016": 0.0771405,
+      "yield_2017": 0.233214,
+      "yield_2018": 0.296116,
+      "yield_run2": 0.809644,
+      "yield_450fb": 2.64743,
+      "yield_run2_from2018only": 0.681121,
+      "yield_450fb_from2018only": 2.22718
+    },
+    {
+      "mchi": 850,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.000420556,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0024923,
+        "run3": 0.0024923
+      },
+      "yield_2016APV": 0.199249,
+      "yield_2016": 0.0766257,
+      "yield_2017": 0.236415,
+      "yield_2018": 0.284796,
+      "yield_run2": 0.797086,
+      "yield_450fb": 2.60637,
+      "yield_run2_from2018only": 0.655084,
+      "yield_450fb_from2018only": 2.14204
+    },
+    {
+      "mchi": 850,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.000420556,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0024923,
+        "run3": 0.0024923
+      },
+      "yield_2016APV": 0.153955,
+      "yield_2016": 0.0639119,
+      "yield_2017": 0.196497,
+      "yield_2018": 0.288576,
+      "yield_run2": 0.70294,
+      "yield_450fb": 2.29852,
+      "yield_run2_from2018only": 0.663779,
+      "yield_450fb_from2018only": 2.17047
+    },
+    {
+      "mchi": 850,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.000420556,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0024923,
+        "run3": 0.0024923
+      },
+      "yield_2016APV": 0.16918,
+      "yield_2016": 0.0617394,
+      "yield_2017": 0.193264,
+      "yield_2018": 0.295835,
+      "yield_run2": 0.720019,
+      "yield_450fb": 2.35437,
+      "yield_run2_from2018only": 0.680476,
+      "yield_450fb_from2018only": 2.22507
+    },
+    {
+      "mchi": 850,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.000420556,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0024923,
+        "run3": 0.0024923
+      },
+      "yield_2016APV": 0.164081,
+      "yield_2016": 0.0677592,
+      "yield_2017": 0.192888,
+      "yield_2018": 0.320757,
+      "yield_run2": 0.745485,
+      "yield_450fb": 2.43764,
+      "yield_run2_from2018only": 0.737799,
+      "yield_450fb_from2018only": 2.41251
+    },
+    {
+      "mchi": 850,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 0.000420556,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0024923,
+        "run3": 0.0024923
+      },
+      "yield_2016APV": 0.189875,
+      "yield_2016": 0.0733942,
+      "yield_2017": 0.239484,
+      "yield_2018": 0.327803,
+      "yield_run2": 0.830556,
+      "yield_450fb": 2.71581,
+      "yield_run2_from2018only": 0.754007,
+      "yield_450fb_from2018only": 2.46551
+    },
+    {
+      "mchi": 850,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 0.000420556,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0024923,
+        "run3": 0.0024923
+      },
+      "yield_2016APV": 0.187337,
+      "yield_2016": 0.076387,
+      "yield_2017": 0.244979,
+      "yield_2018": 0.304467,
+      "yield_run2": 0.813169,
+      "yield_450fb": 2.65896,
+      "yield_run2_from2018only": 0.700329,
+      "yield_450fb_from2018only": 2.28999
+    },
+    {
+      "mchi": 850,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 0.000420556,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0024923,
+        "run3": 0.0024923
+      },
+      "yield_2016APV": 0.185045,
+      "yield_2016": 0.0778086,
+      "yield_2017": 0.233641,
+      "yield_2018": 0.305153,
+      "yield_run2": 0.801647,
+      "yield_450fb": 2.62128,
+      "yield_run2_from2018only": 0.701909,
+      "yield_450fb_from2018only": 2.29515
+    },
+    {
+      "mchi": 850,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 0.000420556,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0024923,
+        "run3": 0.0024923
+      },
+      "yield_2016APV": 0.16206,
+      "yield_2016": 0.0805115,
+      "yield_2017": 0.204705,
+      "yield_2018": 0.262808,
+      "yield_run2": 0.710085,
+      "yield_450fb": 2.32189,
+      "yield_run2_from2018only": 0.604507,
+      "yield_450fb_from2018only": 1.97666
+    },
+    {
+      "mchi": 850,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 0.000420556,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0024923,
+        "run3": 0.0024923
+      },
+      "yield_2016APV": 0.133096,
+      "yield_2016": 0.0675386,
+      "yield_2017": 0.173714,
+      "yield_2018": 0.233727,
+      "yield_run2": 0.608075,
+      "yield_450fb": 1.98833,
+      "yield_run2_from2018only": 0.537616,
+      "yield_450fb_from2018only": 1.75793
+    },
+    {
+      "mchi": 850,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 0.000420556,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.0024923,
+        "run3": 0.0024923
+      },
+      "yield_2016APV": 0.0888534,
+      "yield_2016": 0.0472404,
+      "yield_2017": 0.146737,
+      "yield_2018": 0.19352,
+      "yield_run2": 0.476351,
+      "yield_450fb": 1.55761,
+      "yield_run2_from2018only": 0.445133,
+      "yield_450fb_from2018only": 1.45553
+    },
+    {
+      "mchi": 900,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.000305935,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00180616,
+        "run3": 0.00180616
+      },
+      "yield_2016APV": 0.13504,
+      "yield_2016": 0.0521095,
+      "yield_2017": 0.153186,
+      "yield_2018": 0.20626,
+      "yield_run2": 0.546596,
+      "yield_450fb": 1.7873,
+      "yield_run2_from2018only": 0.474436,
+      "yield_450fb_from2018only": 1.55135
+    },
+    {
+      "mchi": 900,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.000305935,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00180616,
+        "run3": 0.00180616
+      },
+      "yield_2016APV": 0.137456,
+      "yield_2016": 0.0493998,
+      "yield_2017": 0.158314,
+      "yield_2018": 0.221161,
+      "yield_run2": 0.566331,
+      "yield_450fb": 1.85183,
+      "yield_run2_from2018only": 0.508711,
+      "yield_450fb_from2018only": 1.66342
+    },
+    {
+      "mchi": 900,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.000305935,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00180616,
+        "run3": 0.00180616
+      },
+      "yield_2016APV": 0.136613,
+      "yield_2016": 0.0605634,
+      "yield_2017": 0.157214,
+      "yield_2018": 0.209364,
+      "yield_run2": 0.563755,
+      "yield_450fb": 1.84341,
+      "yield_run2_from2018only": 0.481577,
+      "yield_450fb_from2018only": 1.57469
+    },
+    {
+      "mchi": 900,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.000305935,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00180616,
+        "run3": 0.00180616
+      },
+      "yield_2016APV": 0.148629,
+      "yield_2016": 0.0511804,
+      "yield_2017": 0.175275,
+      "yield_2018": 0.217487,
+      "yield_run2": 0.592571,
+      "yield_450fb": 1.93763,
+      "yield_run2_from2018only": 0.50026,
+      "yield_450fb_from2018only": 1.63579
+    },
+    {
+      "mchi": 900,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.000305935,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00180616,
+        "run3": 0.00180616
+      },
+      "yield_2016APV": 0.140235,
+      "yield_2016": 0.0522589,
+      "yield_2017": 0.151891,
+      "yield_2018": 0.206573,
+      "yield_run2": 0.550958,
+      "yield_450fb": 1.80156,
+      "yield_run2_from2018only": 0.475157,
+      "yield_450fb_from2018only": 1.5537
+    },
+    {
+      "mchi": 900,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.000305935,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00180616,
+        "run3": 0.00180616
+      },
+      "yield_2016APV": 0.126354,
+      "yield_2016": 0.0561063,
+      "yield_2017": 0.163984,
+      "yield_2018": 0.222583,
+      "yield_run2": 0.569027,
+      "yield_450fb": 1.86065,
+      "yield_run2_from2018only": 0.511981,
+      "yield_450fb_from2018only": 1.67411
+    },
+    {
+      "mchi": 900,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.000305935,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00180616,
+        "run3": 0.00180616
+      },
+      "yield_2016APV": 0.135675,
+      "yield_2016": 0.0583786,
+      "yield_2017": 0.189033,
+      "yield_2018": 0.230575,
+      "yield_run2": 0.613661,
+      "yield_450fb": 2.00659,
+      "yield_run2_from2018only": 0.530365,
+      "yield_450fb_from2018only": 1.73423
+    },
+    {
+      "mchi": 900,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 0.000305935,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00180616,
+        "run3": 0.00180616
+      },
+      "yield_2016APV": 0.140396,
+      "yield_2016": 0.056611,
+      "yield_2017": 0.187586,
+      "yield_2018": 0.229122,
+      "yield_run2": 0.613716,
+      "yield_450fb": 2.00677,
+      "yield_run2_from2018only": 0.527023,
+      "yield_450fb_from2018only": 1.7233
+    },
+    {
+      "mchi": 900,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 0.000305935,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00180616,
+        "run3": 0.00180616
+      },
+      "yield_2016APV": 0.125754,
+      "yield_2016": 0.0584042,
+      "yield_2017": 0.163844,
+      "yield_2018": 0.231847,
+      "yield_run2": 0.579849,
+      "yield_450fb": 1.89603,
+      "yield_run2_from2018only": 0.53329,
+      "yield_450fb_from2018only": 1.74379
+    },
+    {
+      "mchi": 900,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 0.000305935,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00180616,
+        "run3": 0.00180616
+      },
+      "yield_2016APV": 0.130523,
+      "yield_2016": 0.048308,
+      "yield_2017": 0.144992,
+      "yield_2018": 0.216677,
+      "yield_run2": 0.5405,
+      "yield_450fb": 1.76737,
+      "yield_run2_from2018only": 0.498398,
+      "yield_450fb_from2018only": 1.6297
+    },
+    {
+      "mchi": 900,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 0.000305935,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00180616,
+        "run3": 0.00180616
+      },
+      "yield_2016APV": 0.148561,
+      "yield_2016": 0.0562852,
+      "yield_2017": 0.16044,
+      "yield_2018": 0.224508,
+      "yield_run2": 0.589794,
+      "yield_450fb": 1.92855,
+      "yield_run2_from2018only": 0.516409,
+      "yield_450fb_from2018only": 1.68859
+    },
+    {
+      "mchi": 900,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 0.000305935,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00180616,
+        "run3": 0.00180616
+      },
+      "yield_2016APV": 0.113135,
+      "yield_2016": 0.0487512,
+      "yield_2017": 0.155711,
+      "yield_2018": 0.220909,
+      "yield_run2": 0.538506,
+      "yield_450fb": 1.76085,
+      "yield_run2_from2018only": 0.508131,
+      "yield_450fb_from2018only": 1.66152
+    },
+    {
+      "mchi": 900,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 0.000305935,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00180616,
+        "run3": 0.00180616
+      },
+      "yield_2016APV": 0.101739,
+      "yield_2016": 0.0453915,
+      "yield_2017": 0.133705,
+      "yield_2018": 0.169734,
+      "yield_run2": 0.450569,
+      "yield_450fb": 1.4733,
+      "yield_run2_from2018only": 0.390419,
+      "yield_450fb_from2018only": 1.27662
+    },
+    {
+      "mchi": 950,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.00022285,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00132692,
+        "run3": 0.00132692
+      },
+      "yield_2016APV": 0.0916278,
+      "yield_2016": 0.0379775,
+      "yield_2017": 0.103378,
+      "yield_2018": 0.147292,
+      "yield_run2": 0.380275,
+      "yield_450fb": 1.24345,
+      "yield_run2_from2018only": 0.338799,
+      "yield_450fb_from2018only": 1.10783
+    },
+    {
+      "mchi": 950,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.00022285,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00132692,
+        "run3": 0.00132692
+      },
+      "yield_2016APV": 0.095189,
+      "yield_2016": 0.0385889,
+      "yield_2017": 0.102159,
+      "yield_2018": 0.143428,
+      "yield_run2": 0.379364,
+      "yield_450fb": 1.24047,
+      "yield_run2_from2018only": 0.32991,
+      "yield_450fb_from2018only": 1.07876
+    },
+    {
+      "mchi": 950,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.00022285,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00132692,
+        "run3": 0.00132692
+      },
+      "yield_2016APV": 0.120634,
+      "yield_2016": 0.0387074,
+      "yield_2017": 0.124938,
+      "yield_2018": 0.160654,
+      "yield_run2": 0.444933,
+      "yield_450fb": 1.45487,
+      "yield_run2_from2018only": 0.369534,
+      "yield_450fb_from2018only": 1.20833
+    },
+    {
+      "mchi": 950,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.00022285,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00132692,
+        "run3": 0.00132692
+      },
+      "yield_2016APV": 0.0828889,
+      "yield_2016": 0.0362147,
+      "yield_2017": 0.117522,
+      "yield_2018": 0.157492,
+      "yield_run2": 0.394118,
+      "yield_450fb": 1.28872,
+      "yield_run2_from2018only": 0.362261,
+      "yield_450fb_from2018only": 1.18455
+    },
+    {
+      "mchi": 950,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.00022285,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00132692,
+        "run3": 0.00132692
+      },
+      "yield_2016APV": 0.107165,
+      "yield_2016": 0.0383812,
+      "yield_2017": 0.118598,
+      "yield_2018": 0.155772,
+      "yield_run2": 0.419915,
+      "yield_450fb": 1.37307,
+      "yield_run2_from2018only": 0.358303,
+      "yield_450fb_from2018only": 1.17161
+    },
+    {
+      "mchi": 950,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.00022285,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00132692,
+        "run3": 0.00132692
+      },
+      "yield_2016APV": 0.103295,
+      "yield_2016": 0.0379237,
+      "yield_2017": 0.110111,
+      "yield_2018": 0.164835,
+      "yield_run2": 0.416165,
+      "yield_450fb": 1.36081,
+      "yield_run2_from2018only": 0.37915,
+      "yield_450fb_from2018only": 1.23977
+    },
+    {
+      "mchi": 950,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.00022285,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00132692,
+        "run3": 0.00132692
+      },
+      "yield_2016APV": 0.102249,
+      "yield_2016": 0.0372254,
+      "yield_2017": 0.111333,
+      "yield_2018": 0.157397,
+      "yield_run2": 0.408204,
+      "yield_450fb": 1.33478,
+      "yield_run2_from2018only": 0.362041,
+      "yield_450fb_from2018only": 1.18383
+    },
+    {
+      "mchi": 950,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 0.00022285,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00132692,
+        "run3": 0.00132692
+      },
+      "yield_2016APV": 0.114411,
+      "yield_2016": 0.0412129,
+      "yield_2017": 0.119339,
+      "yield_2018": 0.170477,
+      "yield_run2": 0.44544,
+      "yield_450fb": 1.45653,
+      "yield_run2_from2018only": 0.392128,
+      "yield_450fb_from2018only": 1.28221
+    },
+    {
+      "mchi": 950,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 0.00022285,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00132692,
+        "run3": 0.00132692
+      },
+      "yield_2016APV": 0.116616,
+      "yield_2016": 0.0450732,
+      "yield_2017": 0.128633,
+      "yield_2018": 0.168867,
+      "yield_run2": 0.45919,
+      "yield_450fb": 1.50149,
+      "yield_run2_from2018only": 0.388426,
+      "yield_450fb_from2018only": 1.2701
+    },
+    {
+      "mchi": 950,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 0.00022285,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00132692,
+        "run3": 0.00132692
+      },
+      "yield_2016APV": 0.116973,
+      "yield_2016": 0.0443672,
+      "yield_2017": 0.154274,
+      "yield_2018": 0.160101,
+      "yield_run2": 0.475716,
+      "yield_450fb": 1.55553,
+      "yield_run2_from2018only": 0.368263,
+      "yield_450fb_from2018only": 1.20417
+    },
+    {
+      "mchi": 950,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 0.00022285,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00132692,
+        "run3": 0.00132692
+      },
+      "yield_2016APV": 0.105627,
+      "yield_2016": 0.0455725,
+      "yield_2017": 0.131321,
+      "yield_2018": 0.170193,
+      "yield_run2": 0.452713,
+      "yield_450fb": 1.48031,
+      "yield_run2_from2018only": 0.391474,
+      "yield_450fb_from2018only": 1.28007
+    },
+    {
+      "mchi": 950,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 0.00022285,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00132692,
+        "run3": 0.00132692
+      },
+      "yield_2016APV": 0.0875049,
+      "yield_2016": 0.0391558,
+      "yield_2017": 0.117094,
+      "yield_2018": 0.170917,
+      "yield_run2": 0.414672,
+      "yield_450fb": 1.35593,
+      "yield_run2_from2018only": 0.39314,
+      "yield_450fb_from2018only": 1.28552
+    },
+    {
+      "mchi": 950,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 0.00022285,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.00132692,
+        "run3": 0.00132692
+      },
+      "yield_2016APV": 0.0778302,
+      "yield_2016": 0.0406422,
+      "yield_2017": 0.0971537,
+      "yield_2018": 0.159036,
+      "yield_run2": 0.374662,
+      "yield_450fb": 1.2251,
+      "yield_run2_from2018only": 0.365813,
+      "yield_450fb_from2018only": 1.19616
+    },
+    {
+      "mchi": 1000,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.00016428,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000968853,
+        "run3": 0.000968853
+      },
+      "yield_2016APV": 0.071464,
+      "yield_2016": 0.0238581,
+      "yield_2017": 0.0745852,
+      "yield_2018": 0.0984212,
+      "yield_run2": 0.268328,
+      "yield_450fb": 0.877399,
+      "yield_run2_from2018only": 0.226387,
+      "yield_450fb_from2018only": 0.740256
+    },
+    {
+      "mchi": 1000,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.00016428,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000968853,
+        "run3": 0.000968853
+      },
+      "yield_2016APV": 0.0672147,
+      "yield_2016": 0.0285046,
+      "yield_2017": 0.0793735,
+      "yield_2018": 0.0974545,
+      "yield_run2": 0.272547,
+      "yield_450fb": 0.891194,
+      "yield_run2_from2018only": 0.224163,
+      "yield_450fb_from2018only": 0.732986
+    },
+    {
+      "mchi": 1000,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.00016428,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000968853,
+        "run3": 0.000968853
+      },
+      "yield_2016APV": 0.0652821,
+      "yield_2016": 0.0223188,
+      "yield_2017": 0.0671858,
+      "yield_2018": 0.0996374,
+      "yield_run2": 0.254424,
+      "yield_450fb": 0.831934,
+      "yield_run2_from2018only": 0.229184,
+      "yield_450fb_from2018only": 0.749403
+    },
+    {
+      "mchi": 1000,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.00016428,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000968853,
+        "run3": 0.000968853
+      },
+      "yield_2016APV": 0.0679072,
+      "yield_2016": 0.0255684,
+      "yield_2017": 0.0736613,
+      "yield_2018": 0.109515,
+      "yield_run2": 0.276651,
+      "yield_450fb": 0.904614,
+      "yield_run2_from2018only": 0.251904,
+      "yield_450fb_from2018only": 0.823693
+    },
+    {
+      "mchi": 1000,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.00016428,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000968853,
+        "run3": 0.000968853
+      },
+      "yield_2016APV": 0.0739515,
+      "yield_2016": 0.0267877,
+      "yield_2017": 0.0865203,
+      "yield_2018": 0.115838,
+      "yield_run2": 0.303097,
+      "yield_450fb": 0.991089,
+      "yield_run2_from2018only": 0.266449,
+      "yield_450fb_from2018only": 0.871253
+    },
+    {
+      "mchi": 1000,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.00016428,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000968853,
+        "run3": 0.000968853
+      },
+      "yield_2016APV": 0.0593833,
+      "yield_2016": 0.0275427,
+      "yield_2017": 0.0824695,
+      "yield_2018": 0.115587,
+      "yield_run2": 0.284983,
+      "yield_450fb": 0.931858,
+      "yield_run2_from2018only": 0.265872,
+      "yield_450fb_from2018only": 0.869368
+    },
+    {
+      "mchi": 1000,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.00016428,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000968853,
+        "run3": 0.000968853
+      },
+      "yield_2016APV": 0.0789215,
+      "yield_2016": 0.0256746,
+      "yield_2017": 0.083648,
+      "yield_2018": 0.112629,
+      "yield_run2": 0.300873,
+      "yield_450fb": 0.983817,
+      "yield_run2_from2018only": 0.259067,
+      "yield_450fb_from2018only": 0.847116
+    },
+    {
+      "mchi": 1000,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 0.00016428,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000968853,
+        "run3": 0.000968853
+      },
+      "yield_2016APV": 0.0704296,
+      "yield_2016": 0.0265299,
+      "yield_2017": 0.071501,
+      "yield_2018": 0.122497,
+      "yield_run2": 0.290958,
+      "yield_450fb": 0.951396,
+      "yield_run2_from2018only": 0.281766,
+      "yield_450fb_from2018only": 0.921339
+    },
+    {
+      "mchi": 1000,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 0.00016428,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000968853,
+        "run3": 0.000968853
+      },
+      "yield_2016APV": 0.0803393,
+      "yield_2016": 0.0304417,
+      "yield_2017": 0.0801034,
+      "yield_2018": 0.106315,
+      "yield_run2": 0.2972,
+      "yield_450fb": 0.971806,
+      "yield_run2_from2018only": 0.244545,
+      "yield_450fb_from2018only": 0.79963
+    },
+    {
+      "mchi": 1000,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 0.00016428,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000968853,
+        "run3": 0.000968853
+      },
+      "yield_2016APV": 0.0651876,
+      "yield_2016": 0.030716,
+      "yield_2017": 0.0891578,
+      "yield_2018": 0.123997,
+      "yield_run2": 0.309058,
+      "yield_450fb": 1.01058,
+      "yield_run2_from2018only": 0.285215,
+      "yield_450fb_from2018only": 0.932616
+    },
+    {
+      "mchi": 1000,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 0.00016428,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000968853,
+        "run3": 0.000968853
+      },
+      "yield_2016APV": 0.0791756,
+      "yield_2016": 0.0331592,
+      "yield_2017": 0.0837661,
+      "yield_2018": 0.125248,
+      "yield_run2": 0.321349,
+      "yield_450fb": 1.05077,
+      "yield_run2_from2018only": 0.288095,
+      "yield_450fb_from2018only": 0.942033
+    },
+    {
+      "mchi": 1000,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 0.00016428,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000968853,
+        "run3": 0.000968853
+      },
+      "yield_2016APV": 0.072075,
+      "yield_2016": 0.0318958,
+      "yield_2017": 0.0807766,
+      "yield_2018": 0.133964,
+      "yield_run2": 0.318711,
+      "yield_450fb": 1.04214,
+      "yield_run2_from2018only": 0.308141,
+      "yield_450fb_from2018only": 1.00758
+    },
+    {
+      "mchi": 1000,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 0.00016428,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000968853,
+        "run3": 0.000968853
+      },
+      "yield_2016APV": 0.0644047,
+      "yield_2016": 0.0263037,
+      "yield_2017": 0.0770533,
+      "yield_2018": 0.123712,
+      "yield_run2": 0.291474,
+      "yield_450fb": 0.953083,
+      "yield_run2_from2018only": 0.284561,
+      "yield_450fb_from2018only": 0.930477
+    },
+    {
+      "mchi": 1050,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.000121865,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000731306,
+        "run3": 0.000731306
+      },
+      "yield_2016APV": 0.0540833,
+      "yield_2016": 0.0174412,
+      "yield_2017": 0.0589061,
+      "yield_2018": 0.0775668,
+      "yield_run2": 0.207997,
+      "yield_450fb": 0.680124,
+      "yield_run2_from2018only": 0.178418,
+      "yield_450fb_from2018only": 0.583404
+    },
+    {
+      "mchi": 1050,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.000121865,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000731306,
+        "run3": 0.000731306
+      },
+      "yield_2016APV": 0.0480338,
+      "yield_2016": 0.0199154,
+      "yield_2017": 0.0566349,
+      "yield_2018": 0.07402,
+      "yield_run2": 0.198604,
+      "yield_450fb": 0.64941,
+      "yield_run2_from2018only": 0.17026,
+      "yield_450fb_from2018only": 0.556727
+    },
+    {
+      "mchi": 1050,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.000121865,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000731306,
+        "run3": 0.000731306
+      },
+      "yield_2016APV": 0.0518745,
+      "yield_2016": 0.0189084,
+      "yield_2017": 0.0563912,
+      "yield_2018": 0.0771037,
+      "yield_run2": 0.204278,
+      "yield_450fb": 0.667963,
+      "yield_run2_from2018only": 0.177353,
+      "yield_450fb_from2018only": 0.579921
+    },
+    {
+      "mchi": 1050,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.000121865,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000731306,
+        "run3": 0.000731306
+      },
+      "yield_2016APV": 0.0502266,
+      "yield_2016": 0.0199679,
+      "yield_2017": 0.0572295,
+      "yield_2018": 0.073939,
+      "yield_run2": 0.201363,
+      "yield_450fb": 0.658432,
+      "yield_run2_from2018only": 0.170073,
+      "yield_450fb_from2018only": 0.556118
+    },
+    {
+      "mchi": 1050,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.000121865,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000731306,
+        "run3": 0.000731306
+      },
+      "yield_2016APV": 0.0547376,
+      "yield_2016": 0.022581,
+      "yield_2017": 0.0638482,
+      "yield_2018": 0.0769834,
+      "yield_run2": 0.21815,
+      "yield_450fb": 0.713323,
+      "yield_run2_from2018only": 0.177076,
+      "yield_450fb_from2018only": 0.579016
+    },
+    {
+      "mchi": 1050,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.000121865,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000731306,
+        "run3": 0.000731306
+      },
+      "yield_2016APV": 0.0461928,
+      "yield_2016": 0.0205747,
+      "yield_2017": 0.056721,
+      "yield_2018": 0.079164,
+      "yield_run2": 0.202653,
+      "yield_450fb": 0.66265,
+      "yield_run2_from2018only": 0.182092,
+      "yield_450fb_from2018only": 0.595417
+    },
+    {
+      "mchi": 1050,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.000121865,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000731306,
+        "run3": 0.000731306
+      },
+      "yield_2016APV": 0.0441273,
+      "yield_2016": 0.0175433,
+      "yield_2017": 0.0504811,
+      "yield_2018": 0.0755322,
+      "yield_run2": 0.187684,
+      "yield_450fb": 0.613703,
+      "yield_run2_from2018only": 0.173738,
+      "yield_450fb_from2018only": 0.568101
+    },
+    {
+      "mchi": 1050,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 0.000121865,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000731306,
+        "run3": 0.000731306
+      },
+      "yield_2016APV": 0.0551379,
+      "yield_2016": 0.0177253,
+      "yield_2017": 0.058546,
+      "yield_2018": 0.0892649,
+      "yield_run2": 0.220674,
+      "yield_450fb": 0.721576,
+      "yield_run2_from2018only": 0.205326,
+      "yield_450fb_from2018only": 0.671389
+    },
+    {
+      "mchi": 1050,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 0.000121865,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000731306,
+        "run3": 0.000731306
+      },
+      "yield_2016APV": 0.0576939,
+      "yield_2016": 0.0222722,
+      "yield_2017": 0.0589467,
+      "yield_2018": 0.0842182,
+      "yield_run2": 0.223131,
+      "yield_450fb": 0.72961,
+      "yield_run2_from2018only": 0.193717,
+      "yield_450fb_from2018only": 0.633431
+    },
+    {
+      "mchi": 1050,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 0.000121865,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000731306,
+        "run3": 0.000731306
+      },
+      "yield_2016APV": 0.0646165,
+      "yield_2016": 0.0256011,
+      "yield_2017": 0.0749807,
+      "yield_2018": 0.0872263,
+      "yield_run2": 0.252425,
+      "yield_450fb": 0.825398,
+      "yield_run2_from2018only": 0.200636,
+      "yield_450fb_from2018only": 0.656056
+    },
+    {
+      "mchi": 1050,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 0.000121865,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000731306,
+        "run3": 0.000731306
+      },
+      "yield_2016APV": 0.0673403,
+      "yield_2016": 0.0239847,
+      "yield_2017": 0.0648007,
+      "yield_2018": 0.086938,
+      "yield_run2": 0.243064,
+      "yield_450fb": 0.794789,
+      "yield_run2_from2018only": 0.199973,
+      "yield_450fb_from2018only": 0.653888
+    },
+    {
+      "mchi": 1050,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 0.000121865,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000731306,
+        "run3": 0.000731306
+      },
+      "yield_2016APV": 0.0555101,
+      "yield_2016": 0.0211439,
+      "yield_2017": 0.0780182,
+      "yield_2018": 0.0930171,
+      "yield_run2": 0.247689,
+      "yield_450fb": 0.809912,
+      "yield_run2_from2018only": 0.213957,
+      "yield_450fb_from2018only": 0.699611
+    },
+    {
+      "mchi": 1050,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 0.000121865,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000731306,
+        "run3": 0.000731306
+      },
+      "yield_2016APV": 0.0595914,
+      "yield_2016": 0.0266773,
+      "yield_2017": 0.0721097,
+      "yield_2018": 0.0851647,
+      "yield_run2": 0.243543,
+      "yield_450fb": 0.796355,
+      "yield_run2_from2018only": 0.195895,
+      "yield_450fb_from2018only": 0.64055
+    },
+    {
+      "mchi": 1100,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 9.12469e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000538005,
+        "run3": 0.000538005
+      },
+      "yield_2016APV": 0.0349996,
+      "yield_2016": 0.0133586,
+      "yield_2017": 0.0353853,
+      "yield_2018": 0.0532545,
+      "yield_run2": 0.136998,
+      "yield_450fb": 0.447966,
+      "yield_run2_from2018only": 0.122495,
+      "yield_450fb_from2018only": 0.400544
+    },
+    {
+      "mchi": 1100,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 9.12469e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000538005,
+        "run3": 0.000538005
+      },
+      "yield_2016APV": 0.0377639,
+      "yield_2016": 0.0140491,
+      "yield_2017": 0.0425462,
+      "yield_2018": 0.051687,
+      "yield_run2": 0.146046,
+      "yield_450fb": 0.477552,
+      "yield_run2_from2018only": 0.11889,
+      "yield_450fb_from2018only": 0.388754
+    },
+    {
+      "mchi": 1100,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 9.12469e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000538005,
+        "run3": 0.000538005
+      },
+      "yield_2016APV": 0.0366173,
+      "yield_2016": 0.0154774,
+      "yield_2017": 0.0411104,
+      "yield_2018": 0.052579,
+      "yield_run2": 0.145784,
+      "yield_450fb": 0.476695,
+      "yield_run2_from2018only": 0.120941,
+      "yield_450fb_from2018only": 0.395463
+    },
+    {
+      "mchi": 1100,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 9.12469e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000538005,
+        "run3": 0.000538005
+      },
+      "yield_2016APV": 0.0363926,
+      "yield_2016": 0.0138771,
+      "yield_2017": 0.0418793,
+      "yield_2018": 0.0481674,
+      "yield_run2": 0.140316,
+      "yield_450fb": 0.458816,
+      "yield_run2_from2018only": 0.110794,
+      "yield_450fb_from2018only": 0.362282
+    },
+    {
+      "mchi": 1100,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 9.12469e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000538005,
+        "run3": 0.000538005
+      },
+      "yield_2016APV": 0.0386693,
+      "yield_2016": 0.014164,
+      "yield_2017": 0.0382656,
+      "yield_2018": 0.0567874,
+      "yield_run2": 0.147886,
+      "yield_450fb": 0.483569,
+      "yield_run2_from2018only": 0.130621,
+      "yield_450fb_from2018only": 0.427116
+    },
+    {
+      "mchi": 1100,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 9.12469e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000538005,
+        "run3": 0.000538005
+      },
+      "yield_2016APV": 0.0376469,
+      "yield_2016": 0.0135047,
+      "yield_2017": 0.0359723,
+      "yield_2018": 0.0558647,
+      "yield_run2": 0.142989,
+      "yield_450fb": 0.467556,
+      "yield_run2_from2018only": 0.128499,
+      "yield_450fb_from2018only": 0.420176
+    },
+    {
+      "mchi": 1100,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 9.12469e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000538005,
+        "run3": 0.000538005
+      },
+      "yield_2016APV": 0.045788,
+      "yield_2016": 0.0150105,
+      "yield_2017": 0.0401314,
+      "yield_2018": 0.0575207,
+      "yield_run2": 0.158451,
+      "yield_450fb": 0.518115,
+      "yield_run2_from2018only": 0.132308,
+      "yield_450fb_from2018only": 0.432631
+    },
+    {
+      "mchi": 1100,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 9.12469e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000538005,
+        "run3": 0.000538005
+      },
+      "yield_2016APV": 0.037228,
+      "yield_2016": 0.0155848,
+      "yield_2017": 0.0380063,
+      "yield_2018": 0.0603422,
+      "yield_run2": 0.151161,
+      "yield_450fb": 0.494277,
+      "yield_run2_from2018only": 0.138798,
+      "yield_450fb_from2018only": 0.453852
+    },
+    {
+      "mchi": 1100,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 9.12469e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000538005,
+        "run3": 0.000538005
+      },
+      "yield_2016APV": 0.0407453,
+      "yield_2016": 0.014696,
+      "yield_2017": 0.0482966,
+      "yield_2018": 0.0608261,
+      "yield_run2": 0.164564,
+      "yield_450fb": 0.538103,
+      "yield_run2_from2018only": 0.139911,
+      "yield_450fb_from2018only": 0.457492
+    },
+    {
+      "mchi": 1100,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 9.12469e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000538005,
+        "run3": 0.000538005
+      },
+      "yield_2016APV": 0.0469511,
+      "yield_2016": 0.0162547,
+      "yield_2017": 0.053618,
+      "yield_2018": 0.0662284,
+      "yield_run2": 0.183052,
+      "yield_450fb": 0.598557,
+      "yield_run2_from2018only": 0.152337,
+      "yield_450fb_from2018only": 0.498124
+    },
+    {
+      "mchi": 1100,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 9.12469e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000538005,
+        "run3": 0.000538005
+      },
+      "yield_2016APV": 0.0407176,
+      "yield_2016": 0.01549,
+      "yield_2017": 0.0449046,
+      "yield_2018": 0.0671382,
+      "yield_run2": 0.16825,
+      "yield_450fb": 0.550156,
+      "yield_run2_from2018only": 0.15443,
+      "yield_450fb_from2018only": 0.504967
+    },
+    {
+      "mchi": 1100,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 9.12469e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000538005,
+        "run3": 0.000538005
+      },
+      "yield_2016APV": 0.0449279,
+      "yield_2016": 0.0176211,
+      "yield_2017": 0.0586219,
+      "yield_2018": 0.0709289,
+      "yield_run2": 0.1921,
+      "yield_450fb": 0.628143,
+      "yield_run2_from2018only": 0.163149,
+      "yield_450fb_from2018only": 0.533478
+    },
+    {
+      "mchi": 1100,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 9.12469e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000538005,
+        "run3": 0.000538005
+      },
+      "yield_2016APV": 0.0465732,
+      "yield_2016": 0.0181744,
+      "yield_2017": 0.0547084,
+      "yield_2018": 0.0673955,
+      "yield_run2": 0.186852,
+      "yield_450fb": 0.610982,
+      "yield_run2_from2018only": 0.155022,
+      "yield_450fb_from2018only": 0.506903
+    },
+    {
+      "mchi": 1150,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 6.84561e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000405108,
+        "run3": 0.000405108
+      },
+      "yield_2016APV": 0.024343,
+      "yield_2016": 0.00838536,
+      "yield_2017": 0.0271159,
+      "yield_2018": 0.0380886,
+      "yield_run2": 0.0979329,
+      "yield_450fb": 0.320228,
+      "yield_run2_from2018only": 0.0876108,
+      "yield_450fb_from2018only": 0.286476
+    },
+    {
+      "mchi": 1150,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 6.84561e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000405108,
+        "run3": 0.000405108
+      },
+      "yield_2016APV": 0.0271089,
+      "yield_2016": 0.0107581,
+      "yield_2017": 0.0261441,
+      "yield_2018": 0.0352603,
+      "yield_run2": 0.0992714,
+      "yield_450fb": 0.324605,
+      "yield_run2_from2018only": 0.0811051,
+      "yield_450fb_from2018only": 0.265204
+    },
+    {
+      "mchi": 1150,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 6.84561e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000405108,
+        "run3": 0.000405108
+      },
+      "yield_2016APV": 0.0266165,
+      "yield_2016": 0.00862386,
+      "yield_2017": 0.0266647,
+      "yield_2018": 0.0373422,
+      "yield_run2": 0.0992473,
+      "yield_450fb": 0.324526,
+      "yield_run2_from2018only": 0.085894,
+      "yield_450fb_from2018only": 0.280863
+    },
+    {
+      "mchi": 1150,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 6.84561e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000405108,
+        "run3": 0.000405108
+      },
+      "yield_2016APV": 0.0248563,
+      "yield_2016": 0.0091938,
+      "yield_2017": 0.024981,
+      "yield_2018": 0.0393419,
+      "yield_run2": 0.098373,
+      "yield_450fb": 0.321667,
+      "yield_run2_from2018only": 0.0904937,
+      "yield_450fb_from2018only": 0.295903
+    },
+    {
+      "mchi": 1150,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 6.84561e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000405108,
+        "run3": 0.000405108
+      },
+      "yield_2016APV": 0.0295914,
+      "yield_2016": 0.00996109,
+      "yield_2017": 0.0277678,
+      "yield_2018": 0.0396519,
+      "yield_run2": 0.106972,
+      "yield_450fb": 0.349785,
+      "yield_run2_from2018only": 0.0912066,
+      "yield_450fb_from2018only": 0.298234
+    },
+    {
+      "mchi": 1150,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 6.84561e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000405108,
+        "run3": 0.000405108
+      },
+      "yield_2016APV": 0.0280048,
+      "yield_2016": 0.00904803,
+      "yield_2017": 0.0272094,
+      "yield_2018": 0.038223,
+      "yield_run2": 0.102485,
+      "yield_450fb": 0.335113,
+      "yield_run2_from2018only": 0.08792,
+      "yield_450fb_from2018only": 0.287487
+    },
+    {
+      "mchi": 1150,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 6.84561e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000405108,
+        "run3": 0.000405108
+      },
+      "yield_2016APV": 0.0291174,
+      "yield_2016": 0.0102227,
+      "yield_2017": 0.0303078,
+      "yield_2018": 0.0392094,
+      "yield_run2": 0.108857,
+      "yield_450fb": 0.355949,
+      "yield_run2_from2018only": 0.0901888,
+      "yield_450fb_from2018only": 0.294906
+    },
+    {
+      "mchi": 1150,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 6.84561e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000405108,
+        "run3": 0.000405108
+      },
+      "yield_2016APV": 0.0245186,
+      "yield_2016": 0.0084768,
+      "yield_2017": 0.0256884,
+      "yield_2018": 0.0413469,
+      "yield_run2": 0.100031,
+      "yield_450fb": 0.327089,
+      "yield_run2_from2018only": 0.0951054,
+      "yield_450fb_from2018only": 0.310983
+    },
+    {
+      "mchi": 1150,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 6.84561e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000405108,
+        "run3": 0.000405108
+      },
+      "yield_2016APV": 0.0369953,
+      "yield_2016": 0.0117076,
+      "yield_2017": 0.0345531,
+      "yield_2018": 0.0466162,
+      "yield_run2": 0.129872,
+      "yield_450fb": 0.424665,
+      "yield_run2_from2018only": 0.107226,
+      "yield_450fb_from2018only": 0.350615
+    },
+    {
+      "mchi": 1150,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 6.84561e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000405108,
+        "run3": 0.000405108
+      },
+      "yield_2016APV": 0.0299796,
+      "yield_2016": 0.0115812,
+      "yield_2017": 0.0329309,
+      "yield_2018": 0.046069,
+      "yield_run2": 0.120561,
+      "yield_450fb": 0.394219,
+      "yield_run2_from2018only": 0.105967,
+      "yield_450fb_from2018only": 0.346499
+    },
+    {
+      "mchi": 1150,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 6.84561e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000405108,
+        "run3": 0.000405108
+      },
+      "yield_2016APV": 0.0318477,
+      "yield_2016": 0.0119317,
+      "yield_2017": 0.0337008,
+      "yield_2018": 0.0497983,
+      "yield_run2": 0.127279,
+      "yield_450fb": 0.416186,
+      "yield_run2_from2018only": 0.114545,
+      "yield_450fb_from2018only": 0.374548
+    },
+    {
+      "mchi": 1150,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 6.84561e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000405108,
+        "run3": 0.000405108
+      },
+      "yield_2016APV": 0.0308521,
+      "yield_2016": 0.0134145,
+      "yield_2017": 0.0340643,
+      "yield_2018": 0.049886,
+      "yield_run2": 0.128217,
+      "yield_450fb": 0.419253,
+      "yield_run2_from2018only": 0.114747,
+      "yield_450fb_from2018only": 0.375208
+    },
+    {
+      "mchi": 1150,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 6.84561e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000405108,
+        "run3": 0.000405108
+      },
+      "yield_2016APV": 0.0294421,
+      "yield_2016": 0.0102305,
+      "yield_2017": 0.0361042,
+      "yield_2018": 0.0531281,
+      "yield_run2": 0.128905,
+      "yield_450fb": 0.421503,
+      "yield_run2_from2018only": 0.122204,
+      "yield_450fb_from2018only": 0.399593
+    },
+    {
+      "mchi": 1200,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 5.16263e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000299347,
+        "run3": 0.000299347
+      },
+      "yield_2016APV": 0.0188082,
+      "yield_2016": 0.00646752,
+      "yield_2017": 0.0193043,
+      "yield_2018": 0.0242756,
+      "yield_run2": 0.0688556,
+      "yield_450fb": 0.225149,
+      "yield_run2_from2018only": 0.0558384,
+      "yield_450fb_from2018only": 0.182585
+    },
+    {
+      "mchi": 1200,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 5.16263e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000299347,
+        "run3": 0.000299347
+      },
+      "yield_2016APV": 0.0190275,
+      "yield_2016": 0.00640323,
+      "yield_2017": 0.0192354,
+      "yield_2018": 0.0254327,
+      "yield_run2": 0.0700988,
+      "yield_450fb": 0.229214,
+      "yield_run2_from2018only": 0.0584998,
+      "yield_450fb_from2018only": 0.191287
+    },
+    {
+      "mchi": 1200,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 5.16263e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000299347,
+        "run3": 0.000299347
+      },
+      "yield_2016APV": 0.0176174,
+      "yield_2016": 0.00675564,
+      "yield_2017": 0.0215793,
+      "yield_2018": 0.0255219,
+      "yield_run2": 0.0714743,
+      "yield_450fb": 0.233712,
+      "yield_run2_from2018only": 0.0587051,
+      "yield_450fb_from2018only": 0.191958
+    },
+    {
+      "mchi": 1200,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 5.16263e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000299347,
+        "run3": 0.000299347
+      },
+      "yield_2016APV": 0.0202352,
+      "yield_2016": 0.00747456,
+      "yield_2017": 0.021027,
+      "yield_2018": 0.025449,
+      "yield_run2": 0.0741857,
+      "yield_450fb": 0.242578,
+      "yield_run2_from2018only": 0.0585374,
+      "yield_450fb_from2018only": 0.19141
+    },
+    {
+      "mchi": 1200,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 5.16263e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000299347,
+        "run3": 0.000299347
+      },
+      "yield_2016APV": 0.0191631,
+      "yield_2016": 0.0069209,
+      "yield_2017": 0.0205479,
+      "yield_2018": 0.0267428,
+      "yield_run2": 0.0733746,
+      "yield_450fb": 0.239926,
+      "yield_run2_from2018only": 0.0615133,
+      "yield_450fb_from2018only": 0.201141
+    },
+    {
+      "mchi": 1200,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 5.16263e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000299347,
+        "run3": 0.000299347
+      },
+      "yield_2016APV": 0.020092,
+      "yield_2016": 0.00644605,
+      "yield_2017": 0.0209961,
+      "yield_2018": 0.0277728,
+      "yield_run2": 0.0753069,
+      "yield_450fb": 0.246244,
+      "yield_run2_from2018only": 0.0638825,
+      "yield_450fb_from2018only": 0.208888
+    },
+    {
+      "mchi": 1200,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 5.16263e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000299347,
+        "run3": 0.000299347
+      },
+      "yield_2016APV": 0.0206729,
+      "yield_2016": 0.00837106,
+      "yield_2017": 0.0227077,
+      "yield_2018": 0.0266311,
+      "yield_run2": 0.0783828,
+      "yield_450fb": 0.256302,
+      "yield_run2_from2018only": 0.0612565,
+      "yield_450fb_from2018only": 0.200301
+    },
+    {
+      "mchi": 1200,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 5.16263e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000299347,
+        "run3": 0.000299347
+      },
+      "yield_2016APV": 0.0206567,
+      "yield_2016": 0.00728485,
+      "yield_2017": 0.0242418,
+      "yield_2018": 0.0304224,
+      "yield_run2": 0.0826058,
+      "yield_450fb": 0.270111,
+      "yield_run2_from2018only": 0.0699771,
+      "yield_450fb_from2018only": 0.228816
+    },
+    {
+      "mchi": 1200,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 5.16263e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000299347,
+        "run3": 0.000299347
+      },
+      "yield_2016APV": 0.0212416,
+      "yield_2016": 0.00850336,
+      "yield_2017": 0.0207098,
+      "yield_2018": 0.0318399,
+      "yield_run2": 0.0822946,
+      "yield_450fb": 0.269093,
+      "yield_run2_from2018only": 0.0732376,
+      "yield_450fb_from2018only": 0.239478
+    },
+    {
+      "mchi": 1200,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 5.16263e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000299347,
+        "run3": 0.000299347
+      },
+      "yield_2016APV": 0.0205067,
+      "yield_2016": 0.00725671,
+      "yield_2017": 0.0215066,
+      "yield_2018": 0.032285,
+      "yield_run2": 0.081555,
+      "yield_450fb": 0.266675,
+      "yield_run2_from2018only": 0.0742615,
+      "yield_450fb_from2018only": 0.242826
+    },
+    {
+      "mchi": 1200,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 5.16263e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000299347,
+        "run3": 0.000299347
+      },
+      "yield_2016APV": 0.0229672,
+      "yield_2016": 0.00957804,
+      "yield_2017": 0.0284872,
+      "yield_2018": 0.033083,
+      "yield_run2": 0.0941153,
+      "yield_450fb": 0.307745,
+      "yield_run2_from2018only": 0.0760969,
+      "yield_450fb_from2018only": 0.248827
+    },
+    {
+      "mchi": 1200,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 5.16263e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000299347,
+        "run3": 0.000299347
+      },
+      "yield_2016APV": 0.0212071,
+      "yield_2016": 0.00791674,
+      "yield_2017": 0.0265738,
+      "yield_2018": 0.0349311,
+      "yield_run2": 0.0906288,
+      "yield_450fb": 0.296345,
+      "yield_run2_from2018only": 0.080348,
+      "yield_450fb_from2018only": 0.262728
+    },
+    {
+      "mchi": 1200,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 5.16263e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000299347,
+        "run3": 0.000299347
+      },
+      "yield_2016APV": 0.0250514,
+      "yield_2016": 0.00983772,
+      "yield_2017": 0.0307821,
+      "yield_2018": 0.0347565,
+      "yield_run2": 0.100428,
+      "yield_450fb": 0.328387,
+      "yield_run2_from2018only": 0.0799463,
+      "yield_450fb_from2018only": 0.261414
+    },
+    {
+      "mchi": 1250,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 3.91587e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000240471,
+        "run3": 0.000240471
+      },
+      "yield_2016APV": 0.011832,
+      "yield_2016": 0.00409711,
+      "yield_2017": 0.0139122,
+      "yield_2018": 0.0189254,
+      "yield_run2": 0.0487667,
+      "yield_450fb": 0.159461,
+      "yield_run2_from2018only": 0.0435319,
+      "yield_450fb_from2018only": 0.142344
+    },
+    {
+      "mchi": 1250,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 3.91587e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000240471,
+        "run3": 0.000240471
+      },
+      "yield_2016APV": 0.0139884,
+      "yield_2016": 0.00459378,
+      "yield_2017": 0.0138126,
+      "yield_2018": 0.0193794,
+      "yield_run2": 0.0517743,
+      "yield_450fb": 0.169295,
+      "yield_run2_from2018only": 0.0445762,
+      "yield_450fb_from2018only": 0.145758
+    },
+    {
+      "mchi": 1250,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 3.91587e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000240471,
+        "run3": 0.000240471
+      },
+      "yield_2016APV": 0.0123677,
+      "yield_2016": 0.00497966,
+      "yield_2017": 0.0131778,
+      "yield_2018": 0.0197919,
+      "yield_run2": 0.0503171,
+      "yield_450fb": 0.164531,
+      "yield_run2_from2018only": 0.0455251,
+      "yield_450fb_from2018only": 0.148861
+    },
+    {
+      "mchi": 1250,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 3.91587e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000240471,
+        "run3": 0.000240471
+      },
+      "yield_2016APV": 0.0131298,
+      "yield_2016": 0.00493701,
+      "yield_2017": 0.013602,
+      "yield_2018": 0.019731,
+      "yield_run2": 0.0513999,
+      "yield_450fb": 0.168071,
+      "yield_run2_from2018only": 0.0453849,
+      "yield_450fb_from2018only": 0.148403
+    },
+    {
+      "mchi": 1250,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 3.91587e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000240471,
+        "run3": 0.000240471
+      },
+      "yield_2016APV": 0.0122911,
+      "yield_2016": 0.00415651,
+      "yield_2017": 0.0137569,
+      "yield_2018": 0.0189601,
+      "yield_run2": 0.0491647,
+      "yield_450fb": 0.160762,
+      "yield_run2_from2018only": 0.0436117,
+      "yield_450fb_from2018only": 0.142605
+    },
+    {
+      "mchi": 1250,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 3.91587e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000240471,
+        "run3": 0.000240471
+      },
+      "yield_2016APV": 0.0137704,
+      "yield_2016": 0.00442597,
+      "yield_2017": 0.0125343,
+      "yield_2018": 0.0217018,
+      "yield_run2": 0.0524324,
+      "yield_450fb": 0.171447,
+      "yield_run2_from2018only": 0.049918,
+      "yield_450fb_from2018only": 0.163226
+    },
+    {
+      "mchi": 1250,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 3.91587e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000240471,
+        "run3": 0.000240471
+      },
+      "yield_2016APV": 0.016712,
+      "yield_2016": 0.00460039,
+      "yield_2017": 0.0161448,
+      "yield_2018": 0.0218316,
+      "yield_run2": 0.0592888,
+      "yield_450fb": 0.193867,
+      "yield_run2_from2018only": 0.0502166,
+      "yield_450fb_from2018only": 0.164202
+    },
+    {
+      "mchi": 1250,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 3.91587e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000240471,
+        "run3": 0.000240471
+      },
+      "yield_2016APV": 0.0128415,
+      "yield_2016": 0.00553446,
+      "yield_2017": 0.0159791,
+      "yield_2018": 0.0219557,
+      "yield_run2": 0.0563108,
+      "yield_450fb": 0.184129,
+      "yield_run2_from2018only": 0.0505021,
+      "yield_450fb_from2018only": 0.165135
+    },
+    {
+      "mchi": 1250,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 3.91587e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000240471,
+        "run3": 0.000240471
+      },
+      "yield_2016APV": 0.0151322,
+      "yield_2016": 0.00526518,
+      "yield_2017": 0.0154908,
+      "yield_2018": 0.0232085,
+      "yield_run2": 0.0590966,
+      "yield_450fb": 0.193238,
+      "yield_run2_from2018only": 0.0533838,
+      "yield_450fb_from2018only": 0.174558
+    },
+    {
+      "mchi": 1250,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 3.91587e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000240471,
+        "run3": 0.000240471
+      },
+      "yield_2016APV": 0.0156297,
+      "yield_2016": 0.00562126,
+      "yield_2017": 0.0185459,
+      "yield_2018": 0.0247496,
+      "yield_run2": 0.0645464,
+      "yield_450fb": 0.211059,
+      "yield_run2_from2018only": 0.0569285,
+      "yield_450fb_from2018only": 0.186149
+    },
+    {
+      "mchi": 1250,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 3.91587e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000240471,
+        "run3": 0.000240471
+      },
+      "yield_2016APV": 0.0232785,
+      "yield_2016": 0.00733895,
+      "yield_2017": 0.0211229,
+      "yield_2018": 0.0246035,
+      "yield_run2": 0.0763439,
+      "yield_450fb": 0.249635,
+      "yield_run2_from2018only": 0.0565926,
+      "yield_450fb_from2018only": 0.185051
+    },
+    {
+      "mchi": 1250,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 3.91587e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000240471,
+        "run3": 0.000240471
+      },
+      "yield_2016APV": 0.0189926,
+      "yield_2016": 0.00745603,
+      "yield_2017": 0.0202063,
+      "yield_2018": 0.0260389,
+      "yield_run2": 0.0726938,
+      "yield_450fb": 0.2377,
+      "yield_run2_from2018only": 0.0598942,
+      "yield_450fb_from2018only": 0.195847
+    },
+    {
+      "mchi": 1250,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 3.91587e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000240471,
+        "run3": 0.000240471
+      },
+      "yield_2016APV": 0.019728,
+      "yield_2016": 0.00652063,
+      "yield_2017": 0.0229586,
+      "yield_2018": 0.0284971,
+      "yield_run2": 0.0777044,
+      "yield_450fb": 0.254084,
+      "yield_run2_from2018only": 0.0655486,
+      "yield_450fb_from2018only": 0.214336
+    },
+    {
+      "mchi": 1300,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 2.99353e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000160765,
+        "run3": 0.000160765
+      },
+      "yield_2016APV": 0.00811234,
+      "yield_2016": 0.00251763,
+      "yield_2017": 0.00831036,
+      "yield_2018": 0.0114941,
+      "yield_run2": 0.0304344,
+      "yield_450fb": 0.0995166,
+      "yield_run2_from2018only": 0.0264386,
+      "yield_450fb_from2018only": 0.0864508
+    },
+    {
+      "mchi": 1300,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 2.99353e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000160765,
+        "run3": 0.000160765
+      },
+      "yield_2016APV": 0.00800768,
+      "yield_2016": 0.00303221,
+      "yield_2017": 0.00799519,
+      "yield_2018": 0.0117873,
+      "yield_run2": 0.0308223,
+      "yield_450fb": 0.100785,
+      "yield_run2_from2018only": 0.0271129,
+      "yield_450fb_from2018only": 0.0886556
+    },
+    {
+      "mchi": 1300,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 2.99353e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000160765,
+        "run3": 0.000160765
+      },
+      "yield_2016APV": 0.00822393,
+      "yield_2016": 0.00274534,
+      "yield_2017": 0.00764159,
+      "yield_2018": 0.0121078,
+      "yield_run2": 0.0307186,
+      "yield_450fb": 0.100446,
+      "yield_run2_from2018only": 0.0278501,
+      "yield_450fb_from2018only": 0.0910664
+    },
+    {
+      "mchi": 1300,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 2.99353e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000160765,
+        "run3": 0.000160765
+      },
+      "yield_2016APV": 0.00790251,
+      "yield_2016": 0.00294738,
+      "yield_2017": 0.00900535,
+      "yield_2018": 0.0128654,
+      "yield_run2": 0.0327207,
+      "yield_450fb": 0.106993,
+      "yield_run2_from2018only": 0.0295929,
+      "yield_450fb_from2018only": 0.096765
+    },
+    {
+      "mchi": 1300,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 2.99353e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000160765,
+        "run3": 0.000160765
+      },
+      "yield_2016APV": 0.00928667,
+      "yield_2016": 0.00327235,
+      "yield_2017": 0.0104519,
+      "yield_2018": 0.0117286,
+      "yield_run2": 0.0347395,
+      "yield_450fb": 0.113594,
+      "yield_run2_from2018only": 0.0269779,
+      "yield_450fb_from2018only": 0.0882142
+    },
+    {
+      "mchi": 1300,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 2.99353e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000160765,
+        "run3": 0.000160765
+      },
+      "yield_2016APV": 0.0106975,
+      "yield_2016": 0.0035614,
+      "yield_2017": 0.0104064,
+      "yield_2018": 0.0124857,
+      "yield_run2": 0.037151,
+      "yield_450fb": 0.121479,
+      "yield_run2_from2018only": 0.0287194,
+      "yield_450fb_from2018only": 0.0939089
+    },
+    {
+      "mchi": 1300,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 2.99353e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000160765,
+        "run3": 0.000160765
+      },
+      "yield_2016APV": 0.0103382,
+      "yield_2016": 0.0037457,
+      "yield_2017": 0.0111887,
+      "yield_2018": 0.0135843,
+      "yield_run2": 0.0388569,
+      "yield_450fb": 0.127057,
+      "yield_run2_from2018only": 0.0312463,
+      "yield_450fb_from2018only": 0.102172
+    },
+    {
+      "mchi": 1300,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 2.99353e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000160765,
+        "run3": 0.000160765
+      },
+      "yield_2016APV": 0.0097951,
+      "yield_2016": 0.00326757,
+      "yield_2017": 0.00912858,
+      "yield_2018": 0.0146527,
+      "yield_run2": 0.0368439,
+      "yield_450fb": 0.120475,
+      "yield_run2_from2018only": 0.0337038,
+      "yield_450fb_from2018only": 0.110207
+    },
+    {
+      "mchi": 1300,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 2.99353e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000160765,
+        "run3": 0.000160765
+      },
+      "yield_2016APV": 0.0104387,
+      "yield_2016": 0.00352392,
+      "yield_2017": 0.0099402,
+      "yield_2018": 0.0146573,
+      "yield_run2": 0.03856,
+      "yield_450fb": 0.126086,
+      "yield_run2_from2018only": 0.0337144,
+      "yield_450fb_from2018only": 0.110242
+    },
+    {
+      "mchi": 1300,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 2.99353e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000160765,
+        "run3": 0.000160765
+      },
+      "yield_2016APV": 0.0122184,
+      "yield_2016": 0.00458343,
+      "yield_2017": 0.0135457,
+      "yield_2018": 0.0145519,
+      "yield_run2": 0.0448994,
+      "yield_450fb": 0.146815,
+      "yield_run2_from2018only": 0.0334721,
+      "yield_450fb_from2018only": 0.109449
+    },
+    {
+      "mchi": 1300,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 2.99353e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000160765,
+        "run3": 0.000160765
+      },
+      "yield_2016APV": 0.0120543,
+      "yield_2016": 0.00368751,
+      "yield_2017": 0.0139292,
+      "yield_2018": 0.0164905,
+      "yield_run2": 0.0461615,
+      "yield_450fb": 0.150942,
+      "yield_run2_from2018only": 0.0379311,
+      "yield_450fb_from2018only": 0.12403
+    },
+    {
+      "mchi": 1300,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 2.99353e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000160765,
+        "run3": 0.000160765
+      },
+      "yield_2016APV": 0.0116539,
+      "yield_2016": 0.00478244,
+      "yield_2017": 0.0122062,
+      "yield_2018": 0.0162849,
+      "yield_run2": 0.0449274,
+      "yield_450fb": 0.146907,
+      "yield_run2_from2018only": 0.0374582,
+      "yield_450fb_from2018only": 0.122484
+    },
+    {
+      "mchi": 1300,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 2.99353e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000160765,
+        "run3": 0.000160765
+      },
+      "yield_2016APV": 0.0107387,
+      "yield_2016": 0.00410261,
+      "yield_2017": 0.0122618,
+      "yield_2018": 0.0171561,
+      "yield_run2": 0.0442592,
+      "yield_450fb": 0.144722,
+      "yield_run2_from2018only": 0.0394622,
+      "yield_450fb_from2018only": 0.129036
+    },
+    {
+      "mchi": 1350,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 2.28072e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000111174,
+        "run3": 0.000111174
+      },
+      "yield_2016APV": 0.00531786,
+      "yield_2016": 0.00166191,
+      "yield_2017": 0.00444646,
+      "yield_2018": 0.00716118,
+      "yield_run2": 0.0185874,
+      "yield_450fb": 0.0607784,
+      "yield_run2_from2018only": 0.016472,
+      "yield_450fb_from2018only": 0.0538615
+    },
+    {
+      "mchi": 1350,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 2.28072e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000111174,
+        "run3": 0.000111174
+      },
+      "yield_2016APV": 0.00436072,
+      "yield_2016": 0.00139657,
+      "yield_2017": 0.00450804,
+      "yield_2018": 0.00762939,
+      "yield_run2": 0.0178947,
+      "yield_450fb": 0.0585134,
+      "yield_run2_from2018only": 0.017549,
+      "yield_450fb_from2018only": 0.057383
+    },
+    {
+      "mchi": 1350,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 2.28072e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000111174,
+        "run3": 0.000111174
+      },
+      "yield_2016APV": 0.0055825,
+      "yield_2016": 0.00189459,
+      "yield_2017": 0.00616093,
+      "yield_2018": 0.00756216,
+      "yield_run2": 0.0212002,
+      "yield_450fb": 0.069322,
+      "yield_run2_from2018only": 0.0173944,
+      "yield_450fb_from2018only": 0.0568774
+    },
+    {
+      "mchi": 1350,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 2.28072e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000111174,
+        "run3": 0.000111174
+      },
+      "yield_2016APV": 0.00607408,
+      "yield_2016": 0.00183,
+      "yield_2017": 0.00619147,
+      "yield_2018": 0.00767577,
+      "yield_run2": 0.0217713,
+      "yield_450fb": 0.0711894,
+      "yield_run2_from2018only": 0.0176557,
+      "yield_450fb_from2018only": 0.0577318
+    },
+    {
+      "mchi": 1350,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 2.28072e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000111174,
+        "run3": 0.000111174
+      },
+      "yield_2016APV": 0.00536465,
+      "yield_2016": 0.0018296,
+      "yield_2017": 0.00688521,
+      "yield_2018": 0.00847121,
+      "yield_run2": 0.0225507,
+      "yield_450fb": 0.0737379,
+      "yield_run2_from2018only": 0.0194853,
+      "yield_450fb_from2018only": 0.0637146
+    },
+    {
+      "mchi": 1350,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 2.28072e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000111174,
+        "run3": 0.000111174
+      },
+      "yield_2016APV": 0.00553466,
+      "yield_2016": 0.00185988,
+      "yield_2017": 0.00572717,
+      "yield_2018": 0.00844516,
+      "yield_run2": 0.0215669,
+      "yield_450fb": 0.070521,
+      "yield_run2_from2018only": 0.0194254,
+      "yield_450fb_from2018only": 0.0635187
+    },
+    {
+      "mchi": 1350,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 2.28072e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000111174,
+        "run3": 0.000111174
+      },
+      "yield_2016APV": 0.0055528,
+      "yield_2016": 0.00208266,
+      "yield_2017": 0.00530818,
+      "yield_2018": 0.00898939,
+      "yield_run2": 0.021933,
+      "yield_450fb": 0.0717181,
+      "yield_run2_from2018only": 0.0206772,
+      "yield_450fb_from2018only": 0.067612
+    },
+    {
+      "mchi": 1350,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 2.28072e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000111174,
+        "run3": 0.000111174
+      },
+      "yield_2016APV": 0.00624447,
+      "yield_2016": 0.00200349,
+      "yield_2017": 0.00569532,
+      "yield_2018": 0.00777444,
+      "yield_run2": 0.0217177,
+      "yield_450fb": 0.0710141,
+      "yield_run2_from2018only": 0.0178826,
+      "yield_450fb_from2018only": 0.058474
+    },
+    {
+      "mchi": 1350,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 2.28072e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000111174,
+        "run3": 0.000111174
+      },
+      "yield_2016APV": 0.00615621,
+      "yield_2016": 0.00211793,
+      "yield_2017": 0.00650783,
+      "yield_2018": 0.00863774,
+      "yield_run2": 0.0234197,
+      "yield_450fb": 0.0765795,
+      "yield_run2_from2018only": 0.0198684,
+      "yield_450fb_from2018only": 0.0649671
+    },
+    {
+      "mchi": 1350,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 2.28072e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000111174,
+        "run3": 0.000111174
+      },
+      "yield_2016APV": 0.00615645,
+      "yield_2016": 0.002345,
+      "yield_2017": 0.0062439,
+      "yield_2018": 0.0100288,
+      "yield_run2": 0.0247741,
+      "yield_450fb": 0.0810082,
+      "yield_run2_from2018only": 0.023068,
+      "yield_450fb_from2018only": 0.0754294
+    },
+    {
+      "mchi": 1350,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 2.28072e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000111174,
+        "run3": 0.000111174
+      },
+      "yield_2016APV": 0.00678859,
+      "yield_2016": 0.00243673,
+      "yield_2017": 0.00746289,
+      "yield_2018": 0.0102234,
+      "yield_run2": 0.0269116,
+      "yield_450fb": 0.0879975,
+      "yield_run2_from2018only": 0.0235157,
+      "yield_450fb_from2018only": 0.0768935
+    },
+    {
+      "mchi": 1350,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 2.28072e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000111174,
+        "run3": 0.000111174
+      },
+      "yield_2016APV": 0.00741725,
+      "yield_2016": 0.00277696,
+      "yield_2017": 0.00719917,
+      "yield_2018": 0.0107979,
+      "yield_run2": 0.0281913,
+      "yield_450fb": 0.092182,
+      "yield_run2_from2018only": 0.0248372,
+      "yield_450fb_from2018only": 0.0812146
+    },
+    {
+      "mchi": 1350,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 2.28072e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 0.000111174,
+        "run3": 0.000111174
+      },
+      "yield_2016APV": 0.00777079,
+      "yield_2016": 0.00290453,
+      "yield_2017": 0.00877636,
+      "yield_2018": 0.011052,
+      "yield_run2": 0.0305036,
+      "yield_450fb": 0.0997429,
+      "yield_run2_from2018only": 0.0254215,
+      "yield_450fb_from2018only": 0.0831252
+    },
+    {
+      "mchi": 1400,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 1.75031e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 7.8026e-05,
+        "run3": 7.8026e-05
+      },
+      "yield_2016APV": 0.00326861,
+      "yield_2016": 0.00100183,
+      "yield_2017": 0.00340447,
+      "yield_2018": 0.00468846,
+      "yield_run2": 0.0123634,
+      "yield_450fb": 0.0404268,
+      "yield_run2_from2018only": 0.0107843,
+      "yield_450fb_from2018only": 0.0352634
+    },
+    {
+      "mchi": 1400,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 1.75031e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 7.8026e-05,
+        "run3": 7.8026e-05
+      },
+      "yield_2016APV": 0.00362219,
+      "yield_2016": 0.00123555,
+      "yield_2017": 0.00410927,
+      "yield_2018": 0.00461424,
+      "yield_run2": 0.0135812,
+      "yield_450fb": 0.0444088,
+      "yield_run2_from2018only": 0.0106136,
+      "yield_450fb_from2018only": 0.0347051
+    },
+    {
+      "mchi": 1400,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 1.75031e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 7.8026e-05,
+        "run3": 7.8026e-05
+      },
+      "yield_2016APV": 0.00343699,
+      "yield_2016": 0.0010458,
+      "yield_2017": 0.00312432,
+      "yield_2018": 0.00476397,
+      "yield_run2": 0.0123711,
+      "yield_450fb": 0.0404519,
+      "yield_run2_from2018only": 0.010958,
+      "yield_450fb_from2018only": 0.0358313
+    },
+    {
+      "mchi": 1400,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 1.75031e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 7.8026e-05,
+        "run3": 7.8026e-05
+      },
+      "yield_2016APV": 0.00413592,
+      "yield_2016": 0.00124141,
+      "yield_2017": 0.00354113,
+      "yield_2018": 0.00472612,
+      "yield_run2": 0.0136446,
+      "yield_450fb": 0.0446161,
+      "yield_run2_from2018only": 0.0108709,
+      "yield_450fb_from2018only": 0.0355466
+    },
+    {
+      "mchi": 1400,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 1.75031e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 7.8026e-05,
+        "run3": 7.8026e-05
+      },
+      "yield_2016APV": 0.00367041,
+      "yield_2016": 0.00115886,
+      "yield_2017": 0.00347295,
+      "yield_2018": 0.00491367,
+      "yield_run2": 0.0132159,
+      "yield_450fb": 0.0432143,
+      "yield_run2_from2018only": 0.0113024,
+      "yield_450fb_from2018only": 0.0369573
+    },
+    {
+      "mchi": 1400,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 1.75031e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 7.8026e-05,
+        "run3": 7.8026e-05
+      },
+      "yield_2016APV": 0.00357815,
+      "yield_2016": 0.00122855,
+      "yield_2017": 0.00346815,
+      "yield_2018": 0.0048598,
+      "yield_run2": 0.0131346,
+      "yield_450fb": 0.0429485,
+      "yield_run2_from2018only": 0.0111784,
+      "yield_450fb_from2018only": 0.0365521
+    },
+    {
+      "mchi": 1400,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 1.75031e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 7.8026e-05,
+        "run3": 7.8026e-05
+      },
+      "yield_2016APV": 0.00384696,
+      "yield_2016": 0.00126107,
+      "yield_2017": 0.00404534,
+      "yield_2018": 0.0056287,
+      "yield_run2": 0.0147821,
+      "yield_450fb": 0.0483356,
+      "yield_run2_from2018only": 0.0129471,
+      "yield_450fb_from2018only": 0.0423352
+    },
+    {
+      "mchi": 1400,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 1.75031e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 7.8026e-05,
+        "run3": 7.8026e-05
+      },
+      "yield_2016APV": 0.00355734,
+      "yield_2016": 0.00142172,
+      "yield_2017": 0.00488643,
+      "yield_2018": 0.00592763,
+      "yield_run2": 0.0157931,
+      "yield_450fb": 0.0516414,
+      "yield_run2_from2018only": 0.0136346,
+      "yield_450fb_from2018only": 0.0445835
+    },
+    {
+      "mchi": 1400,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 1.75031e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 7.8026e-05,
+        "run3": 7.8026e-05
+      },
+      "yield_2016APV": 0.00474588,
+      "yield_2016": 0.00148154,
+      "yield_2017": 0.00495245,
+      "yield_2018": 0.00596143,
+      "yield_run2": 0.0171413,
+      "yield_450fb": 0.0560499,
+      "yield_run2_from2018only": 0.0137124,
+      "yield_450fb_from2018only": 0.0448377
+    },
+    {
+      "mchi": 1400,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 1.75031e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 7.8026e-05,
+        "run3": 7.8026e-05
+      },
+      "yield_2016APV": 0.00417335,
+      "yield_2016": 0.00141179,
+      "yield_2017": 0.00531939,
+      "yield_2018": 0.00586036,
+      "yield_run2": 0.0167649,
+      "yield_450fb": 0.0548191,
+      "yield_run2_from2018only": 0.0134799,
+      "yield_450fb_from2018only": 0.0440776
+    },
+    {
+      "mchi": 1400,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 1.75031e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 7.8026e-05,
+        "run3": 7.8026e-05
+      },
+      "yield_2016APV": 0.00435688,
+      "yield_2016": 0.0017239,
+      "yield_2017": 0.00444367,
+      "yield_2018": 0.00679529,
+      "yield_run2": 0.0173197,
+      "yield_450fb": 0.0566332,
+      "yield_run2_from2018only": 0.0156304,
+      "yield_450fb_from2018only": 0.0511095
+    },
+    {
+      "mchi": 1400,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 1.75031e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 7.8026e-05,
+        "run3": 7.8026e-05
+      },
+      "yield_2016APV": 0.00478033,
+      "yield_2016": 0.00177706,
+      "yield_2017": 0.00566286,
+      "yield_2018": 0.00702766,
+      "yield_run2": 0.0192479,
+      "yield_450fb": 0.0629382,
+      "yield_run2_from2018only": 0.0161649,
+      "yield_450fb_from2018only": 0.0528572
+    },
+    {
+      "mchi": 1400,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 1.75031e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 7.8026e-05,
+        "run3": 7.8026e-05
+      },
+      "yield_2016APV": 0.00559287,
+      "yield_2016": 0.00185188,
+      "yield_2017": 0.0056958,
+      "yield_2018": 0.00789334,
+      "yield_run2": 0.0210339,
+      "yield_450fb": 0.0687782,
+      "yield_run2_from2018only": 0.0181561,
+      "yield_450fb_from2018only": 0.0593682
+    },
+    {
+      "mchi": 1450,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 1.34572e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 6.96962e-05,
+        "run3": 6.96962e-05
+      },
+      "yield_2016APV": 0.0028816,
+      "yield_2016": 0.000924797,
+      "yield_2017": 0.00244175,
+      "yield_2018": 0.00393886,
+      "yield_run2": 0.010187,
+      "yield_450fb": 0.0333102,
+      "yield_run2_from2018only": 0.00906011,
+      "yield_450fb_from2018only": 0.0296254
+    },
+    {
+      "mchi": 1450,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 1.34572e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 6.96962e-05,
+        "run3": 6.96962e-05
+      },
+      "yield_2016APV": 0.00326921,
+      "yield_2016": 0.00111495,
+      "yield_2017": 0.00381859,
+      "yield_2018": 0.00406122,
+      "yield_run2": 0.012264,
+      "yield_450fb": 0.0401017,
+      "yield_run2_from2018only": 0.00934156,
+      "yield_450fb_from2018only": 0.0305457
+    },
+    {
+      "mchi": 1450,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 1.34572e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 6.96962e-05,
+        "run3": 6.96962e-05
+      },
+      "yield_2016APV": 0.00293281,
+      "yield_2016": 0.000967596,
+      "yield_2017": 0.00315806,
+      "yield_2018": 0.00355388,
+      "yield_run2": 0.0106124,
+      "yield_450fb": 0.0347012,
+      "yield_run2_from2018only": 0.00817459,
+      "yield_450fb_from2018only": 0.0267299
+    },
+    {
+      "mchi": 1450,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 1.34572e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 6.96962e-05,
+        "run3": 6.96962e-05
+      },
+      "yield_2016APV": 0.00246771,
+      "yield_2016": 0.000931106,
+      "yield_2017": 0.00269627,
+      "yield_2018": 0.00395729,
+      "yield_run2": 0.0100524,
+      "yield_450fb": 0.0328701,
+      "yield_run2_from2018only": 0.00910248,
+      "yield_450fb_from2018only": 0.029764
+    },
+    {
+      "mchi": 1450,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 1.34572e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 6.96962e-05,
+        "run3": 6.96962e-05
+      },
+      "yield_2016APV": 0.00315326,
+      "yield_2016": 0.00130024,
+      "yield_2017": 0.00286947,
+      "yield_2018": 0.00428669,
+      "yield_run2": 0.0116097,
+      "yield_450fb": 0.0379623,
+      "yield_run2_from2018only": 0.00986017,
+      "yield_450fb_from2018only": 0.0322415
+    },
+    {
+      "mchi": 1450,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 1.34572e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 6.96962e-05,
+        "run3": 6.96962e-05
+      },
+      "yield_2016APV": 0.00326724,
+      "yield_2016": 0.00120159,
+      "yield_2017": 0.00356129,
+      "yield_2018": 0.00382899,
+      "yield_run2": 0.0118591,
+      "yield_450fb": 0.0387778,
+      "yield_run2_from2018only": 0.00880739,
+      "yield_450fb_from2018only": 0.0287991
+    },
+    {
+      "mchi": 1450,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 1.34572e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 6.96962e-05,
+        "run3": 6.96962e-05
+      },
+      "yield_2016APV": 0.0035024,
+      "yield_2016": 0.00120067,
+      "yield_2017": 0.00333607,
+      "yield_2018": 0.00411301,
+      "yield_run2": 0.0121522,
+      "yield_450fb": 0.0397362,
+      "yield_run2_from2018only": 0.00946069,
+      "yield_450fb_from2018only": 0.0309353
+    },
+    {
+      "mchi": 1450,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 1.34572e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 6.96962e-05,
+        "run3": 6.96962e-05
+      },
+      "yield_2016APV": 0.00316945,
+      "yield_2016": 0.00106528,
+      "yield_2017": 0.00281339,
+      "yield_2018": 0.00447812,
+      "yield_run2": 0.0115262,
+      "yield_450fb": 0.0376892,
+      "yield_run2_from2018only": 0.0103005,
+      "yield_450fb_from2018only": 0.0336814
+    },
+    {
+      "mchi": 1450,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 1.34572e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 6.96962e-05,
+        "run3": 6.96962e-05
+      },
+      "yield_2016APV": 0.00318556,
+      "yield_2016": 0.00111045,
+      "yield_2017": 0.00267384,
+      "yield_2018": 0.00499352,
+      "yield_run2": 0.0119634,
+      "yield_450fb": 0.0391188,
+      "yield_run2_from2018only": 0.011486,
+      "yield_450fb_from2018only": 0.0375578
+    },
+    {
+      "mchi": 1450,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 1.34572e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 6.96962e-05,
+        "run3": 6.96962e-05
+      },
+      "yield_2016APV": 0.00339517,
+      "yield_2016": 0.00110359,
+      "yield_2017": 0.00297077,
+      "yield_2018": 0.00487672,
+      "yield_run2": 0.0123462,
+      "yield_450fb": 0.0403705,
+      "yield_run2_from2018only": 0.0112174,
+      "yield_450fb_from2018only": 0.0366793
+    },
+    {
+      "mchi": 1450,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 1.34572e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 6.96962e-05,
+        "run3": 6.96962e-05
+      },
+      "yield_2016APV": 0.00399342,
+      "yield_2016": 0.00155789,
+      "yield_2017": 0.00403564,
+      "yield_2018": 0.00556785,
+      "yield_run2": 0.0151548,
+      "yield_450fb": 0.0495543,
+      "yield_run2_from2018only": 0.0128071,
+      "yield_450fb_from2018only": 0.0418775
+    },
+    {
+      "mchi": 1450,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 1.34572e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 6.96962e-05,
+        "run3": 6.96962e-05
+      },
+      "yield_2016APV": 0.0032882,
+      "yield_2016": 0.00139562,
+      "yield_2017": 0.00400708,
+      "yield_2018": 0.00589286,
+      "yield_run2": 0.0145838,
+      "yield_450fb": 0.0476872,
+      "yield_run2_from2018only": 0.0135547,
+      "yield_450fb_from2018only": 0.044322
+    },
+    {
+      "mchi": 1450,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 1.34572e-05,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 6.96962e-05,
+        "run3": 6.96962e-05
+      },
+      "yield_2016APV": 0.00426814,
+      "yield_2016": 0.00162206,
+      "yield_2017": 0.00462695,
+      "yield_2018": 0.00568084,
+      "yield_run2": 0.016198,
+      "yield_450fb": 0.0529654,
+      "yield_run2_from2018only": 0.013067,
+      "yield_450fb_from2018only": 0.0427274
+    },
+    {
+      "mchi": 1500,
+      "mlsp": 1,
+      "xsec_2d": {
+        "run2": 0.0,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 3.5e-05,
+        "run3": 3.5e-05
+      },
+      "yield_2016APV": 0.00135071,
+      "yield_2016": 0.0004462,
+      "yield_2017": 0.00133637,
+      "yield_2018": 0.00172752,
+      "yield_run2": 0.0048608,
+      "yield_450fb": 0.0158942,
+      "yield_run2_from2018only": 0.00397362,
+      "yield_450fb_from2018only": 0.0129932
+    },
+    {
+      "mchi": 1500,
+      "mlsp": 50,
+      "xsec_2d": {
+        "run2": 0.0,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 3.5e-05,
+        "run3": 3.5e-05
+      },
+      "yield_2016APV": 0.001302,
+      "yield_2016": 0.000407723,
+      "yield_2017": 0.0013978,
+      "yield_2018": 0.00177827,
+      "yield_run2": 0.0048858,
+      "yield_450fb": 0.0159759,
+      "yield_run2_from2018only": 0.00409035,
+      "yield_450fb_from2018only": 0.0133749
+    },
+    {
+      "mchi": 1500,
+      "mlsp": 100,
+      "xsec_2d": {
+        "run2": 0.0,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 3.5e-05,
+        "run3": 3.5e-05
+      },
+      "yield_2016APV": 0.00128994,
+      "yield_2016": 0.000408769,
+      "yield_2017": 0.00123966,
+      "yield_2018": 0.0018547,
+      "yield_run2": 0.00479307,
+      "yield_450fb": 0.0156727,
+      "yield_run2_from2018only": 0.00426615,
+      "yield_450fb_from2018only": 0.0139498
+    },
+    {
+      "mchi": 1500,
+      "mlsp": 150,
+      "xsec_2d": {
+        "run2": 0.0,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 3.5e-05,
+        "run3": 3.5e-05
+      },
+      "yield_2016APV": 0.00125862,
+      "yield_2016": 0.000512081,
+      "yield_2017": 0.0013778,
+      "yield_2018": 0.00175352,
+      "yield_run2": 0.00490202,
+      "yield_450fb": 0.016029,
+      "yield_run2_from2018only": 0.00403341,
+      "yield_450fb_from2018only": 0.0131887
+    },
+    {
+      "mchi": 1500,
+      "mlsp": 200,
+      "xsec_2d": {
+        "run2": 0.0,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 3.5e-05,
+        "run3": 3.5e-05
+      },
+      "yield_2016APV": 0.00138362,
+      "yield_2016": 0.000480241,
+      "yield_2017": 0.00150267,
+      "yield_2018": 0.00174451,
+      "yield_run2": 0.00511104,
+      "yield_450fb": 0.0167125,
+      "yield_run2_from2018only": 0.0040127,
+      "yield_450fb_from2018only": 0.013121
+    },
+    {
+      "mchi": 1500,
+      "mlsp": 250,
+      "xsec_2d": {
+        "run2": 0.0,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 3.5e-05,
+        "run3": 3.5e-05
+      },
+      "yield_2016APV": 0.0012414,
+      "yield_2016": 0.000483582,
+      "yield_2017": 0.00133962,
+      "yield_2018": 0.00185647,
+      "yield_run2": 0.00492107,
+      "yield_450fb": 0.0160913,
+      "yield_run2_from2018only": 0.00427023,
+      "yield_450fb_from2018only": 0.0139631
+    },
+    {
+      "mchi": 1500,
+      "mlsp": 300,
+      "xsec_2d": {
+        "run2": 0.0,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 3.5e-05,
+        "run3": 3.5e-05
+      },
+      "yield_2016APV": 0.00145139,
+      "yield_2016": 0.000486404,
+      "yield_2017": 0.00156811,
+      "yield_2018": 0.00209031,
+      "yield_run2": 0.00559622,
+      "yield_450fb": 0.0182989,
+      "yield_run2_from2018only": 0.00480809,
+      "yield_450fb_from2018only": 0.0157218
+    },
+    {
+      "mchi": 1500,
+      "mlsp": 350,
+      "xsec_2d": {
+        "run2": 0.0,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 3.5e-05,
+        "run3": 3.5e-05
+      },
+      "yield_2016APV": 0.0013579,
+      "yield_2016": 0.000523184,
+      "yield_2017": 0.00142631,
+      "yield_2018": 0.00184101,
+      "yield_run2": 0.00514841,
+      "yield_450fb": 0.0168346,
+      "yield_run2_from2018only": 0.00423466,
+      "yield_450fb_from2018only": 0.0138468
+    },
+    {
+      "mchi": 1500,
+      "mlsp": 400,
+      "xsec_2d": {
+        "run2": 0.0,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 3.5e-05,
+        "run3": 3.5e-05
+      },
+      "yield_2016APV": 0.00168519,
+      "yield_2016": 0.000627337,
+      "yield_2017": 0.00190368,
+      "yield_2018": 0.00210456,
+      "yield_run2": 0.00632076,
+      "yield_450fb": 0.0206681,
+      "yield_run2_from2018only": 0.00484087,
+      "yield_450fb_from2018only": 0.015829
+    },
+    {
+      "mchi": 1500,
+      "mlsp": 450,
+      "xsec_2d": {
+        "run2": 0.0,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 3.5e-05,
+        "run3": 3.5e-05
+      },
+      "yield_2016APV": 0.00154899,
+      "yield_2016": 0.000667752,
+      "yield_2017": 0.00178665,
+      "yield_2018": 0.00233213,
+      "yield_run2": 0.00633552,
+      "yield_450fb": 0.0207163,
+      "yield_run2_from2018only": 0.00536432,
+      "yield_450fb_from2018only": 0.0175407
+    },
+    {
+      "mchi": 1500,
+      "mlsp": 500,
+      "xsec_2d": {
+        "run2": 0.0,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 3.5e-05,
+        "run3": 3.5e-05
+      },
+      "yield_2016APV": 0.00188397,
+      "yield_2016": 0.000527905,
+      "yield_2017": 0.00183364,
+      "yield_2018": 0.00254563,
+      "yield_run2": 0.00679114,
+      "yield_450fb": 0.0222062,
+      "yield_run2_from2018only": 0.00585541,
+      "yield_450fb_from2018only": 0.0191464
+    },
+    {
+      "mchi": 1500,
+      "mlsp": 550,
+      "xsec_2d": {
+        "run2": 0.0,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 3.5e-05,
+        "run3": 3.5e-05
+      },
+      "yield_2016APV": 0.00180494,
+      "yield_2016": 0.00062576,
+      "yield_2017": 0.00178812,
+      "yield_2018": 0.00246367,
+      "yield_run2": 0.00668249,
+      "yield_450fb": 0.0218509,
+      "yield_run2_from2018only": 0.00566689,
+      "yield_450fb_from2018only": 0.01853
+    },
+    {
+      "mchi": 1500,
+      "mlsp": 600,
+      "xsec_2d": {
+        "run2": 0.0,
+        "run3": null
+      },
+      "xsec_1d": {
+        "run2": 3.5e-05,
+        "run3": 3.5e-05
+      },
+      "yield_2016APV": 0.00185546,
+      "yield_2016": 0.000651101,
+      "yield_2017": 0.00237209,
+      "yield_2018": 0.00280042,
+      "yield_run2": 0.00767907,
+      "yield_450fb": 0.0251096,
+      "yield_run2_from2018only": 0.00644148,
+      "yield_450fb_from2018only": 0.0210628
+    }
+  ]
+}

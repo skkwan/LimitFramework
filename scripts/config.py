@@ -10,6 +10,7 @@ fit machinery is adapted from).
 
 import os
 import glob
+import json
 
 # ── Root directory (always resolves to limitframework/, wherever you run from) ──
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,6 +23,10 @@ OUTPUT_WWW_DIR = "/eos/user/s/skkwan/www/higgsino/studies/mll-MET-fit-2D/combine
 RUN2_YEARS = ['2016', '2016APV', '2017', '2018']
 RUN3_YEARS = ['2022', '2022EE', '2023', '2023BPix', '2024', '2025']
 ALL_YEARS  = RUN2_YEARS + RUN3_YEARS
+
+# Years with signal MC used for the signal shapes. A mass point is only fit if
+# its ntuple exists in every one of these years (see _discover_mass_points).
+SIGNAL_MC_YEARS = ['2016APV', '2016', '2017', '2018']
 
 # Years for which signal MC exists (TODO: fix 2025)
 SIGNAL_YEAR_MAP = {y: y for y in ALL_YEARS}
@@ -54,8 +59,8 @@ def era_label(years):
 
 
 LUMI = {
-    '2016':     19.51,
-    '2016APV':  16.80,
+    '2016':     16.80,
+    '2016APV':  19.51,
     '2017':     41.48,
     '2018':     59.83,
     '2022':      7.98,
@@ -100,11 +105,14 @@ MIN_EVENTS_FOR_FIT = 10
 # (make_datacards.py) and the data_obs event count (make_workspaces.py).
 # Not per era: the projection is for the total dataset.
 PROJECTED_LUMI = 450.0  # fb^-1
-BKG_YIELD = {'peaking': 12.68, 'nonpeak': 132.52}
-SIGNAL_YIELD_COL = 'yield_450fb'  # signal_master.csv column at PROJECTED_LUMI
+#   2018: peaking=0.20672 (1.55481 at 450 fb^-1)  nonpeak=1.17161 (8.81208 at 450 fb^-1)
+BKG_YIELD = {'peaking': 1.5548, 'nonpeak': 8.812}
+SIGNAL_YIELD_COL = 'yield_450fb'  # signal_config.json field at PROJECTED_LUMI
 
 # Relative Gaussian uncertainty on ratio_peaking in the datacards
 RATIO_PEAKING_REL_UNC = 0.30
+# Relative (lnN) uncertainty on the total background yield in the datacards
+BKG_YIELD_REL_UNC = 0.30
 
 # ===========================================================================
 # Directory structure
@@ -118,8 +126,39 @@ WS_DIR        = os.path.join(COMBINE_DIR, 'workspaces')
 CARDS_DIR     = os.path.join(COMBINE_DIR, 'datacards')
 LIMITS_DIR    = os.path.join(COMBINE_DIR, 'limits')
 
-# Signal master CSV (produced by make_signal_csv.py)
-SIGNAL_CSV = os.path.join(ROOT_DIR, 'signal_master.csv')
+# Per-mass-point signal yields and cross sections
+SIGNAL_CONFIG = os.path.join(ROOT_DIR, 'signal_config.json')
+
+def load_signal_config():
+    """List of per-mass-point dicts from SIGNAL_CONFIG's "mass_points"."""
+    if not os.path.exists(SIGNAL_CONFIG):
+        raise FileNotFoundError(f"signal config not found: {SIGNAL_CONFIG}")
+    with open(SIGNAL_CONFIG) as f:
+        return json.load(f)['mass_points']
+
+def signal_xsec(point, era_tag, mode):
+    """
+    Cross section [pb] of one signal_config.json entry: xsec_{mode}[era_tag],
+    mode '2d' or '1d', era_tag 'run2' or 'run3'. None if the entry doesn't
+    list it.
+
+    'run2run3': luminosity-weighted (xsec_run2*lumi_run2 +
+    xsec_run3*lumi_run3) / lumi_total, so the combined-era reference xsec
+    roughly cancels against the combined datacard's mixed run2+run3 nominal
+    rate. Assumes eff_run2 ~ eff_run3 (checked to be reasonably close,
+    though not exactly equal -- see diag notes on run2 vs run3 signal
+    efficiency). This is an approximation, not an exact cancellation like
+    the single-era case.
+    """
+    xsec = point.get(f'xsec_{mode}')
+    if not isinstance(xsec, dict):
+        return None
+    if era_tag == 'run2run3':
+        x2, x3 = xsec.get('run2'), xsec.get('run3')
+        if x2 is None or x3 is None:
+            return None
+        return (x2 * LUMI_RUN2 + x3 * LUMI_RUN3) / LUMI_RUN2RUN3
+    return xsec.get(era_tag)
 
 # ===========================================================================
 # Raw ntuple locations -- INPUT to make_inputs.py.
@@ -132,15 +171,21 @@ SIGNAL_CSV = os.path.join(ROOT_DIR, 'signal_master.csv')
 # ===========================================================================
 
 RAW_SIGNAL_DIR = {
-    '2018': '/eos/cms/store/group/phys_susy/skkwan/condorHistogramming/'
-            '2026-06-06-00h18m-2018-sample-signal-points',
-    # TODO: add remaining years once signal ntuples exist for them.
+    '2016APV': '/eos/cms/store/group/phys_susy/skkwan/condorHistogramming/2026-10-05-19h18m_2016-samples-SR_mll_MET_fit_scheme-only',
+    '2018': '/eos/cms/store/group/phys_susy/skkwan/condorHistogramming/2026-09-29-20h09m_2018-samples-SR_mll_MET_fit_scheme-only',
+    '2017': '/eos/cms/store/group/phys_susy/skkwan/condorHistogramming/2026-10-05-19h11m_2017-samples-SR_mll_MET_fit_scheme-only', 
+    '2016': '/eos/cms/store/group/phys_susy/skkwan/condorHistogramming/2026-10-05-19h18m_2016-samples-SR_mll_MET_fit_scheme-only',
 }
+
+# The 2016 production holds both halves of the year in one directory, with
+# sample (and file) names prefixed: preVFP_ = 2016APV, postVFP_ = 2016.
+RAW_SIGNAL_PREFIX = {'2016APV': 'preVFP_', '2016': 'postVFP_'}
 
 RAW_BKG_DIR = {
     # TODO: add remaining years
-    '2018': '/eos/cms/store/group/phys_susy/skkwan/condorHistogramming/'
-            '2026-02-25-00h42m-2018-dataMC-with-SR-ntuples',
+    '2018': '/eos/cms/store/group/phys_susy/skkwan/condorHistogramming/2026-09-29-20h09m_2018-samples-SR_mll_MET_fit_scheme-only',
+    '2017': '/eos/cms/store/group/phys_susy/skkwan/condorHistogramming/2026-10-05-19h11m_2017-samples-SR_mll_MET_fit_scheme-only', 
+    '2016': '/eos/cms/store/group/phys_susy/skkwan/condorHistogramming/2026-10-05-19h18m_2016-samples-SR_mll_MET_fit_scheme-only',
 }
 
 # Dedicated Z-peak control-region (CRZ) MC ntuples -- INPUT to make_inputs.py's
@@ -262,25 +307,26 @@ def zpeak_crz_files(years):
 # ===========================================================================
 
 def _discover_mass_points():
-    """Scan the signal ntuple directory to find all (mchi, mlsp) pairs that
-    exist, matching ntuple_sig_path's naming:
-    snapshot_{SIGNAL_PROCESS}_{mchi}_{mlsp}_SR_mll_MET_fit_scheme.root"""
-    pattern = os.path.join(NTUPLE_SIG_DIR, '*',
-                           f'snapshot_{SIGNAL_PROCESS}_*_*_SR_mll_MET_fit_scheme.root')
-    files = glob.glob(pattern)
-    pairs = set()
-    for f in files:
-        base = os.path.basename(f).replace('.root', '')
-        parts = base.split('_')  # ['snapshot', SIGNAL_PROCESS, mchi, mlsp, 'SR', ...]
-        try:
-            mchi = int(parts[2])
-            mlsp = int(parts[3])
-            pairs.add((mchi, mlsp))
-        except (ValueError, IndexError):
-            continue
-    return sorted(pairs)
+    """Scan the signal ntuple directory for (mchi, mlsp) pairs, matching
+    ntuple_sig_path's naming:
+    snapshot_{SIGNAL_PROCESS}_{mchi}_{mlsp}_SR_mll_MET_fit_scheme.root
+    Only pairs present in every year of SIGNAL_MC_YEARS are kept."""
+    per_year = []
+    for year in SIGNAL_MC_YEARS:
+        pattern = os.path.join(NTUPLE_SIG_DIR, year,
+                               f'snapshot_{SIGNAL_PROCESS}_*_*_SR_mll_MET_fit_scheme.root')
+        pairs = set()
+        for f in glob.glob(pattern):
+            base = os.path.basename(f).replace('.root', '')
+            parts = base.split('_')  # ['snapshot', SIGNAL_PROCESS, mchi, mlsp, 'SR', ...]
+            try:
+                pairs.add((int(parts[2]), int(parts[3])))
+            except (ValueError, IndexError):
+                continue
+        per_year.append(pairs)
+    return sorted(set.intersection(*per_year))
 
-# Sorted list of (mchi, mlsp) pairs with ntuple signal files on disk.
+# Sorted list of (mchi, mlsp) pairs with ntuple signal files on disk in all SIGNAL_MC_YEARS.
 SIGNAL_GRID = _discover_mass_points()
 
 def ntuple_sig_files(mchi, mlsp, years):
@@ -308,6 +354,10 @@ def sig_fit_json(mchi, mlsp, era_tag):
 def sig_fit_pdf(mchi, mlsp, era_tag):
     return os.path.join(FITS_DIR, 'signal',
                         _sig_fit_base(mchi, mlsp, era_tag) + '.pdf')
+
+def sig_fit_all_pdf(era_tag):
+    """Every mass point's signal fit PDF for one era, merged into one file."""
+    return os.path.join(FITS_DIR, 'signal', f'fit_sig_all_{era_tag}.pdf')
 
 def sig_fit_log(mchi, mlsp, era_tag):
     return os.path.join(FITS_DIR, 'signal',
@@ -354,10 +404,44 @@ def combined_ws(mchi, mlsp, era_tag):
     return os.path.join(WS_DIR, 'combined',
                         f'workspace_mchi{mchi}_mlsp{mlsp}_{era_tag}.root')
 
-# Datacards (produced by make_datacards.py)
-def datacard_path(mchi, mlsp, era_tag, xsec_mode='2d'):
-    return os.path.join(CARDS_DIR, era_tag,
-                        f'datacard_mchi{mchi}_mlsp{mlsp}_{era_tag}_{xsec_mode}xsec.txt')
+# Signal models (--m): 'gmsb' (mlsp = 1 GeV, sigma_1D) and 'bino' (any mlsp,
+# yields rescaled from sigma_1D to sigma_2D). The signal samples were produced
+# with sigma_1D, so signal_config.json yields are sigma_1D-based.
+MODELS = ('gmsb', 'bino')
+GMSB_MLSP = 1
+GMSB_BR_ZH = 0.5  # BR(chi chi -> ZH) in GMSB; applied as the datacard signal rate, not in the samples
+BINO_BR_ZH = 1.0  # BR(chi chi -> ZH) allowed to be 100% in Higgsino-Bino models
+
+def model_mlsp(model, mlsp):
+    """The mlsp [GeV] to run for `model`: gmsb implies GMSB_MLSP, bino requires --mlsp."""
+    if model == 'gmsb':
+        if mlsp not in (None, GMSB_MLSP):
+            raise ValueError(f"--m gmsb implies --mlsp {GMSB_MLSP}, got --mlsp {mlsp}")
+        return GMSB_MLSP
+    if mlsp is None:
+        raise ValueError("--m bino requires --mlsp")
+    return mlsp
+
+def model_xsec_mode(model):
+    """signal_config.json cross-section key suffix of the reference sigma: gmsb -> '1d', bino -> '2d'."""
+    return {'gmsb': '1d', 'bino': '2d'}[model]
+
+def model_br(model):
+    """BR factor applied on top of the sigma_1D-based yields: 0.5 for gmsb; 1 for bino (BR not applied here)."""
+    if model == 'gmsb':
+        return GMSB_BR_ZH 
+    elif model == 'bino':
+        return BINO_BR_ZH
+    else:
+        return 1.0
+
+# Datacards (produced by make_datacards.py), one folder per model
+def datacard_dir(era_tag, model):
+    return os.path.join(CARDS_DIR, era_tag, model)
+
+def datacard_path(mchi, mlsp, era_tag, model):
+    return os.path.join(datacard_dir(era_tag, model),
+                        f'datacard_mchi{mchi}_mlsp{mlsp}_{era_tag}_{model}.txt')
 
 
 BTAG_WP = {

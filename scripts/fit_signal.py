@@ -2,13 +2,21 @@
 """
 fit_signal.py
 Fits a 2D signal model per mass point: RooCrystalBall (double-sided Crystal
-Ball) for m(ll), times a spline-based KDE-like PDF for MET, built directly
-from the signal MC MET histogram. Adapted from
-2DFit_higgsinos/hbb_zll/individual_pdf_fits/obtain_signal_components.py.
+Ball) for m(ll), times a RooSpline PDF for MET. The MET shape is a cubic
+smoothing spline (scipy UnivariateSpline) fit to the signal MC MET histogram.
+Adapted from 2DFit_higgsinos/hbb_zll/individual_pdf_fits/obtain_signal_components.py.
 
 NOTE: RooSpline requires ROOT >= 6.38 -- if you're running inside a CMSSW
 environment with an older ROOT, source a standalone ROOT 6.38+ instead
 (matching the hbb_zll reference scripts' convention).
+
+Per mass point, the plots are saved as one multi-page PDF (summary, m(ll),
+MET) plus the m(ll) and MET plots on their own as _mll/_met .pdf and .png,
+all copied to config.OUTPUT_WWW_DIR/signal.
+
+After the fits, the per-mass-point multi-page PDFs of every mass point are merged
+into combine/fits/signal/fit_sig_all_{era}.pdf, also copied to
+config.OUTPUT_WWW_DIR/signal.
 
 Usage:
     python3 scripts/fit_signal.py --mchi 300 --mlsp 0 --era run2
@@ -23,6 +31,7 @@ import os
 import sys
 import argparse
 import numpy as np
+from scipy.interpolate import UnivariateSpline
 import cmsstyle as CMS
 
 ROOT.RooMsgService.instance().setGlobalKillBelow(ROOT.RooFit.ERROR)
@@ -65,72 +74,42 @@ def high_correlations(result, threshold=0.6):
     return pairs
 
 
-# ── MET spline construction (ported from hbb_zll obtain_signal_components.py) ──
+# ── MET spline construction ───────────────────────────────────────────────────
 
-def make_knot_x(x_min, x_max, n_knots, power=3.0, min_dx_bins=2, centers=None):
+def build_met_spline_pdf(met_hist, met_var, tag, n_eval=101, min_y=1e-8):
     """
-    Construct knots spanning (x_min, x_max). `power` controls spacing
-    (power>1 packs knots more densely at low x). If `centers` (bin centers)
-    is given, snap knots to the nearest bin and enforce minimum spacing.
-    """
-    n_knots = int(max(2, n_knots))
-    x_min, x_max = float(x_min), float(x_max)
+    Build a RooSpline-based PDF over met_var from a (weighted) MET histogram.
 
-    print(f"x_min: {x_min}, x_max: {x_max}")
-
-    t = np.linspace(0.0, 1.0, n_knots)
-    knot_x = x_min + (x_max - x_min) * (t ** power)
-
-    print(knot_x)
-
-    if centers is not None and len(centers) > 0:
-        knot_x = np.array([centers[np.argmin(np.abs(centers - xx))] for xx in knot_x],
-                          dtype=float)
-
-        print(knot_x)
-
-    if centers is not None and min_dx_bins is not None and min_dx_bins > 0:
-        bw = float(np.median(np.diff(centers))) if len(centers) > 1 else 1.0
-        min_dx = min_dx_bins * bw
-        print("min_dx = ", min_dx)
-        filtered = [knot_x[0]]
-        for xx in knot_x[1:]:
-            if xx - filtered[-1] >= min_dx:
-                filtered.append(xx)
-        if filtered[-1] != knot_x[-1]:
-            filtered.append(knot_x[-1])
-        knot_x = np.array(filtered, dtype=float)
-
-    print(knot_x)
-    return knot_x
-
-
-def build_met_spline_pdf(met_hist, met_var, tag, n_knots=240, power=5, min_y=1e-8,
-                         knot_avg_halfwidth_bins=2):
-    """
-    Build a RooSpline-based PDF over met_var from a (weighted) MET histogram,
-    with knots densified at low MET via `power`.
+    A cubic smoothing spline (scipy UnivariateSpline) is fit to the bin
+    contents, weighting each bin by 1/error. FITPACK adds knots only until
+    sum(((spline - content) / error)^2) <= s, with s = the number of populated
+    bins, so the curve follows the shape without chasing bin-to-bin
+    fluctuations. The number and position of knots is chosen per histogram.
+    The smoothing spline is then sampled at n_eval evenly spaced points, which
+    become the knots of the RooSpline.
     """
     nBins   = met_hist.GetNbinsX()
-    centers = np.array([met_hist.GetBinCenter(i) for i in range(1, nBins + 1)])
-    vals    = np.array([max(float(met_hist.GetBinContent(i)), 0.0)
-                        for i in range(1, nBins + 1)])
+    centers = np.array([met_hist.GetBinCenter(i)  for i in range(1, nBins + 1)])
+    vals    = np.array([met_hist.GetBinContent(i) for i in range(1, nBins + 1)])
+    errs    = np.array([met_hist.GetBinError(i)   for i in range(1, nBins + 1)])
 
-    knot_x = make_knot_x(centers[0], centers[-1], n_knots, power=power, centers=centers)
+    # Empty bins have zero error: give them the error of about one
+    # average-weight event so they still pull the spline towards zero.
+    mean_w = met_hist.Integral() / max(met_hist.GetEntries(), 1)
+    errs   = np.where(errs > 0, errs, mean_w)
 
-    knot_y = []
-    for xx in knot_x:
-        ib = int(np.argmin(np.abs(centers - xx)))
-        i0 = max(0, ib - knot_avg_halfwidth_bins)
-        i1 = min(nBins - 1, ib + knot_avg_halfwidth_bins)
-        local = vals[i0:i1 + 1]
-        yk = float(np.mean(local)) if local.size else float(vals[ib])
-        knot_y.append(max(yk, min_y))
+    smooth = UnivariateSpline(centers, vals, w=1.0 / errs, k=3,
+                              s=np.count_nonzero(vals > 0))
+    print(f"  MET smoothing spline: interior knots at "
+          f"{np.round(smooth.get_knots()[1:-1]).astype(int).tolist()} GeV, "
+          f"chi2 = {smooth.get_residual():.1f} for {np.count_nonzero(vals > 0)} populated bins")
+
+    knot_x = np.linspace(met_var.getMin(), met_var.getMax(), n_eval)
+    knot_y = np.maximum(smooth(knot_x), min_y)
 
     vx = ROOT.std.vector('double')(np.array(knot_x, dtype=np.double))
     vy = ROOT.std.vector('double')(np.array(knot_y, dtype=np.double))
 
-    print(vx, vy)
     spline = ROOT.RooSpline(f"spline_{tag}", "spline", met_var, vx, vy, order=3)
     pdf_of_spline = ROOT.RooGenericPdf(
         f"pdf_of_spline_{tag}", "pdf_of_spline",
@@ -141,11 +120,23 @@ def build_met_spline_pdf(met_hist, met_var, tag, n_knots=240, power=5, min_y=1e-
 
 # ── Data loading ──────────────────────────────────────────────────────────────
 
+def mc_years_label(years):
+    """Compact label for the MC years, e.g. ['2016APV', '2016', '2017', '2018'] -> '2016-2018'."""
+    nums = sorted({y[:4] for y in years})
+    return nums[0] if len(nums) == 1 else f"{nums[0]}-{nums[-1]}"
+
+
 def load_data(mchi, mlsp, years):
+    """
+    Chain the signal ntuples of every year in `years` that has one for this
+    mass point. Returns (ds, mll, met, loaded_years); the lumi of the
+    loaded years sets the plot scaling.
+    """
     sig_years = list(dict.fromkeys(config.signal_year_for(y) for y in years))
-    files = config.ntuple_sig_files(mchi, mlsp, sig_years)
+    loaded_years = [y for y in sig_years if config.ntuple_sig_files(mchi, mlsp, [y])]
+    files = config.ntuple_sig_files(mchi, mlsp, loaded_years)
     if not files:
-        return None, None, None
+        return None, None, None, []
 
     chain = ROOT.TChain("tree")
     for f in files:
@@ -158,13 +149,13 @@ def load_data(mchi, mlsp, years):
                           ROOT.RooFit.Import(chain), ROOT.RooFit.WeightVar(w))
 
     if ds.numEntries() < config.MIN_EVENTS_FOR_FIT:
-        return None, None, None
-    return ds, mll, met
+        return None, None, None, []
+    return ds, mll, met, loaded_years
 
 
 # ── Plotting ──────────────────────────────────────────────────────────────────
 
-def draw_projection(var, ds, pdf, xlabel, era_tag, mc_legend_label, xmax=None, tag="", nFloatParams=2, title=None, n_plot_bins=100):
+def draw_projection(var, ds, pdf, xlabel, era_tag, mc_legend_label, mc_years, xmax=None, tag="", nFloatParams=2, title=None, n_plot_bins=100):
     """
     Build the data/fit + residual canvas for one variable. Returns the
     TCanvas itself (kept alive via canvas._refs) so callers can Print()
@@ -173,6 +164,7 @@ def draw_projection(var, ds, pdf, xlabel, era_tag, mc_legend_label, xmax=None, t
 
     xlabel is the x-axis label
     mc_legend_label is the legend label for the MC curve
+    mc_years is the list of years whose MC is in `ds` (sets the lumi scaling)
     """
     lo = var.getMin()
     hi = xmax if xmax else var.getMax()
@@ -185,16 +177,25 @@ def draw_projection(var, ds, pdf, xlabel, era_tag, mc_legend_label, xmax=None, t
     frame.SetLineWidth(0)
     res_frame.SetLineWidth(0)
 
-    ds.plotOn(frame, ROOT.RooFit.Name("data"),
+    # Plot at config.PROJECTED_LUMI: the MC is normalized to the summed lumi of
+    # the years loaded. RooFit does not carry the data's Rescale over to the
+    # curve, so scale both.
+    mc_lumi = sum(config.LUMI[y] for y in mc_years)
+    mc_label = mc_years_label(mc_years)
+    lumi_scale = config.PROJECTED_LUMI / mc_lumi
+    ds.plotOn(frame, ROOT.RooFit.Name("data"), ROOT.RooFit.Rescale(lumi_scale),
              ROOT.RooFit.LineColor(ROOT.TColor.GetColor("#5790fc")),
              ROOT.RooFit.LineWidth(2),
              ROOT.RooFit.MarkerColor(ROOT.TColor.GetColor("#5790fc")),
              ROOT.RooFit.MarkerSize(1))
     pdf.plotOn(frame, ROOT.RooFit.Name("pdf"),
+              ROOT.RooFit.Normalization(lumi_scale, ROOT.RooAbsReal.Relative),
               ROOT.RooFit.LineColor(ROOT.TColor.GetColor("#f89c20")),
               ROOT.RooFit.LineWidth(2), ROOT.RooFit.LineStyle(1))
+    frame.GetYaxis().SetTitle(f"{frame.GetYaxis().GetTitle()} "
+                              f"(scaled to {config.PROJECTED_LUMI:g} fb^{{#minus1}})")
 
-    # data_hist = ds.createHistogram(f"data_hist_{tag}", var, ROOT.RooFit.Binning(50, lo, hi))
+    # data_hist =ds.createHistogram(f"data_hist_{tag}", var, ROOT.RooFit.Binning(50, lo, hi))
     # pdf_hist  = pdf.createHistogram(f"pdf_hist_{tag}", var, ROOT.RooFit.Binning(50, lo, hi))
     # y_max = 1.4 * max(data_hist.GetMaximum(), pdf_hist.GetMaximum())
     frame.SetMaximum(frame.GetMaximum() * 1.5)
@@ -203,12 +204,9 @@ def draw_projection(var, ds, pdf, xlabel, era_tag, mc_legend_label, xmax=None, t
     # you need both of the following lines
     CMS.SetExtraText("Private work")
     CMS.SetCmsText("CMS", font=62, size=0.76)
-    # TODO: fix this for better eras
-    lumi = 250
-    run_label = ""
-    # lumi = config.LUMI_RUN2 if era_tag == "run2" else config.LUMI_RUN3
-    # run_label = "Run 2" if era_tag == "run2" else "Run 3"
-    CMS.SetLumi(lumi, unit="fb", run=run_label)
+    # Label with the projected luminosity; the plotted MC and the legend's yield are
+    # scaled up to it from the MC of the loaded years
+    CMS.SetLumi(config.PROJECTED_LUMI, unit="fb", run="", round_lumi=0)
 
     cname  = f"c_{tag}"
     canvas = ROOT.TCanvas(cname, cname, 650, 700)
@@ -218,21 +216,25 @@ def draw_projection(var, ds, pdf, xlabel, era_tag, mc_legend_label, xmax=None, t
     pad1.Draw(); pad1.cd()
     frame.GetXaxis().SetLabelSize(0)
     frame.GetXaxis().SetTitleSize(0)
-    frame.GetYaxis().SetTitleSize(0.055)
+    frame.GetYaxis().SetTitleSize(0.045)
     frame.GetYaxis().SetLabelSize(0.048)
     frame.Draw()
     CMS.CMS_lumi(pad1, iPosX=0)
     CMS.UpdatePad(pad1)
 
-    leg = ROOT.TLegend(0.25, 0.70, 0.88, 0.88)
+    leg = ROOT.TLegend(0.17, 0.64, 0.90, 0.88)
+    leg.SetMargin(0.15)
     chi2_per_ndf = frame.chiSquare("pdf", "data", nFloatParams)
     leg.AddEntry(frame.findObject("data"), mc_legend_label, "PE")
+    n_projected = ds.sumEntries() * lumi_scale
+    leg.AddEntry(ROOT.nullptr, f"{ds.numEntries()} entries in {mc_label} MC, {n_projected:.3g} events in "
+                               f"{config.PROJECTED_LUMI:g} fb^{{#minus1}}", "")
     if "met" in tag: 
         leg.AddEntry(frame.findObject("pdf"),  f"Fit (spline)", "L")
     else:
         leg.AddEntry(frame.findObject("pdf"),  f"Fit ( #chi^{{2}}/ndf = {chi2_per_ndf:.2f})", "L")
 
-    leg.SetBorderSize(0); leg.SetTextSize(0.040)
+    leg.SetBorderSize(0); leg.SetTextSize(0.038)
     leg.Draw()
 
     canvas.cd()
@@ -275,7 +277,7 @@ def draw_projection(var, ds, pdf, xlabel, era_tag, mc_legend_label, xmax=None, t
     return canvas
 
 
-def make_plots(pdf_mll, pdf_met, ds, mll, met, mchi, mlsp, era_tag, pdf_path, log_file):
+def make_plots(pdf_mll, pdf_met, ds, mll, met, mchi, mlsp, era_tag, mc_years, pdf_path, log_file):
     logger = setup_logger(log_file)
     logger.info(f"n_entries={ds.numEntries()}  sum_weights={ds.sumEntries():.4f}")
 
@@ -283,10 +285,10 @@ def make_plots(pdf_mll, pdf_met, ds, mll, met, mchi, mlsp, era_tag, pdf_path, lo
     met_ds = ds.reduce(ROOT.RooArgSet(met))
 
     base_MC_legend_label = f"Signal: ({mchi}, {mlsp}) GeV"
-    canvas_mll = draw_projection(mll, mll_ds, pdf_mll, "m(ll) [GeV]", era_tag, base_MC_legend_label,
+    canvas_mll = draw_projection(mll, mll_ds, pdf_mll, "m(ll) [GeV]", era_tag, base_MC_legend_label, mc_years,
                                  tag="mll", nFloatParams=7, title="",
                                  n_plot_bins=config.N_MLL_BINS)
-    canvas_met = draw_projection(met, met_ds, pdf_met, "p_{T}^{miss} [GeV]", era_tag, base_MC_legend_label,
+    canvas_met = draw_projection(met, met_ds, pdf_met, "p_{T}^{miss} [GeV]", era_tag, base_MC_legend_label, mc_years,
                                  xmax=config.MET_HI,
                                  tag="met",
                                  title="", # p_{T}^{miss}: spline
@@ -307,7 +309,9 @@ def make_plots(pdf_mll, pdf_met, ds, mll, met, mchi, mlsp, era_tag, pdf_path, lo
 
     # Build one multi-page vector PDF via EPS + ghostscript: each page is
     # saved as EPS, then gs merges them (in page order) into a single
-    # pdfwrite output. Same export method as obtain_signal_components.py.
+    # pdfwrite output. The m(ll) and MET plots are also saved on their own,
+    # as a single-page PDF (gs from the same EPS) and a PNG. Same export
+    # method as obtain_signal_components.py.
     pdf_stem = os.path.splitext(pdf_path)[0]
     eps_pages = []
     for i, canvas in enumerate([summary, canvas_mll, canvas_met]):
@@ -315,19 +319,53 @@ def make_plots(pdf_mll, pdf_met, ds, mll, met, mchi, mlsp, era_tag, pdf_path, lo
         canvas.SaveAs(eps_path)
         eps_pages.append(eps_path)
 
-    cmd = (f"gs -q -dBATCH -dNOPAUSE -dSAFER -dEPSCrop -dPDFSETTINGS=/prepress "
-           f"-sDEVICE=pdfwrite -dEmbedAllFonts=true -dSubsetFonts=true "
-           f"-sOutputFile={pdf_path} " + " ".join(eps_pages))
-    ret = os.system(cmd)
-    if ret != 0:
-        raise RuntimeError(f"gs merge failed (exit {ret}): {cmd}")
+    gs = ("gs -q -dBATCH -dNOPAUSE -dSAFER -dEPSCrop -dPDFSETTINGS=/prepress "
+          "-sDEVICE=pdfwrite -dEmbedAllFonts=true -dSubsetFonts=true")
+    gs_jobs = [(pdf_path, eps_pages)]
+    plot_files = [pdf_path]
+    for name, canvas, eps_path in (("mll", canvas_mll, eps_pages[1]),
+                                   ("met", canvas_met, eps_pages[2])):
+        gs_jobs.append((f"{pdf_stem}_{name}.pdf", [eps_path]))
+        canvas.SaveAs(f"{pdf_stem}_{name}.png")
+        plot_files += [f"{pdf_stem}_{name}.pdf", f"{pdf_stem}_{name}.png"]
+
+    for out_path, inputs in gs_jobs:
+        cmd = f"{gs} -sOutputFile={out_path} " + " ".join(inputs)
+        ret = os.system(cmd)
+        if ret != 0:
+            raise RuntimeError(f"gs failed (exit {ret}): {cmd}")
     for eps_path in eps_pages:
         os.remove(eps_path)
 
     logger.info(f"PDF saved: {pdf_path}")
+    logger.info(f"Individual plots saved: {' '.join(plot_files[1:])}")
 
-    os.system(f"cp {pdf_path} {config.OUTPUT_WWW_DIR}")
-    logger.info(f"PDF copied to: {config.OUTPUT_WWW_DIR}")
+    os.system(f"cp {' '.join(plot_files)} {config.OUTPUT_WWW_DIR}/signal")
+    logger.info(f"PDF and individual plots copied to: {config.OUTPUT_WWW_DIR}/signal")
+
+
+def merge_plots(era_tag):
+    """
+    Merge the fit PDFs of every mass point in config.SIGNAL_GRID that has one
+    (not only those fitted in this run), ordered by (mchi, mlsp), into one
+    PDF with ghostscript, and copy it to config.OUTPUT_WWW_DIR/signal.
+    """
+    pdfs = [p for p in (config.sig_fit_pdf(mc, ml, era_tag) for mc, ml in config.SIGNAL_GRID)
+            if os.path.exists(p)]
+    if not pdfs:
+        print(f"No signal fit PDFs to merge for era={era_tag}")
+        return
+
+    out_pdf = config.sig_fit_all_pdf(era_tag)
+    cmd = (f"gs -q -dBATCH -dNOPAUSE -dSAFER -dPDFSETTINGS=/prepress "
+           f"-sDEVICE=pdfwrite -sOutputFile={out_pdf} " + " ".join(pdfs))
+    ret = os.system(cmd)
+    if ret != 0:
+        raise RuntimeError(f"gs merge of {len(pdfs)} signal fit PDFs into {out_pdf} failed (exit {ret})")
+    print(f"Merged {len(pdfs)} signal fit PDFs: {out_pdf}")
+
+    os.system(f"cp {out_pdf} {config.OUTPUT_WWW_DIR}/signal")
+    print(f"Merged PDF copied to: {config.OUTPUT_WWW_DIR}/signal")
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
@@ -341,12 +379,12 @@ def fit_one(mchi, mlsp, years, era_tag, force=False):
         print(f"  EXISTS (skip): {os.path.basename(out_json)}")
         return True
 
-    ds, mll, met = load_data(mchi, mlsp, years)
+    ds, mll, met, mc_years = load_data(mchi, mlsp, years)
     if ds is None:
         print(f"  SKIP: too few events")
         return False
 
-    print(f"  Loaded {ds.numEntries()} entries (sum_w={ds.sumEntries():.4f})")
+    print(f"  Loaded {ds.numEntries()} entries (sum_w={ds.sumEntries():.4f}) from years {mc_years}")
     tag = f"mchi{mchi}_mlsp{mlsp}_{era_tag}"
 
     # ── m(ll): double-sided Crystal Ball, unbinned 1D fit ──
@@ -372,7 +410,7 @@ def fit_one(mchi, mlsp, years, era_tag, force=False):
     met_ds   = ds.reduce(ROOT.RooArgSet(met))
     met_hist = met_ds.createHistogram(f"sig_met_hist_{tag}", met,
                                       RF.Binning(config.N_MET_BINS, config.MET_LO, config.MET_HI))
-    pdf_met, spline = build_met_spline_pdf(met_hist, met, tag, n_knots=config.N_MET_BINS, power=5, knot_avg_halfwidth_bins=1)
+    pdf_met, spline = build_met_spline_pdf(met_hist, met, tag)
 
     # ── Combine into the 2D product PDF. No further joint fit is needed --
     # pdf_met has no floating shape parameters, so the product's likelihood
@@ -398,6 +436,7 @@ def fit_one(mchi, mlsp, years, era_tag, force=False):
     with open(out_json, 'w') as f:
         json.dump({
             "mchi": mchi, "mlsp": mlsp, "era": era_tag,
+            "mc_years": mc_years, "mc_lumi": sum(config.LUMI[y] for y in mc_years),
             "n_entries": ds.numEntries(), "sum_weights": ds.sumEntries(),
             "fit_status": result.status(), "cov_qual": result.covQual(),
             "edm": result.edm(), "min_nll": result.minNll(),
@@ -406,7 +445,7 @@ def fit_one(mchi, mlsp, years, era_tag, force=False):
         }, f, indent=2)
     print(f"  Saved {out_json}")
 
-    make_plots(pdf_mll, pdf_met, ds, mll, met, mchi, mlsp, era_tag, out_pdf, out_log)
+    make_plots(pdf_mll, pdf_met, ds, mll, met, mchi, mlsp, era_tag, mc_years, out_pdf, out_log)
     print(f"  Saved {out_pdf}")
     return True
 
@@ -440,6 +479,8 @@ def main():
             n_fail += 1
 
     print(f"\nDone: {n_ok} fitted  {n_skip} skipped  {n_fail} failed")
+
+    merge_plots(args.era)
 
 
 if __name__ == "__main__":

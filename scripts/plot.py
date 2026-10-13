@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
 plot.py
-Produces CMS-style limit plots:
+Produces CMS-style limit plots (ROOT + cmsstyle, "CMS Preliminary" header),
+each saved as .png and .pdf:
 
   1D Brazil band (--plot 1d):
      x: m(χ̃₁⁰) [GeV]    y: cross section [pb]   (log scale)
-     Green band ±1σ, yellow band ±2σ, blue dashed = expected limit median
+     Green band ±1σ, yellow band ±2σ, black dashed = expected limit median
      Theory cross section overlaid
 
   2D exclusion contour (--plot 2d):
@@ -17,8 +18,9 @@ this channel, so (unlike the H(gg)+H/Z(bb) channel this framework was
 originally scaffolded for) there is no BF-exclusion plot mode here.
 
 Usage:
-    python3 scripts/plot.py --era run2 --xsec 1d --plot 1d --mlsp 0
-    python3 scripts/plot.py --era run2 --xsec 2d --plot 2d
+    python3 plot.py --era run2 --m gmsb --plot 1d
+    python3 plot.py --era run2 --m bino --mlsp 100 --plot 1d
+    python3 plot.py --era run2 --m bino --plot 2d
 """
 
 import os
@@ -30,15 +32,19 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
 import matplotlib.ticker as ticker
 import matplotlib.patches as mpatches
-from matplotlib.lines import Line2D
+from contourpy import contour_generator
 from scipy.interpolate import griddata
 from scipy.ndimage import gaussian_filter
+import ROOT
+import cmsstyle as CMS
 
 sys.path.insert(0, os.path.dirname(__file__))
 import config
+
+ROOT.gROOT.SetBatch(True)
+ROOT.gErrorIgnoreLevel = ROOT.kWarning  # silence the "file has been created" Info lines
 
 plt.rcParams.update({
     'font.size': 13,
@@ -49,11 +55,59 @@ plt.rcParams.update({
     'ytick.labelsize': 12,
 })
 
-LUMI_LABELS = {
-    'run2':     r'137.61 fb$^{-1}$ (13 TeV)',
-    'run3':     r'282.44 fb$^{-1}$ (13.6 TeV)',
-    'run2run3': r'420.05 fb$^{-1}$ (13+13.6 TeV)',
+# Centre-of-mass energy for the header; the lumi is config.PROJECTED_LUMI for
+# every era, since the datacard yields are projected to it
+ENERGY_LABELS = {
+    'run2':     '13 TeV',
+    'run3':     '13.6 TeV',
+    'run2run3': '13+13.6 TeV',
 }
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  cmsstyle helpers
+# ══════════════════════════════════════════════════════════════════════════════
+
+def cms_canvas(name, x_min, x_max, y_min, y_max, x_title, y_title, era_tag,
+               right_margin=None, **kwargs):
+    """
+    cmsstyle canvas with "CMS Preliminary" at the top left, outside the frame,
+    and "<lumi> (<energy>)" at the top right.
+    """
+    CMS.SetExtraText("Preliminary")
+    CMS.SetLumi(config.PROJECTED_LUMI, run=None, round_lumi=0)
+    CMS.SetEnergy(0, unit=ENERGY_LABELS.get(era_tag, era_tag))
+    canv = CMS.cmsCanvas(name, x_min, x_max, y_min, y_max, x_title, y_title,
+                         iPos=0, **kwargs)
+    if right_margin is not None:
+        # cmsCanvas has no right-margin option, and it has already placed the
+        # right-aligned lumi text against the old margin, so move that too
+        canv.SetRightMargin(right_margin)
+        for obj in canv.GetListOfPrimitives():
+            if obj.InheritsFrom('TLatex') and obj.GetTextAlign() == 31:
+                obj.SetX(1 - right_margin)
+    return canv
+
+
+def make_graph(x, y):
+    # TGraph reads the raw buffers, so pandas column views must be made contiguous
+    x = np.ascontiguousarray(x, dtype=float)
+    y = np.ascontiguousarray(y, dtype=float)
+    return ROOT.TGraph(len(x), x, y)
+
+
+WEB_DIR = "/eos/user/s/skkwan/www/higgsino/studies/mll-MET-fit-2D/limits"
+
+
+def save_canvas(canv, out_path):
+    """Save canv as out_path (.png) and as a .pdf next to it, then close it."""
+    base = os.path.splitext(out_path)[0]
+    paths = [base + '.png', base + '.pdf']
+    CMS.UpdatePad(canv)
+    for path in paths:
+        canv.SaveAs(path)
+    canv.Close()
+    return paths
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -61,60 +115,37 @@ LUMI_LABELS = {
 # ══════════════════════════════════════════════════════════════════════════════
 
 def load_xsec(era_tag):
-    if not os.path.exists(config.SIGNAL_CSV):
-        raise FileNotFoundError(f"signal_master.csv not found: {config.SIGNAL_CSV}")
-    df = pd.read_csv(config.SIGNAL_CSV)
-
-    if era_tag == 'run2run3':
-        # Combined-era reference xsec: previously this fell through to the
-        # 'else' branch below and silently reused run3's (2022EE) xsec alone
-        # for the whole combined result, which doesn't correctly cancel
-        # against the combined datacard's mixed run2+run3 nominal rate.
-        # Approximation used here: xsec_weighted = (xsec_run2*lumi_run2 +
-        # xsec_run3*lumi_run3) / lumi_total, i.e. luminosity-weighted,
-        # assuming eff_run2 ~ eff_run3 (checked to be reasonably close,
-        # though not exactly equal -- see diag notes on run2 vs run3
-        # signal efficiency). This is an approximation, not an exact
-        # cancellation like the single-era case.
-        df_run2 = df[df['year'] == '2018'][['mchi', 'xsec_2d', 'xsec_1d']].drop_duplicates(subset=['mchi'])
-        df_run3 = df[df['year'] == '2022EE'][['mchi', 'xsec_2d', 'xsec_1d']].drop_duplicates(subset=['mchi'])
-        if df_run2.empty or df_run3.empty:
-            raise ValueError("No rows found for year=2018 or year=2022EE in signal_master.csv "
-                              "(needed to build combined-era reference xsec)")
-        merged = df_run2.merge(df_run3, on='mchi', suffixes=('_run2', '_run3'))
-
-        lumi_run2 = config.LUMI_RUN2
-        lumi_run3 = config.LUMI_RUN3
-        lumi_total = lumi_run2 + lumi_run3
-
-        for col in ['xsec_2d', 'xsec_1d']:
-            merged[col] = (merged[f'{col}_run2'] * lumi_run2 +
-                          merged[f'{col}_run3'] * lumi_run3) / lumi_total
-
-        return merged[['mchi', 'xsec_2d', 'xsec_1d']]
-
-    ref_year = '2018' if era_tag == 'run2' else '2022EE'
-    df_year = df[df['year'] == ref_year][['mchi', 'xsec_2d', 'xsec_1d']].drop_duplicates(subset=['mchi'])
-    if df_year.empty:
-        raise ValueError(f"No rows found for year={ref_year} in signal_master.csv")
-    return df_year
+    """
+    Per-mchi xsec_2d, xsec_1d [pb] for era_tag from signal_config.json.
+    run2run3 is the luminosity-weighted run2/run3 average (config.signal_xsec).
+    """
+    rows = [{'mchi':    p['mchi'],
+             'xsec_2d': config.signal_xsec(p, era_tag, '2d'),
+             'xsec_1d': config.signal_xsec(p, era_tag, '1d')}
+            for p in config.load_signal_config()]
+    df = pd.DataFrame(rows).astype({'xsec_2d': float, 'xsec_1d': float})
+    df = df.dropna(subset=['xsec_2d', 'xsec_1d'], how='all').drop_duplicates(subset=['mchi'])
+    if df.empty:
+        need = " (needs both run2 and run3)" if era_tag == 'run2run3' else ""
+        raise ValueError(f"No {era_tag} cross sections in signal_config.json{need}")
+    return df
 
 
-def add_xsec(df_lim, xsec_mode, era_tag):
+def add_xsec(df_lim, model, era_tag):
     df_xsec = load_xsec(era_tag)
     df = df_lim.merge(df_xsec, on='mchi', how='left')
-    xsec_col = 'xsec_1d' if xsec_mode == '1d' else 'xsec_2d'
-    df['sigma_ref_pb'] = df[xsec_col]
+    xsec_col = f'xsec_{config.model_xsec_mode(model)}'
+    df['sigma_ref_pb'] = df[xsec_col] * config.model_br(model)
     for band in ['exp', 'exp_m1', 'exp_p1', 'exp_m2', 'exp_p2']:
         df[f'sigma_{band}_pb'] = df[band] * df['sigma_ref_pb']
     return df
 
 
-def find_csv(era_tag, xsec_mode):
-    """Auto-find limits CSV for a given era, xsec mode."""
+def find_csv(era_tag, model, mlsp=None):
+    """Auto-find limits CSV for a given era and model (and mlsp, as run_combine.py names it)."""
     # search in era subdir first, then limits root
     for d in [os.path.join(config.LIMITS_DIR, era_tag), config.LIMITS_DIR]:
-        pattern = os.path.join(d, f"limits_{era_tag}_{xsec_mode}xsec.csv")
+        pattern = os.path.join(d, f"limits_{era_tag}_{model}_mlsp{mlsp}.csv")
         matches = glob.glob(pattern)
         if matches:
             return matches[0]
@@ -125,7 +156,7 @@ def find_csv(era_tag, xsec_mode):
 #  1D Brazil band
 # ══════════════════════════════════════════════════════════════════════════════
 
-def plot_brazil(df, mlsp_val, xsec_mode, era_tag, lumi_label, out_path):
+def plot_brazil(df, mlsp_val, model, era_tag, out_path):
     sub = df[df['mlsp'] == mlsp_val].sort_values('mchi').copy()
     if len(sub) < 2:
         print(f"  1D: not enough points for mlsp={mlsp_val}")
@@ -139,42 +170,53 @@ def plot_brazil(df, mlsp_val, xsec_mode, era_tag, lumi_label, out_path):
     s_exp_m2     = sub['sigma_exp_m2_pb'].values
     s_exp_p2     = sub['sigma_exp_p2_pb'].values
 
-    fig, ax = plt.subplots(figsize=(8, 6))
-    ax.fill_between(mchi, s_exp_m2, s_exp_p2,
-                    color='#FFEE44', label=r'Expected $\pm2\sigma$', zorder=2)
-    ax.fill_between(mchi, s_exp_m1, s_exp_p1,
-                    color='#44BB44', label=r'Expected $\pm1\sigma$', zorder=3)
-    ax.plot(mchi, s_exp,        'b--', lw=2, label='Expected limit', zorder=4)
-    ax.plot(mchi, sigma_theory, 'r-',  lw=2, label='Theory',         zorder=5)
-
-    ax.set_yscale('log')
-    ax.set_xlabel(r'$m(\tilde{\chi}_1^0)$ [GeV]')
-    ax.set_ylabel('Cross section [pb]')
-    ax.set_xlim(mchi.min() - 25, mchi.max() + 25)
     all_vals = np.concatenate([s_exp_m2, s_exp_p2, sigma_theory])
-    ax.set_ylim(max(1e-4, all_vals.min() / 5), all_vals.max() * 5)
-    ax.legend(loc='upper right')
-    ax.grid(True, which='both', alpha=0.3, ls=':')
+    # log scale: the curves fill the lower 55% of the frame, the labels and legend sit above
+    y_min = max(1e-4, all_vals.min() / 5)
+    y_max = y_min * (all_vals.max() / y_min) ** (1 / 0.55)
+    canv = cms_canvas('c_brazil', mchi.min() - 25, mchi.max() + 25, y_min, y_max,
+                      'm(#tilde{#chi}^{0}_{1}) [GeV]', '#sigma(#tilde{#chi}^{0}_{1} #tilde{#chi}^{0}_{1} #rightarrow ZH) [pb]',
+                      era_tag, square=False, yTitOffset=1.3, extraSpace=0.04)
+    canv.SetLogy()
 
-    xsec_lbl = r'$\sigma_{\rm 1D}$' if xsec_mode == '1d' else r'$\sigma_{\rm 2D}$'
-    ax.set_title(f'Higgsino $\\to Z(ll)H(bb)$, '
-                 f'$m_{{\\rm LSP}}={mlsp_val}$ GeV, {xsec_lbl}', fontsize=11)
+    # bands are closed polygons: out along the upper edge, back along the lower edge
+    mchi_loop = np.concatenate([mchi, mchi[::-1]])
+    g_2sig = make_graph(mchi_loop, np.concatenate([s_exp_p2, s_exp_m2[::-1]]))
+    g_1sig = make_graph(mchi_loop, np.concatenate([s_exp_p1, s_exp_m1[::-1]]))
+    g_exp  = make_graph(mchi, s_exp)
+    g_th   = make_graph(mchi, sigma_theory)
+    # the line colour only shows as the legend box outline
+    CMS.cmsObjectDraw(g_2sig, 'F', FillColor=CMS.kLimit95, LineColor=CMS.kLimit95)
+    CMS.cmsObjectDraw(g_1sig, 'F', FillColor=CMS.kLimit68, LineColor=CMS.kLimit68)
+    CMS.cmsObjectDraw(g_exp,  'L', LineColor=ROOT.kBlack, LineStyle=ROOT.kDashed, LineWidth=3)
+    CMS.cmsObjectDraw(g_th,   'L', LineColor=ROOT.kRed, LineWidth=3)
 
-    ax.text(0.04, 0.97, "CMS", transform=ax.transAxes,
-            fontsize=16, fontweight="bold", va="top")
-    ax.text(0.04, 0.90, lumi_label, transform=ax.transAxes, fontsize=10, va="top")
+    x_right = 1 - canv.GetRightMargin() - 0.04
+    y_top   = 1 - canv.GetTopMargin() - 0.04
+    latex = ROOT.TLatex()
+    latex.SetNDC()
+    latex.SetTextFont(42)
+    latex.SetTextSize(0.04)
+    latex.SetTextAlign(33)
+    latex.DrawLatex(x_right, y_top, ('GMSB, assuming' if model == 'gmsb' else 'Higgsino-Bino, assuming') + f' BR(#tilde{{#chi}}^{{0}}_{{1}} #tilde{{#chi}}^{{0}}_{{1}} #rightarrow ZH) = {config.model_br(model):.0%}, ')
+    latex.DrawLatex(x_right, y_top - 0.06, f'm_{{LSP}} = {mlsp_val} GeV, 2018 MC scaled up')
 
-    plt.tight_layout()
-    plt.savefig(out_path, dpi=150, bbox_inches='tight')
-    plt.close()
-    print(f"  Saved 1D: {out_path}")
+    leg = CMS.cmsLeg(x_right - 0.32, y_top - 0.38, x_right, y_top - 0.13, textSize=0.04)
+    leg.AddEntry(g_exp,  'Expected limit', 'L')
+    leg.AddEntry(g_1sig, 'Expected #pm1#sigma', 'F')
+    leg.AddEntry(g_2sig, 'Expected #pm2#sigma', 'F')
+    leg.AddEntry(g_th,   'Theory', 'L')
+
+    canv.RedrawAxis()  # the bands cover the frame ticks
+    paths = save_canvas(canv, out_path)
+    print(f"  Saved 1D: {', '.join(paths)}")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  2D exclusion contour
 # ══════════════════════════════════════════════════════════════════════════════
 
-def plot_2d_exclusion(df, xsec_mode, era_tag, lumi_label, out_path):
+def plot_2d_exclusion(df, model, era_tag, out_path):
     mchi_pts = df['mchi'].values.astype(float)
     mlsp_pts = df['mlsp'].values.astype(float)
 
@@ -191,9 +233,9 @@ def plot_2d_exclusion(df, xsec_mode, era_tag, lumi_label, out_path):
     vmin_fb = max(10 ** np.floor(np.log10(sigma_lim_fb.min())), 0.1)
     vmax_fb = 10 ** np.ceil(np.log10(sigma_lim_fb.max()))
 
-    mchi_range = np.linspace(mchi_pts.min(), mchi_pts.max(), 400)
-    mlsp_range = np.linspace(0, mchi_pts.max(), 400)
-    MX, MY = np.meshgrid(mchi_range, mlsp_range)
+    mNLSP_range = np.linspace(mchi_pts.min(), mchi_pts.max(), 400)
+    mLSP_range = np.linspace(0, mchi_pts.max(), 400)
+    MX, MY = np.meshgrid(mNLSP_range, mLSP_range)
 
     def interp_log(vals):
         z = griddata((mchi_pts, mlsp_pts), np.log10(vals),
@@ -211,79 +253,85 @@ def plot_2d_exclusion(df, xsec_mode, era_tag, lumi_label, out_path):
 
     mchi_uniq = np.array(sorted(df['mchi'].unique()), dtype=float)
     mlsp_uniq = np.array(sorted(df['mlsp'].unique()), dtype=float)
-    Z_pixel = np.full((len(mlsp_uniq), len(mchi_uniq)), np.nan)
-    mchi_idx = {v: i for i, v in enumerate(mchi_uniq)}
-    mlsp_idx = {v: i for i, v in enumerate(mlsp_uniq)}
-    for _, row in df.iterrows():
-        Z_pixel[mlsp_idx[row['mlsp']], mchi_idx[row['mchi']]] = \
-            np.log10(row['sigma_exp_pb'] * 1000.0)
-
     step_mchi = np.diff(mchi_uniq).mean() if len(mchi_uniq) > 1 else 50.0
     step_mlsp = np.diff(mlsp_uniq).mean() if len(mlsp_uniq) > 1 else 50.0
     mchi_edges = np.append(mchi_uniq, mchi_uniq[-1] + step_mchi)
     mlsp_edges = np.append(mlsp_uniq, mlsp_uniq[-1] + step_mlsp)
-    ME, MLE = np.meshgrid(mchi_edges, mlsp_edges)
+    # y axis ends 200 GeV above the top edge of the highest mlsp row with a z value
+    mlsp_top = df.loc[np.isfinite(df['sigma_exp_pb']), 'mlsp'].max()
+    y_max = mlsp_edges[np.searchsorted(mlsp_uniq, mlsp_top) + 1] + 200
 
-    import colorsys
-    def desaturate_cmap(cmap_name, sat=0.65):
-        cmap = plt.get_cmap(cmap_name)
-        cols = cmap(np.linspace(0, 1, 256))
-        new_cols = []
-        for r, g, b, a in cols:
-            h, s, v = colorsys.rgb_to_hsv(r, g, b)
-            s *= sat
-            r2, g2, b2 = colorsys.hsv_to_rgb(h, s, v)
-            new_cols.append((r2, g2, b2, a))
-        return mcolors.LinearSegmentedColormap.from_list('jet_muted', new_cols)
 
-    norm = mcolors.LogNorm(vmin=vmin_fb, vmax=vmax_fb)
-    cmap = desaturate_cmap('jet', sat=0.65)
+    print(">>>>", mchi_pts)
+    canv = cms_canvas('c_2d', mchi_pts.min(), mchi_pts.max() + step_mchi,
+                      0, y_max,
+                      'm_{NLSP} [GeV]', 'm_{LSP} [GeV]',
+                      era_tag, square=False, with_z_axis=True, right_margin=0.19,
+                      yTitOffset=1.1, extraSpace=0.03)
+    canv.SetLogz()
+    CMS.SetCMSPalette()
 
-    fig, ax = plt.subplots(figsize=(8, 7))
-    pcm = ax.pcolormesh(ME, MLE, 10**Z_pixel,
-                        cmap=cmap, norm=norm, shading='flat', zorder=1)
+    # one cell per mass point, with its lower edges at (mchi, mlsp)
+    h_lim = ROOT.TH2D('h_lim', '', len(mchi_uniq), mchi_edges, len(mlsp_uniq), mlsp_edges)
+    mchi_idx = {v: i + 1 for i, v in enumerate(mchi_uniq)}
+    mlsp_idx = {v: i + 1 for i, v in enumerate(mlsp_uniq)}
+    for _, row in df.iterrows():
+        # COLZ leaves cells below the minimum blank, so clip them to the lowest colour
+        h_lim.SetBinContent(mchi_idx[row['mchi']], mlsp_idx[row['mlsp']],
+                            max(row['sigma_exp_pb'] * 1000.0, vmin_fb))
+    h_lim.SetMinimum(vmin_fb)
+    h_lim.SetMaximum(vmax_fb)
+    h_lim.SetContour(255)
+    h_lim.GetZaxis().SetTitle('Cross section upper limit (95% CL) [fb]')
+    h_lim.GetZaxis().SetTitleSize(0.045)
+    h_lim.GetZaxis().SetLabelSize(0.045)
+    h_lim.GetZaxis().SetTitleOffset(1.1)
+    CMS.cmsObjectDraw(h_lim, 'COLZ')
+    r = canv.GetRightMargin()
+    CMS.UpdatePalettePosition(h_lim, canv, X1=1 - r + 0.01, X2=1 - r + 0.04)
 
-    contour_kw = dict(zorder=5)
-    for Z, lw, ls in [(Z_excl, 2.0, 'solid'), (Z_excl_m1, 1.3, 'dashed'),
-                      (Z_excl_p1, 1.3, 'dashed'), (Z_excl_m2, 0.8, 'dotted'),
-                      (Z_excl_p2, 0.8, 'dotted')]:
-        try:
-            ax.contour(MX, MY, Z, levels=[0],
-                       colors='red', linewidths=lw, linestyles=ls, **contour_kw)
-        except Exception:
-            pass
+    graphs = []
+    leg_entries = []
+    # style 9 is a long dash
+    for label, lw, ls, Zs in [('Expected median',     3, ROOT.kSolid,  [Z_excl]),
+                              ('Expected #pm1#sigma', 2, 9,            [Z_excl_m1, Z_excl_p1]),
+                              ('Expected #pm2#sigma', 1, ROOT.kDotted, [Z_excl_m2, Z_excl_p2])]:
+        style = dict(LineColor=ROOT.kRed, LineWidth=lw, LineStyle=ls)
+        for Z in Zs:
+            for line in contour_generator(MX, MY, np.ma.masked_invalid(Z)).lines(0):
+                # the PNG renderer restarts the dash pattern on every segment, so
+                # the ~1 px segments of the fine grid draw as solid; thin them out
+                line = np.vstack([line[:-1:6], line[-1:]])
+                graphs.append(make_graph(line[:, 0], line[:, 1]))
+                CMS.cmsObjectDraw(graphs[-1], 'L', **style)
+        # style-only graph for the legend, since a contour can be absent from the plot range
+        g_leg = ROOT.TGraph()
+        CMS.setRootObjectProperties(g_leg, **style)
+        graphs.append(g_leg)
+        leg_entries.append((g_leg, label))
 
-    cb = plt.colorbar(pcm, ax=ax, pad=0.02)
-    cb.set_label('Cross section upper limit (95% CL) [fb]', fontsize=12)
-    tick_vals = [10**p for p in range(int(np.floor(np.log10(vmin_fb))),
-                                       int(np.ceil(np.log10(vmax_fb))) + 1)]
-    cb.set_ticks(tick_vals)
-    cb.set_ticklabels([f'$10^{{{int(np.log10(t))}}}$' if np.log10(t) != 0
-                       else '1' for t in tick_vals])
+    xsec_lbl = '#sigma_{1D}' if model == 'gmsb' else '#sigma_{2D}'
+    x_left  = canv.GetLeftMargin() + 0.03
+    x_right = 1 - canv.GetRightMargin() - 0.03
+    y_top   = 1 - canv.GetTopMargin() - 0.03
 
-    ax.set_xlim(mchi_pts.min(), mchi_pts.max() + step_mchi)
-    ax.set_ylim(0, mchi_pts.max() * 0.8)
-    ax.set_xlabel(r'$m(\tilde{\chi}_1^0)_{\rm NLSP}$ [GeV]', fontsize=14)
-    ax.set_ylabel(r'$m_{\rm LSP}$ [GeV]', fontsize=14)
+    latex = ROOT.TLatex()
+    latex.SetNDC()
+    latex.SetTextFont(42)
+    latex.SetTextSize(0.03)
+    latex.SetTextAlign(13)
+    latex.DrawLatex(x_left, y_top, ('GMSB, assuming' if model == 'gmsb' else 'Higgsino-Bino, assuming') + f' BR(#tilde{{#chi}}^{{0}}_{{1}} #tilde{{#chi}}^{{0}}_{{1}} #rightarrow ZH) = {config.model_br(model):.0%}')
 
-    xsec_lbl = r'$\sigma_{\rm 1D}$' if xsec_mode == '1d' else r'$\sigma_{\rm 2D}$'
-    ax.text(0.03, 0.97,
-            f'pp → higgsino → Z(ll)H(bb) + LSP\n{xsec_lbl}',
-            transform=ax.transAxes, fontsize=10, va='top', ha='left',
-            bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.4'),
-            zorder=10)
+    # drawn after the contours, and opaque, so it stays readable over the colour map
+    leg = CMS.cmsLeg(x_left, y_top - 0.21, x_left + 0.24, y_top - 0.06, textSize=0.03)
+    leg.SetFillStyle(1001)
+    leg.SetBorderSize(0)
+    for g_leg, label in leg_entries:
+        leg.AddEntry(g_leg, label, 'L')
 
-    legend_elements = [
-        Line2D([0,1],[0,0], color='red', lw=2.0, ls='solid',  label='Exp. median'),
-        Line2D([0,1],[0,0], color='red', lw=1.3, ls='dashed', label=r'Exp. $\pm1\sigma$'),
-        Line2D([0,1],[0,0], color='red', lw=0.8, ls='dotted', label=r'Exp. $\pm2\sigma$'),
-    ]
-    ax.legend(handles=legend_elements, loc='upper right', fontsize=10, framealpha=0.9)
-
-    plt.tight_layout()
-    plt.savefig(out_path, dpi=150, bbox_inches='tight')
-    plt.close()
-    print(f"  Saved 2D: {out_path}")
+    canv.RedrawAxis()  # the colour map covers the frame ticks
+    paths = save_canvas(canv, out_path)
+    print(f"  Saved 2D: {', '.join(paths)}")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -438,7 +486,8 @@ def plot_bf_exclusion(era_tag, xsec_mode, lumi_label, out_dir):
 
     plt.tight_layout()
     out_path = os.path.join(out_dir, f"bf_exclusion_{era_tag}_{xsec_mode}xsec.png")
-    plt.savefig(out_path, dpi=200, bbox_inches="tight")
+    plt.savefig(out_path, dpi=400, bbox_inches="tight")
+    plt.savefig(os.path.splitext(out_path)[0] + ".pdf", bbox_inches="tight")
     plt.close()
     print(f"  Saved BF exclusion: {out_path}")
 
@@ -453,22 +502,30 @@ def main():
                         help="Limits CSV from run_combine.py (auto-found if --era given)")
     parser.add_argument("--era",    default=None,
                         help="Era label (used to auto-find CSV)")
-    parser.add_argument("--xsec",   choices=["1d", "2d"], default="1d",
-                        help="Xsec mode (default: 1d)")
+    parser.add_argument("--m",      dest="model", choices=config.MODELS, required=True,
+                        help="'gmsb': mlsp=1, sigma_1D; 'bino': sigma_2D, --mlsp selects the "
+                             "limits CSV and the 1D Brazil band")
     parser.add_argument("--mlsp",   type=int, default=None,
-                        help="mlsp value for 1D Brazil band (default: smallest)")
+                        help="mlsp value (gmsb: 1; bino: required for --plot 1d/both and for "
+                             "auto-finding the CSV)")
     parser.add_argument("--plot",   choices=["1d", "2d", "both"], default="both")
-    parser.add_argument("--outdir", default=None)
+    parser.add_argument("--outdir", default=WEB_DIR,
+                        help=f"Output directory (default: {WEB_DIR})")
     args = parser.parse_args()
+    if args.model == 'gmsb':
+        try:
+            args.mlsp = config.model_mlsp('gmsb', args.mlsp)
+        except ValueError as e:
+            parser.error(str(e))
 
     # ── auto-find CSV if not given ────────────────────────────────────────────
     if not args.csv:
         if not args.era:
             print("ERROR: --csv or --era required")
             sys.exit(1)
-        args.csv = find_csv(args.era, args.xsec)
+        args.csv = find_csv(args.era, args.model, args.mlsp)
         if not args.csv:
-            print(f"ERROR: could not find limits_{args.era}_{args.xsec}xsec.csv "
+            print(f"ERROR: could not find limits_{args.era}_{args.model}_mlsp{args.mlsp}.csv "
                   f"in {config.LIMITS_DIR}")
             sys.exit(1)
         print(f"Auto-found CSV: {args.csv}")
@@ -481,13 +538,12 @@ def main():
     if df_raw.empty:
         print("ERROR: no successful results in CSV"); sys.exit(1)
 
-    era_tag    = args.era  or str(df_raw['era'].iloc[0])
-    xsec_mode  = args.xsec or str(df_raw['xsec'].iloc[0])
-    lumi_label = LUMI_LABELS.get(era_tag, era_tag)
-    out_dir    = args.outdir or os.path.dirname(args.csv)
+    era_tag    = args.era 
+    xsec_mode  = args.model
+    out_dir    = args.outdir
     os.makedirs(out_dir, exist_ok=True)
 
-    print("Loading cross sections from signal_master.csv...", flush=True)
+    print("Loading cross sections from signal_config.json...", flush=True)
     df = add_xsec(df_raw, xsec_mode, era_tag)
     n_excl = (df['exp'] <= 1).sum()
     print(f"Loaded {len(df)} mass points: {n_excl} expected excluded (mu<1)")
@@ -500,14 +556,14 @@ def main():
             mlsp_val = int(counts[counts >= 3].index.min())
         print(f"\nMaking 1D Brazil band (mlsp={mlsp_val})...", flush=True)
         out_1d = os.path.join(out_dir,
-                              f"brazil_{era_tag}_{xsec_mode}xsec_mlsp{mlsp_val}.png")
-        plot_brazil(df, mlsp_val, xsec_mode, era_tag, lumi_label, out_1d)
+                              f"asymptoticLimits_{era_tag}_{xsec_mode}_mlsp{mlsp_val}.png")
+        plot_brazil(df, mlsp_val, xsec_mode, era_tag, out_1d)
 
     if args.plot in ("2d", "both"):
         print(f"\nMaking 2D exclusion map...", flush=True)
         out_2d = os.path.join(out_dir,
-                              f"exclusion2d_{era_tag}_{xsec_mode}xsec.png")
-        plot_2d_exclusion(df, xsec_mode, era_tag, lumi_label, out_2d)
+                              f"exclusion2d_{era_tag}_{xsec_mode}.png")
+        plot_2d_exclusion(df, xsec_mode, era_tag, out_2d)
 
     print("\nDone.")
 

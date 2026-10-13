@@ -14,12 +14,14 @@ What this script does, per era (run2 / run3):
                                  constraint (named ratio_peaking, not r,
                                  since r is Combine's POI)
       sig_pdf_..._{era}_norm     the signal yield, fixed at the per-mass-point
-                                 yield from signal_master.csv (Combine scales
+                                 yield from signal_config.json (Combine scales
                                  it by the signal strength r)
     and builds
       bkg_total_{era} = ratio_peaking * bkg_peak + (1-ratio_peaking) * bkg_nonpeak
     The total background normalization (sum of config.BKG_YIELD) is not in
     the workspace: make_datacards.py writes it as the bkg rate in the datacard.
+  - Fixes (setConstant) every m(ll) and MET shape parameter of the signal
+    and background pdfs; make_datacards.py also states them in the datacard.
   - Builds data_obs as a background-only pseudo-dataset generated from
     bkg_total -- a placeholder until real (unblinded) data ntuples exist.
     Run Combine with -t -1 for an Asimov-based expected limit (which
@@ -35,7 +37,7 @@ Output:
     contents:
       bkg_total_{era}                    <- background PDF (shape params fixed)
       ratio_peaking_{era}                <- RooRealVar, starts at ratio_peaking_mc, floating
-      sig_pdf_mchi{}_mlsp{}_{era}        <- signal PDF (from fit_signal.py)
+      sig_pdf_mchi{}_mlsp{}_{era}        <- signal PDF (from fit_signal.py, shape params fixed)
       sig_pdf_mchi{}_mlsp{}_{era}_norm   <- RooRealVar, fixed at the signal yield
       data_obs                           <- RooDataSet (mll, met), pseudo-data
 
@@ -58,7 +60,7 @@ ROOT.gROOT.SetBatch(True)
 
 sys.path.insert(0, os.path.dirname(__file__))
 import config
-from make_datacards import load_signal_csv, get_yield
+from make_datacards import load_signal_config, get_yield
 
 
 # ── Pseudo-data ───────────────────────────────────────────────────────────────
@@ -160,7 +162,7 @@ def make_mass_point_workspace(mchi, mlsp, era_tag, bkg_ws, sig_yield, force=Fals
         return True
 
     if sig_yield <= 0:
-        print(f"  SKIP mchi={mchi} mlsp={mlsp}: signal yield is zero")
+        print(f"  SKIP mchi={mchi} mlsp={mlsp}: signal yield zero or missing in signal_config.json")
         return False
 
     sig_ws_path = config.sig_fit_ws(mchi, mlsp, era_tag)
@@ -190,12 +192,25 @@ def make_mass_point_workspace(mchi, mlsp, era_tag, bkg_ws, sig_yield, force=Fals
     sig_norm.setConstant(True)
     ws.Import(sig_norm, ROOT.RooFit.Silence())
 
+    # Fix every m(ll)/MET shape parameter of the signal and background pdfs
+    # (fit_signal.py leaves the signal m(ll) params floating). Only
+    # ratio_peaking stays floating, constrained by the datacard.
+    observables = ROOT.RooArgSet(ws.var("mll"), ws.var("met"))
+    n_frozen = 0
+    for pdf_name in (sig_pdf_name, f"bkg_total_{era_tag}"):
+        for p in ws.pdf(pdf_name).getParameters(observables):
+            if p.GetName() == f"ratio_peaking_{era_tag}":
+                continue
+            if not p.isConstant():
+                n_frozen += 1
+            p.setConstant(True)
+
     ws.Import(bkg_ws.data("data_obs"))
 
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     ws.writeToFile(out_path)
-    print(f"  Wrote: {os.path.basename(out_path)}  [{sig_norm.GetName()} = {sig_yield:.4f}]",
-          flush=True)
+    print(f"  Wrote: {os.path.basename(out_path)}  [{sig_norm.GetName()} = {sig_yield:.4f}, "
+          f"froze {n_frozen} floating shape params]", flush=True)
     return True
 
 
@@ -220,7 +235,7 @@ def main():
         mass_points = [(mc, ml) for mc, ml in mass_points if ml == args.mlsp]
     print(f"Mass points: {len(mass_points)}", flush=True)
 
-    df = load_signal_csv()
+    df = load_signal_config()
 
     for era in eras:
         print(f"\n=== Background model: era={era} ===")

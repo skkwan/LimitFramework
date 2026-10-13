@@ -10,6 +10,7 @@ fit machinery is adapted from).
 
 import os
 import glob
+import json
 
 # ── Root directory (always resolves to limitframework/, wherever you run from) ──
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -54,8 +55,8 @@ def era_label(years):
 
 
 LUMI = {
-    '2016':     19.51,
-    '2016APV':  16.80,
+    '2016':     16.80,
+    '2016APV':  19.51,
     '2017':     41.48,
     '2018':     59.83,
     '2022':      7.98,
@@ -115,8 +116,15 @@ WS_DIR        = os.path.join(COMBINE_DIR, 'workspaces')
 CARDS_DIR     = os.path.join(COMBINE_DIR, 'datacards')
 LIMITS_DIR    = os.path.join(COMBINE_DIR, 'limits')
 
-# Signal master CSV (produced by make_signal_csv.py)
-SIGNAL_CSV = os.path.join(ROOT_DIR, 'signal_master.csv')
+# Per-mass-point signal yields and cross sections
+SIGNAL_CONFIG = os.path.join(ROOT_DIR, 'signal_config.json')
+
+def load_signal_config():
+    """List of per-mass-point dicts from SIGNAL_CONFIG's "mass_points"."""
+    if not os.path.exists(SIGNAL_CONFIG):
+        raise FileNotFoundError(f"signal config not found: {SIGNAL_CONFIG}")
+    with open(SIGNAL_CONFIG) as f:
+        return json.load(f)['mass_points']
 
 # ===========================================================================
 # Raw ntuple locations -- INPUT to make_inputs.py.
